@@ -16,5 +16,6 @@ module.exports = {
       ],
     ],
     'subject-max-length': [2, 'always', 50],
+    'subject-case': [0], // 대소문자 제한 비활성화 (ESLint 같은 고유명사 허용)
   },
 };
