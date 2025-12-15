@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && npm run dev",
+    "dev:backend": "cd backend && npm run start",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css}\"",
     "lint": "npm run lint:front && npm run lint:back"
   },
@@ -25,5 +25,9 @@
   "devDependencies": {
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.7.2"
+  },
+  "engines": {
+    "node": "24.11.1",
+    "npm": "11.6.2"
   }
 }
