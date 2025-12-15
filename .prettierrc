@@ -6,7 +6,7 @@
   "printWidth": 120,
   "endOfLine": "lf",
   "trailingComma": "all",
-  "arrowParens": "avoid",
+  "arrowParens": "always",
   "plugins": [],
   "overrides": [
     {
