@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { JoinUserDTO } from './dto/join-user.dto';
 import { LeaveUserDTO } from './dto/left-user.dto';
 import { MoveCursorDTO } from './dto/move-cursor.dto';
+import { UserStatus } from './dto/user-status.dto';
 import { WorkspaceService } from './workspace.service';
 
 @WebSocketGateway()
@@ -27,17 +28,26 @@ export class WorkspaceGateway {
     const { roomId, user } = this.workspaceService.joinUser(payload);
 
     await client.join(roomId);
+
+    this.server.to(roomId).emit('user:status', {
+      status: UserStatus.ONLINE,
+    });
     this.server.to(roomId).emit('user:joined', user);
   }
 
   @SubscribeMessage('user:leave')
-  handleUserLeave(
+  async handleUserLeave(
     @MessageBody()
     payload: LeaveUserDTO,
-    @ConnectedSocket() _client: Socket,
+    @ConnectedSocket() client: Socket,
   ) {
     const { roomId, userId } = this.workspaceService.leaveUser(payload);
 
+    await client.leave(roomId);
+
+    this.server.to(roomId).emit('user:status', {
+      status: UserStatus.OFFLINE,
+    });
     this.server.to(roomId).emit('user:left', userId);
   }
 
