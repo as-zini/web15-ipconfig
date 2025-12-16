@@ -1,9 +1,57 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  MessageBody,
+  ConnectedSocket,
+  WebSocketServer,
+} from '@nestjs/websockets';
+
+import { Server, Socket } from 'socket.io';
+import { JoinUserDTO } from './dto/join-user.dto';
+import { LeaveUserDTO } from './dto/left-user.dto';
+import { MoveCursorDTO } from './dto/move-cursor.dto';
+import { WorkspaceService } from './workspace.service';
 
 @WebSocketGateway()
 export class WorkspaceGateway {
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
+  @WebSocketServer()
+  server: Server;
+
+  constructor(private readonly workspaceService: WorkspaceService) {}
+
+  @SubscribeMessage('user:join')
+  async handleUserJoin(
+    @MessageBody() payload: JoinUserDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { roomId, user } = this.workspaceService.joinUser(payload);
+
+    await client.join(roomId);
+    this.server.to(roomId).emit('user:joined', user);
+  }
+
+  @SubscribeMessage('user:leave')
+  handleUserLeave(
+    @MessageBody()
+    payload: LeaveUserDTO,
+    @ConnectedSocket() _client: Socket,
+  ) {
+    const { roomId, userId } = this.workspaceService.leaveUser(payload);
+
+    this.server.to(roomId).emit('user:left', userId);
+  }
+
+  // 커서 부분
+  @SubscribeMessage('cursor:move')
+  handleCursorMove(
+    @MessageBody()
+    payload: MoveCursorDTO,
+    @ConnectedSocket() _client: Socket,
+  ) {
+    // 유저가 속한 방을 알기 위한 조회
+    const roomId = this.workspaceService.getRoomIdByUserId(payload.userId);
+
+    // 서비스에서 처리하지 않고 바로 반환
+    this.server.to(roomId).emit('cursor:moved', payload);
   }
 }

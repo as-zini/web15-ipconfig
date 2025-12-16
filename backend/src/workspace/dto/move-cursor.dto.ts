@@ -18,7 +18,7 @@ export class MoveData {
   y: number;
 }
 
-export class CursorMoveDTO {
+export class MoveCursorDTO {
   @ApiProperty({
     description: '유저 ID',
     example: 'u1',
