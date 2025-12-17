@@ -4,6 +4,7 @@ import TechLabel from './TeckLabel';
 import { TECH_STACKS } from '../constant/techStackInfo';
 import { useState } from 'react';
 import useDebounce from '../hooks/useDebounce';
+import NoContents from './NoContents';
 
 export default function TechStackModal() {
   const [search, setSearch] = useState<string>('');
@@ -22,6 +23,9 @@ export default function TechStackModal() {
         ).map((te) => (
           <TechLabel key={te.name} techName={te.name} />
         ))}
+        {TECH_STACKS.filter((te) =>
+          te.name.toLowerCase().includes(debouncedSearch.toLowerCase()),
+        ).length === 0 && <NoContents />}
       </div>
     </div>
   );
