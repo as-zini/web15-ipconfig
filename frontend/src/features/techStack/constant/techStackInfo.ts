@@ -136,3 +136,23 @@ export const TECH_STACKS: TechStackItem[] = [
   { category: 'Collaboration', name: 'GitLab' },
   { category: 'Collaboration', name: 'Bitbucket' },
 ];
+
+// 예외 처리가 필요한 이름들을 매핑(Simple Icons 슬러그 기준)
+export const iconMap: Record<string, string> = {
+  'React Native': 'react',
+  'C#': 'csharp',
+  'Express.js': 'express',
+  GCP: 'googlecloud',
+  NCP: 'naver',
+  'Photoshop / Illustrator': 'adobephotoshop',
+  'styled-components': 'styledcomponents',
+  SvelteKit: 'svelte',
+  'TanStack Query': 'tanstack',
+  'Shadcn/ui': 'shadcnui',
+  'Drizzle ORM': 'drizzle',
+  Cassandra: 'apachecassandra',
+  'JPA / Hibernate': 'hibernate',
+  MyBatis: 'mybatis',
+  Kafka: 'kafka',
+  'GitLab CI': 'gitlab',
+};
