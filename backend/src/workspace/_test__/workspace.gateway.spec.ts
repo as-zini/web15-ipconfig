@@ -26,6 +26,7 @@ describe('WorkspaceGateway', () => {
       getRoomIdByUserId: jest.fn(),
       joinUser: jest.fn(),
       leaveUser: jest.fn(),
+      handleDisconnect: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -45,6 +46,48 @@ describe('WorkspaceGateway', () => {
 
   it('워크 스페이스 게이트웨이 생성', () => {
     expect(gateway).toBeDefined();
+  });
+
+  describe('disconnect', () => {
+    beforeEach(() => {
+      serverMock.to = jest.fn().mockReturnValue(serverMock as Server);
+      clientMock = {
+        id: 's1',
+        join: jest.fn(),
+        leave: jest.fn(),
+      };
+    });
+
+    it('disconnect 시 handleDisconnect가 null이면 emit 하지 않는다', () => {
+      // GIVEN
+      workspaceServiceMock.handleDisconnect = jest.fn().mockReturnValue(null);
+
+      // WHEN
+      gateway.handleDisconnect(clientMock as Socket);
+
+      // THEN
+      expect(serverMock.emit).not.toHaveBeenCalled();
+      expect(serverMock.to).not.toHaveBeenCalled();
+    });
+
+    it('disconnect 시 user:left, user:status(OFFLINE) 이벤트를 발생시킨다', () => {
+      // GIVEN
+      workspaceServiceMock.handleDisconnect = jest.fn().mockReturnValue({
+        roomId: 'p1',
+        userId: 'u1',
+      });
+
+      // WHEN
+      gateway.handleDisconnect(clientMock as Socket);
+
+      // THEN
+      expect(workspaceServiceMock.handleDisconnect).toHaveBeenCalledWith('s1');
+      expect(serverMock.to).toHaveBeenCalledWith('p1');
+      expect(serverMock.emit).toHaveBeenCalledWith('user:status', {
+        status: 'OFFLINE',
+      });
+      expect(serverMock.emit).toHaveBeenCalledWith('user:left', 'u1');
+    });
   });
 
   describe('user:join', () => {
@@ -117,7 +160,10 @@ describe('WorkspaceGateway', () => {
       await gateway.handleUserJoin(payload, clientMock as Socket);
 
       // THEN
-      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(payload);
+      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(
+        payload,
+        clientMock,
+      );
     });
   });
 
@@ -175,7 +221,10 @@ describe('WorkspaceGateway', () => {
       await gateway.handleUserLeave(payload, clientMock as Socket);
 
       // THEN
-      expect(workspaceServiceMock.leaveUser).toHaveBeenCalledWith(payload);
+      expect(workspaceServiceMock.leaveUser).toHaveBeenCalledWith(
+        payload,
+        clientMock,
+      );
     });
   });
 
@@ -196,7 +245,7 @@ describe('WorkspaceGateway', () => {
       };
 
       // WHEN
-      gateway.handleCursorMove(payload, clientMock as Socket);
+      gateway.handleCursorMove(payload);
 
       // THEN
       expect(serverMock.emit).toHaveBeenCalledWith('cursor:moved', payload);
@@ -214,7 +263,7 @@ describe('WorkspaceGateway', () => {
       };
 
       // WHEN
-      gateway.handleCursorMove(payload, clientMock as Socket);
+      gateway.handleCursorMove(payload);
 
       // THEN
       expect(workspaceServiceMock.getRoomIdByUserId).toHaveBeenCalledWith(
