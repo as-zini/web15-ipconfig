@@ -10,7 +10,7 @@ export default function TechStackModal() {
   const [search, setSearch] = useState<string>('');
   const debouncedSearch = useDebounce(search, 300);
   return (
-    <div className="flex h-[80vh] w-[400px] cursor-auto flex-col rounded-xl border border-gray-700 bg-gray-800 p-5">
+    <div className="fixed top-1/2 left-[80px] z-50 flex h-[80vh] w-[400px] -translate-y-1/2 cursor-auto flex-col rounded-xl border border-gray-700 bg-gray-800 p-5 shadow-2xl">
       <WidgetHeader
         title="Tech Stack"
         icon={<LuLayers className="text-purple-400" size={18} />}
