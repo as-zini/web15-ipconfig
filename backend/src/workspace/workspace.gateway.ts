@@ -12,20 +12,34 @@ import { LeaveUserDTO } from './dto/left-user.dto';
 import { MoveCursorDTO } from './dto/move-cursor.dto';
 import { UserStatus } from './dto/user-status.dto';
 import { WorkspaceService } from './workspace.service';
+import { OnGatewayDisconnect } from '@nestjs/websockets';
 
 @WebSocketGateway()
-export class WorkspaceGateway {
+export class WorkspaceGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
   constructor(private readonly workspaceService: WorkspaceService) {}
+
+  handleDisconnect(client: Socket) {
+    const result = this.workspaceService.handleDisconnect(client.id);
+    if (!result) {
+      return;
+    }
+    const { roomId, userId } = result;
+
+    this.server.to(roomId).emit('user:status', {
+      status: UserStatus.OFFLINE,
+    });
+    this.server.to(roomId).emit('user:left', userId);
+  }
 
   @SubscribeMessage('user:join')
   async handleUserJoin(
     @MessageBody() payload: JoinUserDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, user } = this.workspaceService.joinUser(payload);
+    const { roomId, user } = this.workspaceService.joinUser(payload, client);
 
     await client.join(roomId);
 
@@ -41,7 +55,7 @@ export class WorkspaceGateway {
     payload: LeaveUserDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, userId } = this.workspaceService.leaveUser(payload);
+    const { roomId, userId } = this.workspaceService.leaveUser(payload, client);
 
     await client.leave(roomId);
 
@@ -56,7 +70,6 @@ export class WorkspaceGateway {
   handleCursorMove(
     @MessageBody()
     payload: MoveCursorDTO,
-    @ConnectedSocket() _client: Socket,
   ) {
     // 유저가 속한 방을 알기 위한 조회
     const roomId = this.workspaceService.getRoomIdByUserId(payload.userId);

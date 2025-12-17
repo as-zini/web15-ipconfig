@@ -1,12 +1,48 @@
-// workspace.service.ts (예시)
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { JoindedUserDTO, JoinUserDTO } from './dto/join-user.dto';
 import { LeaveUserDTO } from './dto/left-user.dto';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class WorkspaceService {
   private readonly rooms: Map<string, JoindedUserDTO[]> = new Map();
+  // socketId -> { roomId, userId } 매핑(disconnect 고려)
+  private readonly socketToUser: Map<
+    string,
+    { roomId: string; userId: string }
+  > = new Map();
+
+  public handleDisconnect(
+    socketId: string,
+  ): { roomId: string; userId: string } | null {
+    const mapped = this.socketToUser.get(socketId);
+    if (!mapped) return null;
+
+    const { roomId, userId } = mapped;
+    const room = this.rooms.get(roomId);
+
+    // 방이 없거나 유저가 이미 제거된 상태면 매핑만 정리하고 종료
+    if (!room) {
+      this.socketToUser.delete(socketId);
+      return null;
+    }
+
+    const idx = room.findIndex((user) => user.id === userId);
+    this.socketToUser.delete(socketId);
+    // 유저가 방에 없으면 매핑만 정리하고 종료
+    if (idx === -1) {
+      return null;
+    }
+
+    // 유저가 방에 있으면 제거
+    room.splice(idx, 1);
+
+    if (room.length === 0) {
+      this.rooms.delete(roomId);
+    }
+
+    return { roomId, userId };
+  }
 
   public getRoomIdByUserId(userId: string): string {
     for (const [roomId, roomUsers] of this.rooms.entries()) {
@@ -27,7 +63,10 @@ export class WorkspaceService {
   }
 
   // 유저 입장
-  public joinUser(payload: JoinUserDTO): {
+  public joinUser(
+    payload: JoinUserDTO,
+    client: Socket,
+  ): {
     roomId: string;
     user: JoindedUserDTO;
   } {
@@ -48,13 +87,20 @@ export class WorkspaceService {
 
     room.push(user);
 
+    this.socketToUser.set(client.id, { roomId, userId: user.id });
+
     return { roomId, user };
   }
 
   // 유저 퇴장
-  public leaveUser(payload: LeaveUserDTO): { roomId: string; userId: string } {
+  public leaveUser(
+    payload: LeaveUserDTO,
+    client: Socket,
+  ): { roomId: string; userId: string } {
     const roomId = payload.projectId;
     const userId = payload.userId;
+
+    this.socketToUser.delete(client.id);
 
     const room = this.rooms.get(roomId);
     if (!room) {
