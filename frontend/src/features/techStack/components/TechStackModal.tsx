@@ -9,14 +9,14 @@ export default function TechStackModal() {
   const [search, setSearch] = useState<string>('');
   const debouncedSearch = useDebounce(search, 300);
   return (
-    <div className="w-[400px] cursor-auto rounded-xl border border-gray-700 bg-gray-800 p-5">
+    <div className="flex h-[80vh] w-[400px] cursor-auto flex-col rounded-xl border border-gray-700 bg-gray-800 p-5">
       <WidgetHeader
         title="Tech Stack"
         icon={<LuLayers className="text-purple-400" size={18} />}
         onRemove={() => {}}
       />
       <SearchBar search={search} setSearch={setSearch} />
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 overflow-y-auto">
         {TECH_STACKS.filter((te) =>
           te.name.toLowerCase().includes(debouncedSearch.toLowerCase()),
         ).map((te) => (
