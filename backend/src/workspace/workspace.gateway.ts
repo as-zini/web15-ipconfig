@@ -4,6 +4,7 @@ import {
   MessageBody,
   ConnectedSocket,
   WebSocketServer,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 
 import { Server, Socket } from 'socket.io';
@@ -12,7 +13,6 @@ import { LeaveUserDTO } from './dto/left-user.dto';
 import { MoveCursorDTO } from './dto/move-cursor.dto';
 import { UserStatus } from './dto/user-status.dto';
 import { WorkspaceService } from './workspace.service';
-import { OnGatewayDisconnect } from '@nestjs/websockets';
 
 @WebSocketGateway()
 export class WorkspaceGateway implements OnGatewayDisconnect {
@@ -22,13 +22,14 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
   handleDisconnect(client: Socket) {
-    const result = this.workspaceService.handleDisconnect(client);
+    const result = this.workspaceService.handleDisconnect(client.id);
     if (!result) {
       return;
     }
     const { roomId, userId } = result;
 
     this.server.to(roomId).emit('user:status', {
+      userId,
       status: UserStatus.OFFLINE,
     });
     this.server.to(roomId).emit('user:left', userId);
@@ -39,11 +40,12 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
     @MessageBody() payload: JoinUserDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, user } = this.workspaceService.joinUser(payload, client);
+    const { roomId, user } = this.workspaceService.joinUser(payload, client.id);
 
     await client.join(roomId);
 
     this.server.to(roomId).emit('user:status', {
+      userId: user.id,
       status: UserStatus.ONLINE,
     });
     this.server.to(roomId).emit('user:joined', user);
@@ -51,31 +53,37 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('user:leave')
   async handleUserLeave(
-    @MessageBody()
-    payload: LeaveUserDTO,
+    @MessageBody() payload: LeaveUserDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    const { roomId, userId } = this.workspaceService.leaveUser(payload, client);
+    const result = this.workspaceService.leaveUser(client.id);
+    if (!result) {
+      return;
+    }
+    const { roomId, userId } = result;
 
     await client.leave(roomId);
 
     this.server.to(roomId).emit('user:status', {
+      userId,
       status: UserStatus.OFFLINE,
     });
     this.server.to(roomId).emit('user:left', userId);
   }
 
-  // 커서 부분
   @SubscribeMessage('cursor:move')
   handleCursorMove(
     @ConnectedSocket() client: Socket,
-    @MessageBody()
-    payload: MoveCursorDTO,
+    @MessageBody() payload: MoveCursorDTO,
   ) {
-    const roomId = (client.data as { roomId?: string })?.roomId;
-    if (!roomId) return;
+    // 굳이 들어가야 하는 부분일까? 유저가 없다면 무시하긴 하는 로직이긴 한데...
+    const userInfo = this.workspaceService.getUserBySocketId(client.id);
+    if (!userInfo) {
+      return;
+    }
 
-    // 서비스에서 처리하지 않고 바로 반환
+    const { roomId } = userInfo;
+
     this.server.to(roomId).emit('cursor:moved', payload);
   }
 }

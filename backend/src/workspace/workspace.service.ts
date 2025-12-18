@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { JoindedUserDTO, JoinUserDTO } from './dto/join-user.dto';
-import { LeaveUserDTO } from './dto/left-user.dto';
-import { Socket } from 'socket.io';
+import { User } from './dto/join-user.dto';
+
+// 유저 정보는 저장해야 함
+interface UserSession {
+  socketId: string;
+  roomId: string;
+  user: User;
+}
 
 @Injectable()
 export class WorkspaceService {
+  private readonly userSessions = new Map<string, UserSession>();
+
   public handleDisconnect(
-    client: Socket,
+    socketId: string,
   ): { roomId: string; userId: string } | null {
-    const data = client.data as { roomId?: string; userId?: string };
-    const { roomId, userId } = data;
+    const session = this.userSessions.get(socketId);
+    if (!session) {
+      return null;
+    }
 
-    client.data = {};
+    const { roomId, user } = session;
 
-    if (!roomId || !userId) return null;
-    return { roomId, userId };
+    this.userSessions.delete(socketId);
+
+    return { roomId, userId: user.id };
   }
 
-  // 유저 입장
   public joinUser(
     payload: JoinUserDTO,
-    client: Socket,
+    socketId: string,
   ): {
     roomId: string;
     user: JoindedUserDTO;
@@ -33,25 +43,50 @@ export class WorkspaceService {
       color: payload.user.color,
     };
 
-    // 소켓 자체에 데이터 저장하기
-    client.data = {
+    this.userSessions.set(socketId, {
+      socketId,
       roomId,
-      userId: user.id,
-    };
+      user,
+    });
 
     return { roomId, user };
   }
 
-  // 유저 퇴장
   public leaveUser(
-    payload: LeaveUserDTO,
-    client: Socket,
-  ): { roomId: string; userId: string } {
-    const roomId = payload.workspaceId;
-    const userId = payload.userId;
+    socketId: string,
+  ): { roomId: string; userId: string } | null {
+    const session = this.userSessions.get(socketId);
+    if (!session) {
+      return null;
+    }
 
-    client.data = {};
+    const { roomId, user } = session;
 
-    return { roomId, userId };
+    this.userSessions.delete(socketId);
+
+    return { roomId, userId: user.id };
+  }
+
+  // 소켓 Id로 유저 정보 조회
+  public getUserBySocketId(socketId: string): {
+    roomId: string;
+    user: JoindedUserDTO;
+  } | null {
+    const session = this.userSessions.get(socketId);
+    if (!session) {
+      return null;
+    }
+
+    return {
+      roomId: session.roomId,
+      user: session.user,
+    };
+  }
+
+  // 방 Id로 유저 정보 조회
+  public getUsersByRoomId(roomId: string): JoindedUserDTO[] {
+    return Array.from(this.userSessions.values())
+      .filter((session) => session.roomId === roomId)
+      .map((session) => session.user);
   }
 }

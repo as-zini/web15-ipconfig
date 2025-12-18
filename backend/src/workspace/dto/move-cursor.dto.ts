@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsObject, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class MoveData {
   @ApiProperty({
@@ -26,5 +27,13 @@ export class MoveCursorDTO {
   })
   @IsString()
   userId: string;
+
+  @ApiProperty({
+    description: '커서 이동 데이터',
+    example: { x: 100, y: 200 },
+    required: true,
+  })
+  @IsObject()
+  @Type(() => MoveData)
   moveData: MoveData;
 }
