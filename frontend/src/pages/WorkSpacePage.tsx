@@ -171,24 +171,41 @@ function WorkSpacePage() {
         id: currentUser.id,
         nickname: currentUser.nickname,
         color: currentUser.color,
+        backgroundColor: currentUser.backgroundColor,
       },
     });
 
-    socket.on('user:joined', (user) => {
-      // 최초 커서 위치 기본값
-      // 일단 100, 100으로 해놓겠습니다
-      setRemoteCursors((prev) => ({
-        ...prev,
-        [user.id]: {
-          userId: user.id,
-          nickname: user.nickname,
-          color: user.color,
-          backgroundColor: user.backgroundColor,
-          x: 100,
-          y: 100,
-        },
-      }));
-    });
+    // 같은 workspace에 있는 전체 유저 목록 수신
+    socket.on(
+      'user:joined',
+      (
+        allUsers: {
+          id: string;
+          nickname: string;
+          color: string;
+          backgroundColor: string;
+        }[],
+      ) => {
+        setRemoteCursors((prev) => {
+          const next = { ...prev };
+
+          allUsers.forEach((user) => {
+            if (!next[user.id]) {
+              next[user.id] = {
+                userId: user.id,
+                nickname: user.nickname,
+                color: user.color,
+                backgroundColor: user.backgroundColor,
+                x: 100,
+                y: 100,
+              };
+            }
+          });
+
+          return next;
+        });
+      },
+    );
 
     socket.on('user:left', (userId: string) => {
       setRemoteCursors((prev) => {

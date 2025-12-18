@@ -34,6 +34,7 @@ export class WorkspaceService {
   ): {
     roomId: string;
     user: User;
+    allUsers: User[];
   } {
     const roomId = payload.workspaceId;
 
@@ -50,7 +51,9 @@ export class WorkspaceService {
       user,
     });
 
-    return { roomId, user };
+    const allUsers = this.getUsersByRoomId(roomId);
+
+    return { roomId, user, allUsers };
   }
 
   public leaveUser(
