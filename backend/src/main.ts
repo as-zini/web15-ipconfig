@@ -6,6 +6,15 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const isProduction = process.env.NODE_ENV === 'production';
+  const allowedOrigins = isProduction ? [] : '*';
+
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // 쿠키/인증 헤더 허용 시 필수
+  });
+
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(

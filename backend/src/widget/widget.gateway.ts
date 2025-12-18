@@ -13,7 +13,16 @@ import { CreateWidgetDto } from './dto/create-widget.dto';
 import { UpdateWidgetDto } from './dto/update-widget.dto';
 import { WorkspaceService } from '../workspace/workspace.service';
 
-@WebSocketGateway({ namespace: 'workspace', cors: { origin: '*' } })
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = isProduction ? [] : '*';
+
+@WebSocketGateway({
+  namespace: 'workspace',
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
+})
 export class WidgetGateway {
   @WebSocketServer()
   server: Server;
