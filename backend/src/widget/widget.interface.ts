@@ -2,12 +2,17 @@ import { CreateWidgetDto } from './dto/create-widget.dto';
 import { UpdateWidgetDto } from './dto/update-widget.dto';
 
 export interface IWidgetService {
-  create(createWidgetDto: CreateWidgetDto): Promise<CreateWidgetDto>;
-  findAll(): Promise<CreateWidgetDto[]>;
-  findOne(id: string): Promise<CreateWidgetDto>;
-  update(updateWidgetDto: UpdateWidgetDto): Promise<CreateWidgetDto>;
-  remove(widgetId: string): Promise<{ widgetId: string }>;
+  create(
+    workspaceId: string,
+    createWidgetDto: CreateWidgetDto,
+  ): Promise<CreateWidgetDto>;
+  findAll(workspaceId: string): Promise<CreateWidgetDto[]>;
+  findOne(workspaceId: string, widgetId: string): Promise<CreateWidgetDto>;
+  update(
+    workspaceId: string,
+    updateWidgetDto: UpdateWidgetDto,
+  ): Promise<CreateWidgetDto>;
+  remove(workspaceId: string, widgetId: string): Promise<{ widgetId: string }>;
 }
 
-// DI 토큰
 export const WIDGET_SERVICE = 'WIDGET_SERVICE';

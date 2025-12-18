@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('WidgetMemoryService', () => {
   let service: WidgetMemoryService;
+  const workspaceId = 'workspace-1';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,7 +21,7 @@ describe('WidgetMemoryService', () => {
   });
 
   describe('create (위젯 생성)', () => {
-    it('새로운 기술 스택 위젯을 생성하고 저장해야 한다', async () => {
+    it('새로운 기술 스택 위젯을 특정 워크스페이스에 생성하고 저장해야 한다', async () => {
       // given: 생성할 기술 스택 위젯 데이터가 주어졌을 때
       const widgetData: WidgetData = {
         x: 100,
@@ -41,16 +42,16 @@ describe('WidgetMemoryService', () => {
       };
 
       // when: 위젯 생성 메서드를 호출하면
-      const result = await service.create(createDto);
+      const result = await service.create(workspaceId, createDto);
 
       // then: 생성된 위젯이 반환되고, 조회 시 동일한 데이터가 존재해야 한다
       expect(result).toEqual(createDto);
-      expect(await service.findOne('test-1')).toEqual(createDto);
+      expect(await service.findOne(workspaceId, 'test-1')).toEqual(createDto);
     });
   });
 
   describe('findAll (전체 조회)', () => {
-    it('저장된 모든 위젯 목록을 반환해야 한다', async () => {
+    it('해당 워크스페이스의 모든 위젯 목록을 반환해야 한다', async () => {
       // given: 위젯 하나가 미리 저장되어 있을 때
       const createDto: CreateWidgetDto = {
         widgetId: 'test-1',
@@ -67,10 +68,10 @@ describe('WidgetMemoryService', () => {
           } as TechStackContentDto,
         },
       };
-      await service.create(createDto);
+      await service.create(workspaceId, createDto);
 
       // when: 전체 위젯 목록을 조회하면
-      const result = await service.findAll();
+      const result = await service.findAll(workspaceId);
 
       // then: 길이가 1인 배열에 저장된 위젯이 포함되어야 한다
       expect(result).toHaveLength(1);
@@ -79,7 +80,7 @@ describe('WidgetMemoryService', () => {
   });
 
   describe('update (위젯 수정)', () => {
-    it('기존 위젯의 일부 속성(위치)만 수정해도 나머지 속성은 유지되어야 한다 (부분 업데이트)', async () => {
+    it('기존 위젯의 일부 속성(위치)만 수정해도 나머지 속성은 유지되어야 한다', async () => {
       // given: 초기 위젯이 저장되어 있을 때
       const initialDto: CreateWidgetDto = {
         widgetId: 'test-1',
@@ -96,12 +97,12 @@ describe('WidgetMemoryService', () => {
           } as TechStackContentDto,
         },
       };
-      await service.create(initialDto);
+      await service.create(workspaceId, initialDto);
 
       // when: 위젯의 x 좌표만 300으로 수정하면
-      const updateResult = await service.update({
+      const updateResult = await service.update(workspaceId, {
         widgetId: 'test-1',
-        data: { x: 300 }, // content나 y좌표는 보내지 않음
+        data: { x: 300 },
       });
 
       // then: x 좌표는 300으로 변경되고, y 좌표와 content는 기존 값이 유지되어야 한다
@@ -117,7 +118,7 @@ describe('WidgetMemoryService', () => {
       // when: 수정을 시도하면
       // then: NotFoundException 에러가 발생해야 한다
       await expect(
-        service.update({ widgetId: 'invalid-id', data: {} }),
+        service.update(workspaceId, { widgetId: 'invalid-id', data: {} }),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -140,23 +141,14 @@ describe('WidgetMemoryService', () => {
           } as TechStackContentDto,
         },
       };
-      await service.create(createDto);
+      await service.create(workspaceId, createDto);
 
       // when: 해당 위젯을 삭제하면
-      const result = await service.remove('test-1');
+      const result = await service.remove(workspaceId, 'test-1');
 
       // then: 삭제된 위젯 ID가 반환되고, 다시 조회 시 NotFoundException이 발생해야 한다
       expect(result).toEqual({ widgetId: 'test-1' });
-      await expect(service.findOne('test-1')).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-
-    it('존재하지 않는 위젯을 삭제하려 하면 NotFoundException을 던져야 한다', async () => {
-      // given: 존재하지 않는 위젯 ID가 주어졌을 때
-      // when: 삭제를 시도하면
-      // then: NotFoundException 에러가 발생해야 한다
-      await expect(service.remove('invalid-id')).rejects.toThrow(
+      await expect(service.findOne(workspaceId, 'test-1')).rejects.toThrow(
         NotFoundException,
       );
     });

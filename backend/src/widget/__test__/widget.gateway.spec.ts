@@ -2,21 +2,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WidgetGateway } from '../widget.gateway';
 import { IWidgetService, WIDGET_SERVICE } from '../widget.interface';
 import { CreateWidgetDto } from '../dto/create-widget.dto';
+import { UpdateWidgetDto } from '../dto/update-widget.dto';
 import { WidgetType, TechStackContentDto } from '../dto/widget-content.dto';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
-// IWidgetService의 모든 메서드를 Mock 함수로 정의
 type MockWidgetService = {
   [P in keyof IWidgetService]: jest.Mock;
 };
 
-// Socket Server의 Mock 타입 정의
 type MockServer = Partial<Record<keyof Server, jest.Mock>>;
 
 describe('WidgetGateway', () => {
   let gateway: WidgetGateway;
   let serviceMock: MockWidgetService;
   let serverMock: MockServer;
+  let clientMock: Partial<Socket>;
+
+  const roomId = 'room-1';
 
   beforeEach(async () => {
     serviceMock = {
@@ -29,6 +31,11 @@ describe('WidgetGateway', () => {
 
     serverMock = {
       emit: jest.fn(),
+      to: jest.fn().mockReturnThis(),
+    };
+
+    clientMock = {
+      data: { roomId },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -42,7 +49,6 @@ describe('WidgetGateway', () => {
     }).compile();
 
     gateway = module.get<WidgetGateway>(WidgetGateway);
-
     gateway.server = serverMock as unknown as Server;
   });
 
@@ -51,7 +57,7 @@ describe('WidgetGateway', () => {
   });
 
   describe('create (위젯 생성 이벤트)', () => {
-    it('위젯을 생성하고 "widget:created" 이벤트를 브로드캐스트해야 한다', async () => {
+    it('위젯을 생성하고 특정 룸에 "widget:created" 이벤트를 전파해야 한다', async () => {
       // given: 클라이언트로부터 생성 요청 데이터가 왔을 때
       const createDto: CreateWidgetDto = {
         widgetId: 'w-1',
@@ -71,26 +77,28 @@ describe('WidgetGateway', () => {
       serviceMock.create.mockResolvedValue(createDto);
 
       // when: create 핸들러가 실행되면
-      await gateway.create(createDto);
+      await gateway.create(createDto, clientMock as Socket);
 
       // then: 서비스의 create 메서드가 호출되고, 서버 전체에 "widget:created" 이벤트가 전송되어야 한다
-      expect(serviceMock.create).toHaveBeenCalledWith(createDto);
+      expect(serviceMock.create).toHaveBeenCalledWith(roomId, createDto); // roomId 전달 확인
+      expect(serverMock.to).toHaveBeenCalledWith(roomId); // Room 타겟팅 확인
       expect(serverMock.emit).toHaveBeenCalledWith('widget:created', createDto);
     });
   });
 
   describe('update (위젯 수정 이벤트)', () => {
-    it('위젯을 수정하고 "widget:updated" 이벤트를 브로드캐스트해야 한다', async () => {
+    it('위젯을 수정하고 특정 룸에 "widget:updated" 이벤트를 전파해야 한다', async () => {
       // given: 클라이언트로부터 수정 요청 데이터가 왔을 때
-      const updateDto = { widgetId: 'w-1', data: { x: 100 } };
+      const updateDto: UpdateWidgetDto = { widgetId: 'w-1', data: { x: 100 } };
       const updatedWidget = { widgetId: 'w-1', data: { x: 100, y: 0 } };
       serviceMock.update.mockResolvedValue(updatedWidget);
 
       // when: update 핸들러가 실행되면
-      await gateway.update(updateDto);
+      await gateway.update(updateDto, clientMock as Socket);
 
       // then: 서비스의 update 메서드가 호출되고, "widget:updated" 이벤트가 수정된 데이터와 함께 전송되어야 한다
-      expect(serviceMock.update).toHaveBeenCalledWith(updateDto);
+      expect(serviceMock.update).toHaveBeenCalledWith(roomId, updateDto);
+      expect(serverMock.to).toHaveBeenCalledWith(roomId);
       expect(serverMock.emit).toHaveBeenCalledWith(
         'widget:updated',
         updatedWidget,
@@ -99,17 +107,18 @@ describe('WidgetGateway', () => {
   });
 
   describe('remove (위젯 삭제 이벤트)', () => {
-    it('위젯을 삭제하고 "widget:deleted" 이벤트를 브로드캐스트해야 한다', async () => {
+    it('위젯을 삭제하고 특정 룸에 "widget:deleted" 이벤트를 전파해야 한다', async () => {
       // given: 클라이언트로부터 삭제할 위젯 ID가 왔을 때
       const widgetId = 'w-1';
       const result = { widgetId };
       serviceMock.remove.mockResolvedValue(result);
 
       // when: remove 핸들러가 실행되면
-      await gateway.remove({ widgetId });
+      await gateway.remove({ widgetId }, clientMock as Socket);
 
       // then: 서비스의 remove 메서드가 호출되고, "widget:deleted" 이벤트가 삭제된 ID와 함께 전송되어야 한다
-      expect(serviceMock.remove).toHaveBeenCalledWith(widgetId);
+      expect(serviceMock.remove).toHaveBeenCalledWith(roomId, widgetId);
+      expect(serverMock.to).toHaveBeenCalledWith(roomId);
       expect(serverMock.emit).toHaveBeenCalledWith('widget:deleted', result);
     });
   });
