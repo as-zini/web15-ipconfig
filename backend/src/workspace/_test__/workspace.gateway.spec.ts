@@ -27,6 +27,7 @@ describe('WorkspaceGateway', () => {
       joinUser: jest.fn(),
       leaveUser: jest.fn(),
       handleDisconnect: jest.fn(),
+      getUserBySocketId: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -54,7 +55,7 @@ describe('WorkspaceGateway', () => {
         id: 's1',
         join: jest.fn(),
         leave: jest.fn(),
-      };
+      } as Partial<Socket>;
     });
 
     it('disconnect 시 handleDisconnect가 null이면 emit 하지 않는다', () => {
@@ -65,6 +66,7 @@ describe('WorkspaceGateway', () => {
       gateway.handleDisconnect(clientMock as Socket);
 
       // THEN
+      expect(workspaceServiceMock.handleDisconnect).toHaveBeenCalledWith('s1');
       expect(serverMock.emit).not.toHaveBeenCalled();
       expect(serverMock.to).not.toHaveBeenCalled();
     });
@@ -80,11 +82,10 @@ describe('WorkspaceGateway', () => {
       gateway.handleDisconnect(clientMock as Socket);
 
       // THEN
-      expect(workspaceServiceMock.handleDisconnect).toHaveBeenCalledWith(
-        clientMock,
-      );
+      expect(workspaceServiceMock.handleDisconnect).toHaveBeenCalledWith('s1');
       expect(serverMock.to).toHaveBeenCalledWith('w1');
       expect(serverMock.emit).toHaveBeenCalledWith('user:status', {
+        userId: 'u1',
         status: 'OFFLINE',
       });
       expect(serverMock.emit).toHaveBeenCalledWith('user:left', 'u1');
@@ -92,7 +93,6 @@ describe('WorkspaceGateway', () => {
   });
 
   describe('user:join', () => {
-    // 값 모킹해놓기
     beforeEach(() => {
       workspaceServiceMock.joinUser = jest.fn().mockReturnValue({
         roomId: 'w1',
@@ -103,8 +103,12 @@ describe('WorkspaceGateway', () => {
         },
       });
 
-      // this.server.to(roomId).emit(...) 체이닝을 위해 this를 반환
       serverMock.to = jest.fn().mockReturnValue(serverMock as Server);
+      clientMock = {
+        id: 's1',
+        join: jest.fn(),
+        leave: jest.fn(),
+      } as Partial<Socket>;
     });
 
     it('user:join 이벤트 발생 시 일련의 과정을 거친 후 user:joined, user:status 이벤트 발생', async () => {
@@ -122,8 +126,11 @@ describe('WorkspaceGateway', () => {
       await gateway.handleUserJoin(payload, clientMock as Socket);
 
       // THEN
+      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(payload, 's1');
+      expect(clientMock.join).toHaveBeenCalledWith('w1');
       expect(serverMock.emit).toHaveBeenCalledWith('user:joined', payload.user);
       expect(serverMock.emit).toHaveBeenCalledWith('user:status', {
+        userId: 'u1',
         status: 'ONLINE',
       });
     });
@@ -161,23 +168,23 @@ describe('WorkspaceGateway', () => {
       await gateway.handleUserJoin(payload, clientMock as Socket);
 
       // THEN
-      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(
-        payload,
-        clientMock,
-      );
+      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(payload, 's1');
     });
   });
 
   describe('user:leave', () => {
-    // 값 모킹해놓기
     beforeEach(() => {
       workspaceServiceMock.leaveUser = jest.fn().mockReturnValue({
         roomId: 'w1',
         userId: 'u1',
       });
 
-      // this.server.to(roomId).emit(...) 체이닝을 위해 this를 반환
       serverMock.to = jest.fn().mockReturnValue(serverMock as Server);
+      clientMock = {
+        id: 's1',
+        join: jest.fn(),
+        leave: jest.fn(),
+      } as unknown as Partial<Socket>;
     });
 
     it('user:leave 이벤트 발생 시 일련의 과정을 거친 후 user:left, user:status 이벤트 발생', async () => {
@@ -191,8 +198,11 @@ describe('WorkspaceGateway', () => {
       await gateway.handleUserLeave(payload, clientMock as Socket);
 
       // THEN
+      expect(workspaceServiceMock.leaveUser).toHaveBeenCalledWith('s1');
+      expect(clientMock.leave).toHaveBeenCalledWith('w1');
       expect(serverMock.emit).toHaveBeenCalledWith('user:left', payload.userId);
       expect(serverMock.emit).toHaveBeenCalledWith('user:status', {
+        userId: 'u1',
         status: 'OFFLINE',
       });
     });
@@ -222,10 +232,7 @@ describe('WorkspaceGateway', () => {
       await gateway.handleUserLeave(payload, clientMock as Socket);
 
       // THEN
-      expect(workspaceServiceMock.leaveUser).toHaveBeenCalledWith(
-        payload,
-        clientMock,
-      );
+      expect(workspaceServiceMock.leaveUser).toHaveBeenCalledWith('s1');
     });
   });
 
@@ -236,8 +243,7 @@ describe('WorkspaceGateway', () => {
         id: 's1',
         join: jest.fn(),
         leave: jest.fn(),
-        data: { roomId: 'w1', userId: 'u1' },
-      };
+      } as unknown as Partial<Socket>;
     });
 
     it('cursor:move 이벤트 발생 시 cursor:moved 이벤트 발생', () => {
@@ -250,17 +256,22 @@ describe('WorkspaceGateway', () => {
         },
       };
 
+      workspaceServiceMock.getUserBySocketId = jest.fn().mockReturnValue({
+        roomId: 'w1',
+        user: { id: 'u1', nickname: 'user1', color: '#000000' },
+      });
+
       // WHEN
       gateway.handleCursorMove(clientMock as Socket, payload);
 
       // THEN
+      expect(workspaceServiceMock.getUserBySocketId).toHaveBeenCalledWith('s1');
       expect(serverMock.emit).toHaveBeenCalledWith('cursor:moved', payload);
       expect(serverMock.to).toHaveBeenCalledWith('w1');
     });
 
-    it('socket.data.roomId가 없으면 emit 하지 않는다', () => {
+    it('getUserBySocketId가 null을 반환하면 emit 하지 않는다', () => {
       // GIVEN
-      clientMock.data = {};
       const payload: MoveCursorDTO = {
         userId: 'u1',
         moveData: {
@@ -269,10 +280,13 @@ describe('WorkspaceGateway', () => {
         },
       };
 
+      workspaceServiceMock.getUserBySocketId = jest.fn().mockReturnValue(null);
+
       // WHEN
       gateway.handleCursorMove(clientMock as Socket, payload);
 
       // THEN
+      expect(workspaceServiceMock.getUserBySocketId).toHaveBeenCalledWith('s1');
       expect(serverMock.to).not.toHaveBeenCalled();
       expect(serverMock.emit).not.toHaveBeenCalledWith('cursor:moved', payload);
     });
