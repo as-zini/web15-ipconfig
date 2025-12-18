@@ -15,7 +15,7 @@ export default function ModalHeader({ title, icon, onRemove }: HeaderProps) {
       <button
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onRemove}
-        className="text-gray-500 transition-colors hover:cursor-pointer hover:text-blue-400"
+        className="hover:text-main text-gray-500 transition-colors hover:cursor-pointer"
       >
         <LuTrash2 size={16} />
       </button>

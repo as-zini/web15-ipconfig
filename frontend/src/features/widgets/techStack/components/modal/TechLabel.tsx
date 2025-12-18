@@ -31,7 +31,7 @@ function TechLabel({ techName }: { techName: string }) {
 
   return (
     <div
-      className="mb-4 flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-2 py-1 select-none hover:border-blue-500 hover:bg-gray-700"
+      className="hover:border-main mb-4 flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-2 py-1 select-none hover:bg-gray-700"
       draggable={true}
       onDragStart={handleDragStart}
     >

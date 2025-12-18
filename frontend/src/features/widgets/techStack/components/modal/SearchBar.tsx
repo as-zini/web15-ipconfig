@@ -12,7 +12,7 @@ export default function SearchBar({
       <input
         type="text"
         placeholder="기술 스택을 검색하세요"
-        className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm font-medium text-gray-300 placeholder-gray-400 focus:border-blue-400 focus:outline-none"
+        className="focus:border-main w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm font-medium text-gray-300 placeholder-gray-400 focus:outline-none"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
