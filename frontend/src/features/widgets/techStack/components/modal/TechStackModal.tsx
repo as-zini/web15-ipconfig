@@ -11,7 +11,7 @@ function TechStackModal({ onModalClose }: { onModalClose: () => void }) {
   const [search, setSearch] = useState<string>('');
   const debouncedSearch = useDebounce(search, 300);
   return (
-    <div className="fixed top-1/2 left-[80px] z-50 flex h-[80vh] w-[400px] -translate-y-1/2 cursor-auto flex-col rounded-xl border border-gray-600 bg-gray-800 p-5 shadow-2xl">
+    <div className="fixed top-1/2 left-[80px] flex h-[80vh] w-[400px] -translate-y-1/2 cursor-auto flex-col rounded-xl border border-gray-600 bg-gray-800 p-5 shadow-2xl">
       <ModalHeader
         title="Tech Stack"
         icon={HEADER_ICON}
