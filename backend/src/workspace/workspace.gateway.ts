@@ -14,7 +14,11 @@ import { MoveCursorDTO } from './dto/move-cursor.dto';
 import { UserStatus } from './dto/user-status.dto';
 import { WorkspaceService } from './workspace.service';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: '*',
+  },
+})
 export class WorkspaceGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
