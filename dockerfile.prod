@@ -1,10 +1,13 @@
 FROM node:24.12.0-alpine AS base
 WORKDIR /app
 
-# Root package.json 복사
+# Root package.json과 package-lock.json 복사
 COPY package*.json ./
 COPY frontend/package*.json ./frontend/
 COPY backend/package*.json ./backend/
+
+# Root에서 workspace 의존성 설치
+RUN npm ci --ignore-scripts
 
 #############################
 # 1. 프론트엔드 빌드 단계
@@ -15,9 +18,8 @@ WORKDIR /app
 # 프론트엔드 소스 복사
 COPY frontend ./frontend
 
-WORKDIR /app/frontend
-RUN npm ci
-RUN npm run build
+# Root에서 workspace 빌드 명령 실행
+RUN npm run build -w frontend
 
 #############################
 # 2. 프론트엔드 nginx 배포 이미지
@@ -42,9 +44,8 @@ WORKDIR /app
 # 백엔드 소스 복사
 COPY backend ./backend
 
-WORKDIR /app/backend
-RUN npm ci
-RUN npm run build
+# Root에서 workspace 빌드 명령 실행
+RUN npm run build -w backend
 
 #############################
 # 4. 백엔드 런타임 이미지
@@ -55,9 +56,12 @@ WORKDIR /app
 # 빌드 결과만 복사
 COPY --from=backend-build /app/backend/dist ./dist
 
-# 백엔드 패키지 의존성만 설치 (prod 전용)
-COPY backend/package*.json ./
-RUN npm ci --omit=dev
+# Root package.json과 backend package.json 복사 (workspace 구조 유지)
+COPY package*.json ./
+COPY backend/package*.json ./backend/
+
+# Production 의존성만 설치 (workspace 구조 유지)
+RUN npm ci --omit=dev --ignore-scripts
 
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
