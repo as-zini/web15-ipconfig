@@ -5,7 +5,6 @@ import {
   ConnectedSocket,
   WebSocketServer,
   OnGatewayDisconnect,
-  OnGatewayConnection,
 } from '@nestjs/websockets';
 
 import { Server, Socket } from 'socket.io';
@@ -14,6 +13,9 @@ import { LeaveUserDTO } from './dto/left-user.dto';
 import { MoveCursorDTO } from './dto/move-cursor.dto';
 import { UserStatus } from './dto/user-status.dto';
 import { WorkspaceService } from './workspace.service';
+import { CursorService } from '../cursor/cursor.service';
+import { SetCursorDTO } from '../cursor/dto/set-cursor.dto';
+import { UpdateCursorDTO } from '../cursor/dto/update-cursor.dto';
 
 @WebSocketGateway({
   cors: {
@@ -24,7 +26,10 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly workspaceService: WorkspaceService) {}
+  constructor(
+    private readonly workspaceService: WorkspaceService,
+    private readonly cursorService: CursorService,
+  ) {}
 
   handleDisconnect(client: Socket) {
     const result = this.workspaceService.handleDisconnect(client.id);
@@ -32,6 +37,9 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
       return;
     }
     const { roomId, userId } = result;
+
+    // 커서 정보 정리
+    this.cursorService.removeCursor(roomId, userId);
 
     this.server.to(roomId).emit('user:status', {
       userId,
@@ -57,12 +65,27 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
 
     await client.join(roomId);
 
+    this.cursorService.setCursor({
+      workspaceId: roomId,
+      userId: user.id,
+      // 아예 처음에 안보이게 하기...
+      x: 10000,
+      y: 10000,
+    } as SetCursorDTO);
+
+    // 현재 워크스페이스의 커서 상태도 함께 내려줄 수 있도록 확장 여지 확보
+    const cursors = this.cursorService.getCursorsByWorkspace(roomId);
+
     this.server.to(roomId).emit('user:status', {
       userId: user.id,
       status: UserStatus.ONLINE,
     });
-    // 같은 workspace(room)에 있는 전체 유저 목록을 전달
-    this.server.to(roomId).emit('user:joined', allUsers);
+
+    // 같은 workspace(room)에 있는 전체 유저 + 커서 목록 전달
+    this.server.to(roomId).emit('user:joined', {
+      allUsers,
+      cursors,
+    });
   }
 
   @SubscribeMessage('user:leave')
@@ -75,6 +98,9 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
       return;
     }
     const { roomId, userId } = result;
+
+    // 커서 정보 정리
+    this.cursorService.removeCursor(roomId, userId);
 
     await client.leave(roomId);
 
@@ -90,7 +116,6 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: MoveCursorDTO,
   ) {
-    // 굳이 들어가야 하는 부분일까? 유저가 없다면 무시하긴 하는 로직이긴 한데...
     const userInfo = this.workspaceService.getUserBySocketId(client.id);
     if (!userInfo) {
       return;
@@ -98,6 +123,14 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
 
     const { roomId } = userInfo;
 
+    this.cursorService.updateCursor({
+      workspaceId: roomId,
+      userId: payload.userId,
+      x: payload.moveData.x,
+      y: payload.moveData.y,
+    } as UpdateCursorDTO);
+
+    // 동일 room에 브로드캐스트
     this.server.to(roomId).emit('cursor:moved', payload);
   }
 }
