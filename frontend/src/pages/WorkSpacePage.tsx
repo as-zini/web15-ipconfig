@@ -132,6 +132,9 @@ function WorkSpacePage() {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
+  // 캔버스 영역(ref) - 커서 좌표를 사이드바/헤더를 제외한 영역 기준으로 계산하기 위함
+  const canvasRef = useRef<HTMLDivElement | null>(null);
+
   const [remoteCursors, setRemoteCursors] = useState<
     Record<string, RemoteCursor>
   >({});
@@ -287,11 +290,18 @@ function WorkSpacePage() {
     const socket = socketRef.current;
     if (!socket) return;
 
+    // 캔버스 영역 기준 좌표 계산 (좌/상단 사이드바, 헤더 padding 등 제외)
+    const canvasRect = canvasRef.current?.getBoundingClientRect();
+    if (!canvasRect) return;
+
+    const relativeX = e.clientX - canvasRect.left;
+    const relativeY = e.clientY - canvasRect.top;
+
     socket.emit('cursor:move', {
       userId: currentUser.id,
       moveData: {
-        x: e.clientX,
-        y: e.clientY,
+        x: relativeX,
+        y: relativeY,
       },
     });
   };
@@ -422,7 +432,10 @@ ${techs.length ? techs : '| None | - | - |'}
         </aside>
 
         {/* 3. Canvas Area */}
-        <main className="scrollbar-hide relative flex-1 cursor-grab overflow-auto bg-gray-900 active:cursor-grabbing">
+        <main
+          ref={canvasRef}
+          className="scrollbar-hide relative flex-1 cursor-grab overflow-auto bg-gray-900 active:cursor-grabbing"
+        >
           {/* Background Pattern */}
           <div
             className="pointer-events-none absolute inset-0"
