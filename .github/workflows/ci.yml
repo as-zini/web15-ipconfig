@@ -1,0 +1,64 @@
+name: CI Pipeline (Test & Build Check)
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+env:
+  NODE_VERSION: '24.12.0'
+  HUSKY: 0
+
+jobs:
+  # -----------------------------------------------------------------
+  # JOB 1: 프론트엔드 (React) CI
+  # -----------------------------------------------------------------
+  frontend-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (Root)
+        run: npm ci --ignore-scripts
+
+      - name: Lint (Frontend)
+        run: npm run lint -w frontend
+
+      - name: Run tests (Frontend)
+        run: npm test -w frontend -- --passWithNoTests
+
+  # -----------------------------------------------------------------
+  # JOB 2: 백엔드 (NestJS) CI
+  # -----------------------------------------------------------------
+  backend-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (Root)
+        run: npm ci --ignore-scripts
+
+      - name: Lint (Backend)
+        run: npm run lint -w backend
+
+      - name: Run tests (Backend)
+        run: npm run test -w backend
