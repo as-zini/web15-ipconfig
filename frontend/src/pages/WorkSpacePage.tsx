@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useRef, useState } from 'react';
 import {
   LuShare2,
   LuFileText,
@@ -16,6 +16,10 @@ import {
   LuGithub,
 } from 'react-icons/lu';
 import TechStackModal from '../features/widgets/techStack/components/modal/TechStackModal';
+
+import Cursor from '../components/ui/cursor';
+import { getRandomColor } from '../utils/getRandomColor';
+import { useSocket } from '../hooks/useSocket';
 
 // --- Types ---
 
@@ -37,12 +41,21 @@ interface User {
   id: string;
   name: string;
   role: string;
-  color: string; // Tailwind color class (e.g. 'bg-purple-500')
+  color: string; // Tailwind color class (e.g. 'bg-purple-500') 또는 HEX
   textColor: string; // e.g. 'text-purple-500'
   style: string;
   time: string;
   status: string;
   activity: number[]; // Array for graph height
+}
+
+interface RemoteCursor {
+  userId: string;
+  nickname: string;
+  color: string;
+  backgroundColor: string;
+  x: number;
+  y: number;
 }
 
 // --- Mock Data ---
@@ -82,7 +95,7 @@ const INITIAL_USERS: User[] = [
     activity: [50, 50, 50, 50, 50],
   },
   {
-    id: 'u3',
+    id: 'u4',
     name: 'snailw',
     role: 'PM',
     color: 'bg-green-500',
@@ -123,6 +136,35 @@ function WorkSpacePage() {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
+  // 캔버스 영역(ref) - 커서 좌표를 사이드바/헤더를 제외한 영역 기준으로 계산하기 위함
+  const canvasRef = useRef<HTMLDivElement | null>(null);
+
+  const [remoteCursors, setRemoteCursors] = useState<
+    Record<string, RemoteCursor>
+  >({});
+
+  // 임시로 고정된 워크스페이스 / 사용자 정보 (실제 서비스에서는 라우팅/로그인 정보 사용)
+  // 나중에 워크 스페이스를 지정해서 들어갈 수 있도록 해야 할 것 같습니다
+  const workspaceId = 'w1';
+
+  // 유저는 어떻게 처리해야 할까요..? 일단 커서를 구현하면서 임시로 만들어놨는데, 유저를 받는 걸 먼저 처리하는 게 시급할 것 같습니다.
+  const currentUser = useMemo(
+    () => ({
+      id: crypto.randomUUID(),
+      nickname: `임시 유저 ${crypto.getRandomValues(new Uint16Array(1))}`,
+      color: getRandomColor(),
+      backgroundColor: getRandomColor(),
+    }),
+    [],
+  );
+
+  // ----- WebSocket 초기화 & 이벤트 바인딩 -----
+  const { emitCursorMove } = useSocket({
+    workspaceId,
+    currentUser,
+    setRemoteCursors,
+  });
+
   // --- Handlers ---
 
   const addWidget = (type: WidgetType) => {
@@ -156,10 +198,13 @@ function WorkSpacePage() {
     });
   };
 
+  // 커서 이동 스로틀링을 위한 ref
+  const lastEmitRef = useRef<number>(0);
+
   const handleMouseMove = (e: React.MouseEvent) => {
     if (draggingId) {
-      setWidgets(
-        widgets.map((w) => {
+      setWidgets((prev) =>
+        prev.map((w) => {
           if (w.id === draggingId) {
             return {
               ...w,
@@ -173,6 +218,20 @@ function WorkSpacePage() {
         }),
       );
     }
+
+    // --- 커서 이동 웹소켓 연동 + 스로틀링 ---
+    const now = performance.now();
+    const throttleMs = 30;
+    if (now - lastEmitRef.current < throttleMs) return;
+    lastEmitRef.current = now;
+
+    const canvasRect = canvasRef.current?.getBoundingClientRect();
+    if (!canvasRect) return;
+
+    const relativeX = e.clientX - canvasRect.left;
+    const relativeY = e.clientY - canvasRect.top;
+
+    emitCursorMove(relativeX, relativeY);
   };
 
   const handleMouseUp = () => {
@@ -301,7 +360,10 @@ ${techs.length ? techs : '| None | - | - |'}
         </aside>
 
         {/* 3. Canvas Area */}
-        <main className="scrollbar-hide relative flex-1 cursor-grab overflow-auto bg-gray-900 active:cursor-grabbing">
+        <main
+          ref={canvasRef}
+          className="scrollbar-hide relative flex-1 cursor-grab overflow-auto bg-gray-900 active:cursor-grabbing"
+        >
           {/* Background Pattern */}
           <div
             className="pointer-events-none absolute inset-0"
@@ -339,6 +401,25 @@ ${techs.length ? techs : '| None | - | - |'}
                   onToggle={toggleTech}
                 />
               )}
+            </div>
+          ))}
+          {/* Remote Cursors Rendering */}
+          {Object.values(remoteCursors).map((cursor) => (
+            <div
+              key={cursor.userId}
+              className="pointer-events-none absolute z-100"
+              style={{
+                left: cursor.x,
+                top: cursor.y,
+              }}
+            >
+              <Cursor
+                nickname={cursor.nickname}
+                color={cursor.color}
+                backgroundColor={cursor.backgroundColor}
+                x={cursor.x}
+                y={cursor.y}
+              />
             </div>
           ))}
         </main>

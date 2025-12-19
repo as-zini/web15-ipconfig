@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { JoindedUserDTO, JoinUserDTO } from './dto/join-user.dto';
+import { JoinUserDTO } from './dto/join-user.dto';
 import { User } from './dto/join-user.dto';
 
 // 유저 정보는 저장해야 함
@@ -33,14 +33,16 @@ export class WorkspaceService {
     socketId: string,
   ): {
     roomId: string;
-    user: JoindedUserDTO;
+    user: User;
+    allUsers: User[];
   } {
     const roomId = payload.workspaceId;
 
-    const user: JoindedUserDTO = {
+    const user: User = {
       id: payload.user.id,
       nickname: payload.user.nickname,
       color: payload.user.color,
+      backgroundColor: payload.user.backgroundColor,
     };
 
     this.userSessions.set(socketId, {
@@ -49,7 +51,9 @@ export class WorkspaceService {
       user,
     });
 
-    return { roomId, user };
+    const allUsers = this.getUsersByRoomId(roomId);
+
+    return { roomId, user, allUsers };
   }
 
   public leaveUser(
@@ -70,7 +74,7 @@ export class WorkspaceService {
   // 소켓 Id로 유저 정보 조회
   public getUserBySocketId(socketId: string): {
     roomId: string;
-    user: JoindedUserDTO;
+    user: User;
   } | null {
     const session = this.userSessions.get(socketId);
     if (!session) {
@@ -84,7 +88,7 @@ export class WorkspaceService {
   }
 
   // 방 Id로 유저 정보 조회
-  public getUsersByRoomId(roomId: string): JoindedUserDTO[] {
+  public getUsersByRoomId(roomId: string): User[] {
     return Array.from(this.userSessions.values())
       .filter((session) => session.roomId === roomId)
       .map((session) => session.user);
