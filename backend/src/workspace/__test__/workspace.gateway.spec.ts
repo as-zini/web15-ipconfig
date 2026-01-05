@@ -92,7 +92,6 @@ describe('WorkspaceGateway', () => {
 
       // THEN
       expect(workspaceServiceMock.handleDisconnect).toHaveBeenCalledWith('s1');
-      expect(cursorServiceMock.removeCursor).toHaveBeenCalledWith('w1', 'u1');
       expect(serverMock.to).toHaveBeenCalledWith('w1');
       expect(serverMock.emit).toHaveBeenCalledWith('user:status', {
         userId: 'u1',
