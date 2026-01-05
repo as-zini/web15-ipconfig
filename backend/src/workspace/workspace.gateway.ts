@@ -11,12 +11,10 @@ import { Server, Socket } from 'socket.io';
 import { AsyncApiPub, AsyncApiSub } from 'nestjs-asyncapi';
 import { JoinUserDTO } from './dto/join-user.dto';
 import { LeaveUserDTO } from './dto/left-user.dto';
-import { MoveCursorDTO } from './dto/move-cursor.dto';
 import { UserStatus, UserStatusDTO } from './dto/user-status.dto';
 import { WorkspaceService } from './workspace.service';
 import { CursorService } from '../cursor/cursor.service';
 import { SetCursorDTO } from '../cursor/dto/set-cursor.dto';
-import { UpdateCursorDTO } from '../cursor/dto/update-cursor.dto';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const allowedOrigins = isProduction ? process.env.HOST_URL : '*';
@@ -43,9 +41,6 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
       return;
     }
     const { roomId, userId } = result;
-
-    // 커서 정보 정리
-    this.cursorService.removeCursor(roomId, userId);
 
     this.server.to(roomId).emit('user:status', {
       userId,
