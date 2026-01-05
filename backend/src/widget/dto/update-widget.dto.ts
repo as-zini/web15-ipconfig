@@ -10,6 +10,7 @@ import {
   ValidateNested,
   IsObject,
   IsOptional,
+  IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { WidgetData } from './create-widget.dto';
@@ -31,6 +32,16 @@ class PartialWidgetDataWithoutContent extends PartialType(
   PartialGroundRuleContentDto,
 )
 class UpdateWidgetData extends PartialWidgetDataWithoutContent {
+  @ApiProperty({ description: 'X 좌표', required: false })
+  @IsOptional()
+  @IsNumber()
+  readonly x?: number;
+
+  @ApiProperty({ description: 'Y 좌표', required: false })
+  @IsOptional()
+  @IsNumber()
+  readonly y?: number;
+
   @ApiProperty({
     description: '수정할 콘텐츠 데이터 (부분 수정 가능, widgetType 필수)',
     required: false,

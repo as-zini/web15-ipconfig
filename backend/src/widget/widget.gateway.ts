@@ -69,7 +69,9 @@ export class WidgetGateway {
       roomId,
       updateWidgetDto,
     );
-    this.server.to(roomId).emit('widget:updated', updatedWidget);
+
+    client.to(roomId).emit('widget:updated', updatedWidget);
+
     return updatedWidget;
   }
 
