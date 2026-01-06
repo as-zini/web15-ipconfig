@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 
-// --- 1. 타입 정의 ---
 type WidgetType = {
   id: string;
   type: 'note' | 'image' | 'card';
@@ -10,61 +9,26 @@ type WidgetType = {
   color: string;
 };
 
-type Camera = {
+export interface Camera {
   x: number;
   y: number;
   z: number; // Scale (1 = 100%)
-};
+}
 
 export default function useCanvas() {
-  // --- 상태 관리 ---
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, z: 1 });
   const [widgets, setWidgets] = useState<WidgetType[]>([]);
 
-  // 드래그/인터랙션 상태
   const [isPanning, setIsPanning] = useState(false);
   const [draggingWidgetId, setDraggingWidgetId] = useState<string | null>(null);
   const lastMousePos = useRef<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // --- 3. 좌표 계산 헬퍼 함수 ---
-  // 화면 좌표(마우스)를 캔버스 내부 좌표(World 좌표)로 변환
   const screenToWorld = (screenX: number, screenY: number) => {
     return {
       x: (screenX - camera.x) / camera.z,
       y: (screenY - camera.y) / camera.z,
     };
-  };
-
-  // --- 4. 이벤트 핸들러: 줌 (Wheel) ---
-  const handleWheel = (e: React.WheelEvent) => {
-    // 트랙패드 핀치 줌 또는 마우스 휠
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const zoomSensitivity = 0.001;
-      const zoomDelta = -e.deltaY * zoomSensitivity;
-      const newZoom = Math.min(Math.max(camera.z + zoomDelta, 0.1), 5); // 10% ~ 500% 제한
-
-      // 마우스 커서 위치를 기준으로 줌 (Zoom to Point)
-      // 공식: NewCam = Mouse - (Mouse - OldCam) * (NewScale / OldScale)
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      const newX = mouseX - (mouseX - camera.x) * (newZoom / camera.z);
-      const newY = mouseY - (mouseY - camera.y) * (newZoom / camera.z);
-
-      setCamera({ x: newX, y: newY, z: newZoom });
-    } else {
-      // 일반 휠은 상하 이동 (Shift 누르면 좌우 이동)
-      setCamera((prev) => ({
-        ...prev,
-        x: prev.x - (e.shiftKey ? e.deltaY : e.deltaX),
-        y: prev.y - (e.shiftKey ? e.deltaX : e.deltaY),
-      }));
-    }
   };
 
   const handleZoomButton = (delta: number) => {
@@ -89,7 +53,6 @@ export default function useCanvas() {
     });
   };
 
-  // --- 5. 이벤트 핸들러: 마우스 다운 (Pointer Down) ---
   const handlePointerDown = (e: React.PointerEvent) => {
     const target = e.target as HTMLElement;
 
@@ -108,7 +71,6 @@ export default function useCanvas() {
     lastMousePos.current = { x: e.clientX, y: e.clientY };
   };
 
-  // --- 6. 이벤트 핸들러: 마우스 이동 (Pointer Move) ---
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!lastMousePos.current) return;
 
@@ -141,10 +103,21 @@ export default function useCanvas() {
     }
   };
 
-  // --- 7. 이벤트 핸들러: 마우스 업 (Pointer Up) ---
   const handlePointerUp = () => {
     setIsPanning(false);
     setDraggingWidgetId(null);
     lastMousePos.current = null;
+  };
+
+  return {
+    camera,
+    widgets,
+    handleZoomButton,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    isPanning,
+    draggingWidgetId,
+    containerRef,
   };
 }
