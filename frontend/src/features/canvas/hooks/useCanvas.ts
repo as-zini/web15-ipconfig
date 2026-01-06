@@ -49,6 +49,21 @@ export default function useCanvas() {
     lastMousePos.current = null;
   };
 
+  // World 좌표로 변환
+  const getMousePosition = (e: React.PointerEvent | React.MouseEvent) => {
+    if (!containerRef.current) return { x: 0, y: 0 };
+
+    const rect = containerRef.current.getBoundingClientRect();
+
+    const canvasX = e.clientX - rect.left;
+    const canvasY = e.clientY - rect.top;
+
+    const worldX = (canvasX - camera.x) / camera.z;
+    const worldY = (canvasY - camera.y) / camera.z;
+
+    return { x: worldX, y: worldY };
+  };
+
   return {
     camera,
     handleZoomButton,
@@ -57,5 +72,6 @@ export default function useCanvas() {
     handlePointerUp,
     isPanning,
     containerRef,
+    getMousePosition,
   };
 }

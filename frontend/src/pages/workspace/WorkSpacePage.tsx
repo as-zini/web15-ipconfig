@@ -48,6 +48,7 @@ function WorkSpacePage() {
     handlePointerUp,
     handleZoomButton,
     isPanning,
+    getMousePosition,
   } = useCanvas();
 
   // 임시로 고정된 워크스페이스 / 사용자 정보 (실제 서비스에서는 라우팅/로그인 정보 사용)
@@ -88,25 +89,14 @@ function WorkSpacePage() {
   // 커서 이동 스로틀링을 위한 ref
   const lastEmitRef = useRef<number>(0);
 
-  // WorkSpacePage.tsx
-
   const handleCanvasPointerMove = (e: React.PointerEvent) => {
     handlePointerMove(e);
 
     const now = performance.now();
-    const throttleMs = 30;
-    if (now - lastEmitRef.current < throttleMs) return;
+    if (now - lastEmitRef.current < 30) return;
     lastEmitRef.current = now;
 
-    if (!containerRef.current) return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-
-    const canvasX = e.clientX - rect.left;
-    const canvasY = e.clientY - rect.top;
-
-    const worldX = (canvasX - camera.x) / camera.z;
-    const worldY = (canvasY - camera.y) / camera.z;
+    const { x: worldX, y: worldY } = getMousePosition(e);
 
     emitCursorMove(worldX, worldY);
   };
