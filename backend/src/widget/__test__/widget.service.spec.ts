@@ -113,6 +113,39 @@ describe('WidgetMemoryService', () => {
       expect(content.selectedItems).toEqual(['React']);
     });
 
+    it('기존 위젯의 XY 좌표를 동시에 수정하면 해당 값만 바뀌어야 한다', async () => {
+      // given: 초기 위젯이 저장되어 있을 때
+      const initialDto: CreateWidgetDto = {
+        widgetId: 'test-1',
+        type: WidgetType.TECH_STACK,
+        data: {
+          x: 100,
+          y: 100,
+          width: 200,
+          height: 200,
+          zIndex: 1,
+          content: {
+            widgetType: WidgetType.TECH_STACK,
+            selectedItems: ['React'],
+          } as TechStackContentDto,
+        },
+      };
+      await service.create(workspaceId, initialDto);
+
+      // when: 위젯의 x, y 좌표를 각각 300, 400으로 수정하면
+      const updateResult = await service.update(workspaceId, {
+        widgetId: 'test-1',
+        data: { x: 300, y: 400 },
+      });
+
+      // then: x, y 좌표는 각각 300, 400으로 변경되고 나머지 속성은 유지되어야 한다
+      expect(updateResult.data.x).toBe(300);
+      expect(updateResult.data.y).toBe(400);
+      expect(updateResult.data.width).toBe(200);
+      const content = updateResult.data.content as TechStackContentDto;
+      expect(content.selectedItems).toEqual(['React']);
+    });
+
     it('존재하지 않는 위젯을 수정하려 하면 NotFoundException을 던져야 한다', async () => {
       // given: 존재하지 않는 위젯 ID가 주어졌을 때
       // when: 수정을 시도하면

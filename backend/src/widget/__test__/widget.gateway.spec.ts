@@ -14,14 +14,15 @@ type MockWidgetService = {
 type MockWorkspaceService = {
   getUserBySocketId: jest.Mock;
 };
-type MockServer = Partial<Record<keyof Server, jest.Mock>>;
 
 describe('WidgetGateway', () => {
   let gateway: WidgetGateway;
   let serviceMock: MockWidgetService;
   let workspaceServiceMock: MockWorkspaceService;
-  let serverMock: MockServer;
-  let clientMock: Partial<Socket>;
+  let serverMock: { to: jest.Mock; emit: jest.Mock };
+  let clientMock: { id: string; to: jest.Mock; emit: jest.Mock };
+  let serverToEmitMock: jest.Mock;
+  let clientToEmitMock: jest.Mock;
 
   const roomId = 'room-1';
   const socketId = 's1';
@@ -39,14 +40,17 @@ describe('WidgetGateway', () => {
       getUserBySocketId: jest.fn(),
     };
 
+    serverToEmitMock = jest.fn();
     serverMock = {
       emit: jest.fn(),
-      to: jest.fn().mockReturnThis(),
+      to: jest.fn().mockReturnValue({ emit: serverToEmitMock }),
     };
 
+    clientToEmitMock = jest.fn();
     clientMock = {
       id: socketId,
       emit: jest.fn(),
+      to: jest.fn().mockReturnValue({ emit: clientToEmitMock }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -94,7 +98,7 @@ describe('WidgetGateway', () => {
       serviceMock.create.mockResolvedValue(createDto);
 
       // when: create 핸들러가 실행되면
-      await gateway.create(createDto, clientMock as Socket);
+      await gateway.create(createDto, clientMock as unknown as Socket);
 
       // then: 서비스의 create 메서드가 호출되고, 서버 전체에 "widget:created" 이벤트가 전송되어야 한다
       expect(workspaceServiceMock.getUserBySocketId).toHaveBeenCalledWith(
@@ -102,7 +106,10 @@ describe('WidgetGateway', () => {
       );
       expect(serviceMock.create).toHaveBeenCalledWith(roomId, createDto);
       expect(serverMock.to).toHaveBeenCalledWith(roomId);
-      expect(serverMock.emit).toHaveBeenCalledWith('widget:created', createDto);
+      expect(serverToEmitMock).toHaveBeenCalledWith(
+        'widget:created',
+        createDto,
+      );
     });
   });
 
@@ -115,12 +122,12 @@ describe('WidgetGateway', () => {
       serviceMock.update.mockResolvedValue(updatedWidget);
 
       // when: update 핸들러가 실행되면
-      await gateway.update(updateDto, clientMock as Socket);
+      await gateway.update(updateDto, clientMock as unknown as Socket);
 
       // then: 서비스의 update 메서드가 호출되고, "widget:updated" 이벤트가 수정된 데이터와 함께 전송되어야 한다
       expect(serviceMock.update).toHaveBeenCalledWith(roomId, updateDto);
-      expect(serverMock.to).toHaveBeenCalledWith(roomId);
-      expect(serverMock.emit).toHaveBeenCalledWith(
+      expect(clientMock.to).toHaveBeenCalledWith(roomId);
+      expect(clientToEmitMock).toHaveBeenCalledWith(
         'widget:updated',
         updatedWidget,
       );
@@ -136,12 +143,12 @@ describe('WidgetGateway', () => {
       serviceMock.remove.mockResolvedValue(result);
 
       // when: remove 핸들러가 실행되면
-      await gateway.remove({ widgetId }, clientMock as Socket);
+      await gateway.remove({ widgetId }, clientMock as unknown as Socket);
 
       // then: 서비스의 remove 메서드가 호출되고, "widget:deleted" 이벤트가 삭제된 ID와 함께 전송되어야 한다
       expect(serviceMock.remove).toHaveBeenCalledWith(roomId, widgetId);
       expect(serverMock.to).toHaveBeenCalledWith(roomId);
-      expect(serverMock.emit).toHaveBeenCalledWith('widget:deleted', result);
+      expect(serverToEmitMock).toHaveBeenCalledWith('widget:deleted', result);
     });
   });
 });
