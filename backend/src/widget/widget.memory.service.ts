@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { IWidgetService } from './widget.interface';
 import { CreateWidgetDto } from './dto/create-widget.dto';
 import { UpdateWidgetDto } from './dto/update-widget.dto';
+import { WidgetType } from './dto/widget-content.dto';
 
 @Injectable()
 export class WidgetMemoryService implements IWidgetService {
@@ -36,6 +37,20 @@ export class WidgetMemoryService implements IWidgetService {
     const widget = widgets.get(widgetId);
     if (!widget) {
       throw new NotFoundException(`Widget with ID ${widgetId} not found`);
+    }
+    return Promise.resolve(widget);
+  }
+
+  async findOneByWidgetType(
+    workspaceId: string,
+    widgetType: WidgetType,
+  ): Promise<CreateWidgetDto | null> {
+    const widgets = this.getWidgetsMap(workspaceId);
+    const widget = Array.from(widgets.values()).find(
+      (widget) => widget.data.content.widgetType === widgetType,
+    );
+    if (!widget) {
+      return Promise.resolve(null);
     }
     return Promise.resolve(widget);
   }
