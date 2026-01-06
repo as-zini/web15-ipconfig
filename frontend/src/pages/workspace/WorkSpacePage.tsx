@@ -21,8 +21,8 @@ import RightSidebar from './components/infoPanel/InfoPanel';
 import UserHoverCard from './components/UserHoverCard';
 import ZoomControls from './components/ZoomControls';
 import ExportModal from './components/ExportModal';
-import WorkspaceHeader from './components/WorkSpaceHeader';
-import useCanvas from '@/features/canvas/useCanvas';
+import useCanvas from '@/features/canvas/hooks/useCanvas';
+import WorkspaceHeader from './components/WorkspaceHeader';
 
 function WorkSpacePage() {
   const mainWorkspaceRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,6 @@ function WorkSpacePage() {
     handlePointerUp,
     handleZoomButton,
     isPanning,
-    draggingWidgetId,
   } = useCanvas();
 
   // 임시로 고정된 워크스페이스 / 사용자 정보 (실제 서비스에서는 라우팅/로그인 정보 사용)
@@ -90,17 +89,17 @@ function WorkSpacePage() {
   const lastEmitRef = useRef<number>(0);
 
   const handleCanvasPointerMove = (e: React.PointerEvent) => {
-    // 1. 캔버스/위젯 이동 로직 실행 (useCanvas)
+    // 캔버스/위젯 이동 로직 실행 (useCanvas)
     handlePointerMove(e);
 
-    // 2. 소켓으로 내 커서 위치 전송 (스로틀링 적용)
+    // 소켓으로 내 커서 위치 전송 (스로틀링 적용)
     const now = performance.now();
     const throttleMs = 30;
     if (now - lastEmitRef.current < throttleMs) return;
     lastEmitRef.current = now;
 
-    // [중요] Screen 좌표 -> World 좌표로 변환
-    // 캔버스 컴포넌트가 World 좌표 기준으로 렌더링하기 때문에, 데이터도 World 기준으로 보내야 합니다.
+    // Screen 좌표 -> World 좌표로 변환
+    // 캔버스 컴포넌트가 World 좌표 기준으로 렌더링하기 때문에, 데이터도 World 기준으로 보냄
     const worldX = (e.clientX - camera.x) / camera.z;
     const worldY = (e.clientY - camera.y) / camera.z;
 
@@ -146,7 +145,6 @@ function WorkSpacePage() {
           handlePointerMove={handleCanvasPointerMove}
           handlePointerUp={handlePointerUp}
           isPanning={isPanning}
-          draggingWidgetId={draggingWidgetId}
           remoteCursor={remoteCursors}
         />
 

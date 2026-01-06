@@ -1,8 +1,8 @@
 import type { Cursor } from '@/common/types/cursor';
 import TechStackWidget from '@/features/widgets/techStack/components/TechStackWidget';
-import { useEffect, useState } from 'react';
-import type { Camera } from './useCanvas';
+import { useState } from 'react';
 import CursorWithName from '@/common/components/cursorWithName/cursorWithName';
+import type { Camera } from '@/common/types/camera';
 
 interface CanvasContainerProps {
   camera: Camera;
@@ -11,7 +11,6 @@ interface CanvasContainerProps {
   handlePointerMove: (e: React.PointerEvent) => void;
   handlePointerUp: () => void;
   isPanning: boolean;
-  draggingWidgetId: string | null;
   remoteCursor: Record<string, Cursor>;
 }
 
@@ -22,18 +21,17 @@ function CanvasContent({
   handlePointerMove,
   handlePointerUp,
   isPanning,
-  draggingWidgetId,
   remoteCursor,
 }: CanvasContainerProps) {
   const [techStackPosition, setTechStackPosition] = useState({
-    x: 0,
-    y: 0,
+    x: 500,
+    y: 500,
   });
 
   return (
     <div
       ref={containerRef}
-      className={`h-full w-full cursor-${isPanning ? 'grabbing' : draggingWidgetId ? 'grabbing' : 'default'}`}
+      className={`h-full w-full cursor-${isPanning ? 'grabbing' : 'default'}`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -60,15 +58,13 @@ function CanvasContent({
         className="relative will-change-transform"
       >
         {/* 위젯 렌더링 */}
-        {techStackPosition.x !== 0 && techStackPosition.y !== 0 && (
-          <TechStackWidget
-            id="tech-stack"
-            position={techStackPosition}
-            width={200}
-            type="tech"
-            content="Tech Stack"
-          />
-        )}
+        <TechStackWidget
+          id="tech-stack"
+          position={techStackPosition}
+          width={200}
+          type="tech"
+          content="Tech Stack"
+        />
         {/* 커서 렌더링 */}
         {Object.values(remoteCursor).map((cursor) => (
           <div

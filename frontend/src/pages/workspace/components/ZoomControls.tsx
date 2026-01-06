@@ -1,4 +1,4 @@
-import type { Camera } from '@/features/canvas/useCanvas';
+import type { Camera } from '@/common/types/camera';
 import { LuZoomIn, LuZoomOut } from 'react-icons/lu';
 
 function ZoomControls({
