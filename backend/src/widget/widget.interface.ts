@@ -33,6 +33,8 @@ export interface IWidgetService {
   ): Promise<boolean>;
 
   getLockOwner(workspaceId: string, widgetId: string): Promise<string | null>;
+
+  unlockAllByUser(workspaceId: string, userId: string): Promise<string[]>;
 }
 
 export const WIDGET_SERVICE = 'WIDGET_SERVICE';

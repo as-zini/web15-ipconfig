@@ -148,4 +148,18 @@ export class WidgetMemoryService implements IWidgetService {
   ): Promise<string | null> {
     return Promise.resolve(this.locks.get(widgetId) || null);
   }
+
+  async unlockAllByUser(
+    workspaceId: string,
+    userId: string,
+  ): Promise<string[]> {
+    const unlockedWidgetIds: string[] = [];
+    for (const [widgetId, ownerId] of this.locks.entries()) {
+      if (ownerId === userId) {
+        this.locks.delete(widgetId);
+        unlockedWidgetIds.push(widgetId);
+      }
+    }
+    return Promise.resolve(unlockedWidgetIds);
+  }
 }
