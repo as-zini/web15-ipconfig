@@ -201,12 +201,11 @@ export class WidgetGateway {
     return updatedWidget;
   }
 
-  // 콘텐츠 변경 (내용 수정)
   @AsyncApiSub({
     channel: 'widget:update',
     summary: '위젯 수정',
     description:
-      '클라이언트에서 위젯의 위치/내용 등을 수정할 때 서버로 보내는 이벤트입니다.',
+      '클라이언트에서 위젯의 내용을 수정할 때 서버로 보내는 이벤트입니다. (Lock 체크)',
     message: {
       payload: UpdateWidgetDto,
     },
@@ -226,7 +225,17 @@ export class WidgetGateway {
     @ConnectedSocket() client: Socket,
   ) {
     const roomId = this.getRoomId(client);
-    if (!roomId) return;
+    const userId = this.getUserId(client);
+    if (!roomId || !userId) return;
+
+    const owner = await this.widgetService.getLockOwner(
+      roomId,
+      updateWidgetDto.widgetId,
+    );
+    if (owner && owner !== userId) {
+      client.emit('error', 'Widget is locked by another user.');
+      return;
+    }
 
     const updatedWidget = await this.widgetService.update(
       roomId,
@@ -242,7 +251,7 @@ export class WidgetGateway {
     channel: 'widget:delete',
     summary: '위젯 삭제',
     description:
-      '특정 위젯을 삭제할 때 서버로 보내는 이벤트입니다. widgetId를 포함합니다. /* 현재는 DTO로 받지 않고 단일 widgetId로 받고 있어서 나오지 않음 */',
+      '특정 위젯을 삭제할 때 서버로 보내는 이벤트입니다. widgetId를 포함합니다. (Lock 체크) /* 현재는 DTO로 받지 않고 단일 widgetId로 받고 있어서 나오지 않음 */',
     message: {
       payload: Object,
     },
@@ -262,7 +271,14 @@ export class WidgetGateway {
     @ConnectedSocket() client: Socket,
   ) {
     const roomId = this.getRoomId(client);
-    if (!roomId) return;
+    const userId = this.getUserId(client);
+    if (!roomId || !userId) return;
+
+    const owner = await this.widgetService.getLockOwner(roomId, body.widgetId);
+    if (owner && owner !== userId) {
+      client.emit('error', 'Widget is locked by another user.');
+      return;
+    }
 
     const result = await this.widgetService.remove(roomId, body.widgetId);
     this.server.to(roomId).emit('widget:deleted', result);
