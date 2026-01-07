@@ -120,6 +120,41 @@ export class WidgetGateway {
   }
 
   @AsyncApiSub({
+    channel: 'widget:unlock',
+    summary: '위젯 점유 해제(Unlock) 요청',
+    description: '드래그 종료 시 위젯 점유를 해제하기 위해 호출합니다.',
+    message: { payload: UpdateWidgetLayoutDto },
+  })
+  @AsyncApiPub({
+    channel: 'widget:unlocked',
+    summary: '위젯 점유 해제 브로드캐스트',
+    description: '위젯 점유가 해제되었음을 알립니다.',
+    message: { payload: Object },
+  })
+  @SubscribeMessage('widget:unlock')
+  async unlock(
+    @MessageBody() dto: UpdateWidgetLayoutDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const roomId = this.getRoomId(client);
+    const userId = this.getUserId(client);
+    if (!roomId || !userId) return;
+
+    const success = await this.widgetService.unlock(
+      roomId,
+      dto.widgetId,
+      userId,
+    );
+
+    if (success) {
+      client.to(roomId).emit('widget:unlocked', {
+        widgetId: dto.widgetId,
+        userId,
+      });
+    }
+  }
+
+  @AsyncApiSub({
     channel: 'widget:move',
     summary: '위젯 레이아웃 변경',
     description:
