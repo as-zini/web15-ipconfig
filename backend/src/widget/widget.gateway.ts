@@ -46,6 +46,11 @@ export class WidgetGateway {
     return userInfo.roomId;
   }
 
+  private getUserId(client: Socket): string | null {
+    const userInfo = this.workspaceService.getUserBySocketId(client.id);
+    return userInfo ? userInfo.user.id : null;
+  }
+
   @AsyncApiSub({
     channel: 'widget:create',
     summary: '위젯 생성',
@@ -76,7 +81,44 @@ export class WidgetGateway {
     return widget;
   }
 
-  // 레이아웃 변경 (이동, 크기 조절 등)
+  @AsyncApiSub({
+    channel: 'widget:lock',
+    summary: '위젯 점유(Lock) 요청',
+    description: '드래그 시작 시 위젯을 점유하기 위해 호출합니다.',
+    message: { payload: UpdateWidgetLayoutDto },
+  })
+  @AsyncApiPub({
+    channel: 'widget:locked',
+    summary: '위젯 점유 브로드캐스트',
+    description: '위젯이 특정 유저에게 점유되었음을 알립니다.',
+    message: { payload: Object },
+  })
+  @SubscribeMessage('widget:lock')
+  async lock(
+    @MessageBody() dto: UpdateWidgetLayoutDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const roomId = this.getRoomId(client);
+    const userId = this.getUserId(client);
+    if (!roomId || !userId) return;
+
+    const success = await this.widgetService.lock(roomId, dto.widgetId, userId);
+
+    if (success) {
+      // 다른 사용자들에게 userId가 점유중을 알림(FE에서 시각적으로 필요하면 사용. 아닌경우 추후 삭제)
+      client.to(roomId).emit('widget:locked', {
+        widgetId: dto.widgetId,
+        userId,
+      });
+    } else {
+      // 점유 실패 시 본인에게 에러 전송
+      client.emit(
+        'error',
+        'Failed to lock widget. It might be already locked.',
+      );
+    }
+  }
+
   @AsyncApiSub({
     channel: 'widget:move',
     summary: '위젯 레이아웃 변경',
