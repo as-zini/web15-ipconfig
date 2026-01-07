@@ -1,4 +1,4 @@
-import CursorWithName from '@/common/components/cursorWithName';
+import CursorWithName from '@/common/components/CursorWithName';
 import type { Cursor } from '@/common/types/cursor';
 import TechStackWidget from '@/features/widgets/techStack/components/TechStackWidget';
 import { useEffect, useState } from 'react';
