@@ -26,8 +26,6 @@ export default function useCanvas() {
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    const target = e.target as HTMLElement;
-
     setIsPanning(true);
     lastMousePos.current = { x: e.clientX, y: e.clientY };
   };

@@ -19,7 +19,6 @@ import ExportModal from './components/ExportModal';
 import useCanvas from '@/features/canvas/hooks/useCanvas';
 
 function WorkSpacePage() {
-  const mainWorkspaceRef = useRef<HTMLDivElement>(null);
   const [remoteCursors, setRemoteCursors] = useState<Record<string, Cursor>>(
     {},
   );
