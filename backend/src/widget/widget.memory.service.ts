@@ -106,6 +106,7 @@ export class WidgetMemoryService implements IWidgetService {
       throw new NotFoundException(`Widget with ID ${widgetId} not found`);
     }
     widgets.delete(widgetId);
+    this.locks.delete(widgetId);
     return Promise.resolve({ widgetId });
   }
 
@@ -139,5 +140,12 @@ export class WidgetMemoryService implements IWidgetService {
       return Promise.resolve(true);
     }
     return Promise.resolve(false);
+  }
+
+  async getLockOwner(
+    workspaceId: string,
+    widgetId: string,
+  ): Promise<string | null> {
+    return Promise.resolve(this.locks.get(widgetId) || null);
   }
 }

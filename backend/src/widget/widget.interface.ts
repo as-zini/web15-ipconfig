@@ -31,6 +31,8 @@ export interface IWidgetService {
     widgetId: string,
     userId: string,
   ): Promise<boolean>;
+
+  getLockOwner(workspaceId: string, widgetId: string): Promise<string | null>;
 }
 
 export const WIDGET_SERVICE = 'WIDGET_SERVICE';
