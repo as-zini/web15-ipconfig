@@ -1,5 +1,6 @@
 import type { Camera } from '@/common/types/camera';
 import { useRef, useState } from 'react';
+import { MAX_ZOOM, MIN_ZOOM, ZOOM_SENSITIVITY } from '../constants/zoom';
 
 export default function useCanvas() {
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, scale: 1 });
@@ -7,31 +8,36 @@ export default function useCanvas() {
   const lastMousePos = useRef<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleZoomButton = (delta: number) => {
+  const zoomTo = (delta: number, pivotX: number, pivotY: number) => {
     setCamera((prev) => {
-      const newZoom = Math.min(Math.max(prev.scale + delta, 0.1), 5);
-      const container = containerRef.current;
-      if (!container) return { ...prev, scale: newZoom };
+      const newScale = Math.min(
+        Math.max(prev.scale + delta, MIN_ZOOM),
+        MAX_ZOOM,
+      );
 
-      const rect = container.getBoundingClientRect();
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+      if (newScale === prev.scale) return prev;
 
-      // 중앙점이 도망가지 않게 잡아당기는 계산
-      const newX = centerX - (centerX - prev.x) * (newZoom / prev.scale);
-      const newY = centerY - (centerY - prev.y) * (newZoom / prev.scale);
+      const ratio = newScale / prev.scale;
+      const newX = pivotX - (pivotX - prev.x) * ratio;
+      const newY = pivotY - (pivotY - prev.y) * ratio;
 
-      return { x: newX, y: newY, scale: newZoom };
+      return { x: newX, y: newY, scale: newScale };
     });
+  };
+
+  const handleZoomButton = (delta: number) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    zoomTo(delta, centerX, centerY);
   };
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-
-    const zoomSensitivity = 0.001;
-    const zoomDelta = -e.deltaY * zoomSensitivity;
-
-    const newZoom = Math.min(Math.max(camera.scale + zoomDelta, 0.1), 5);
 
     const container = containerRef.current;
     if (!container) return;
@@ -40,9 +46,9 @@ export default function useCanvas() {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    const newX = mouseX - (mouseX - camera.x) * (newZoom / camera.scale);
-    const newY = mouseY - (mouseY - camera.y) * (newZoom / camera.scale);
-    setCamera({ x: newX, y: newY, scale: newZoom });
+    const zoomDelta = -e.deltaY * ZOOM_SENSITIVITY;
+
+    zoomTo(zoomDelta, mouseX, mouseY);
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
