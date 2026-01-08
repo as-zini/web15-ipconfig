@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Server, Socket } from 'socket.io';
 import { WorkspaceGateway } from '../workspace.gateway';
 import { WorkspaceService } from '../workspace.service';
-import { CursorService } from '../../cursor/cursor.service';
 import { JoinUserDTO } from '../dto/join-user.dto';
 import { LeaveUserDTO } from '../dto/left-user.dto';
 import { IWidgetService, WIDGET_SERVICE } from '../../widget/widget.interface';
@@ -12,7 +11,6 @@ describe('WorkspaceGateway', () => {
   let serverMock: { to: jest.Mock; emit: jest.Mock };
   let clientMock: Partial<Socket>;
   let workspaceServiceMock: Partial<WorkspaceService>;
-  let cursorServiceMock: Partial<CursorService>;
   let widgetServiceMock: Partial<IWidgetService>;
   let serverToEmitMock: jest.Mock;
 
@@ -41,14 +39,6 @@ describe('WorkspaceGateway', () => {
       getUserBySocketId: jest.fn(),
     };
 
-    cursorServiceMock = {
-      setCursor: jest.fn(),
-      updateCursor: jest.fn(),
-      removeCursor: jest.fn(),
-      getCursorsByWorkspace: jest.fn().mockReturnValue([]),
-      hasCursor: jest.fn(),
-    };
-
     widgetServiceMock = {
       unlockAllByUser: jest.fn().mockResolvedValue([]),
     };
@@ -57,7 +47,6 @@ describe('WorkspaceGateway', () => {
       providers: [
         WorkspaceGateway,
         { provide: WorkspaceService, useValue: workspaceServiceMock },
-        { provide: CursorService, useValue: cursorServiceMock },
         { provide: WIDGET_SERVICE, useValue: widgetServiceMock },
       ],
     }).compile();
@@ -90,10 +79,6 @@ describe('WorkspaceGateway', () => {
       expect(workspaceServiceMock.handleDisconnect).toHaveBeenCalledWith(
         socketId,
       );
-      expect(cursorServiceMock.removeCursor).toHaveBeenCalledWith(
-        workspaceId,
-        userId,
-      );
       expect(widgetServiceMock.unlockAllByUser).toHaveBeenCalledWith(
         workspaceId,
         userId,
@@ -124,8 +109,37 @@ describe('WorkspaceGateway', () => {
   });
 
   describe('user:join (워크스페이스 참여)', () => {
-    it('새로운 유저가 참여하면, 참여자 정보를 설정하고 다른 유저들에게 알려야 한다', async () => {
-      // given
+    beforeEach(() => {
+      workspaceServiceMock.joinUser = jest.fn().mockReturnValue({
+        roomId: 'w1',
+        user: {
+          id: 'u1',
+          nickname: 'user1',
+          color: '#000000',
+          backgroundColor: '#ffffff',
+        },
+        allUsers: [
+          {
+            id: 'u1',
+            nickname: 'user1',
+            color: '#000000',
+            backgroundColor: '#ffffff',
+          },
+        ],
+      });
+
+      serverMock.to = jest
+        .fn()
+        .mockReturnValue(serverMock as unknown as Server);
+      clientMock = {
+        id: 's1',
+        join: jest.fn().mockResolvedValue(undefined),
+        leave: jest.fn().mockResolvedValue(undefined),
+      } as Partial<Socket>;
+    });
+
+    it('user:join 이벤트 발생 시 일련의 과정을 거친 후 user:status(ONLINE), user:joined 이벤트 발생', async () => {
+      // GIVEN
       const payload: JoinUserDTO = {
         workspaceId: workspaceId,
         user: {
@@ -141,30 +155,65 @@ describe('WorkspaceGateway', () => {
         allUsers: [payload.user],
       });
 
-      // [수정 2] 불필요한 타입 단언(as jest.Mock) 제거
-      // serverMock 정의 시점에 이미 타입이 지정되어 있습니다.
       serverMock.to.mockClear();
       serverMock.emit.mockClear();
 
       // when
       await gateway.handleUserJoin(payload, clientMock as Socket);
 
-      // then
-      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(
-        payload,
-        socketId,
-      );
-      expect(clientMock.join).toHaveBeenCalledWith(workspaceId);
-      expect(cursorServiceMock.setCursor).toHaveBeenCalled();
-      expect(serverMock.to).toHaveBeenCalledWith(workspaceId);
-      expect(serverToEmitMock).toHaveBeenCalledWith('user:status', {
-        userId: userId,
+      // THEN
+      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(payload, 's1');
+      expect(clientMock.join).toHaveBeenCalledWith('w1');
+      expect(serverMock.emit).toHaveBeenCalledWith('user:status', {
+        userId: 'u1',
         status: 'ONLINE',
       });
-      expect(serverToEmitMock).toHaveBeenCalledWith('user:joined', {
-        allUsers: [payload.user],
-        cursors: [],
-      });
+      expect(serverMock.emit).toHaveBeenCalledWith('user:joined', [
+        {
+          id: 'u1',
+          nickname: 'user1',
+          color: '#000000',
+          backgroundColor: '#ffffff',
+        },
+      ]);
+    });
+
+    it('user:join 이벤트 발생 시 client가 방에 들어가는지', async () => {
+      // GIVEN
+      const payload: JoinUserDTO = {
+        workspaceId: 'w1',
+        user: {
+          id: 'u1',
+          nickname: 'user1',
+          color: '#000000',
+          backgroundColor: '#ffffff',
+        },
+      };
+
+      // WHEN
+      await gateway.handleUserJoin(payload, clientMock as Socket);
+
+      // THEN
+      expect(clientMock.join).toHaveBeenCalledWith('w1');
+    });
+
+    it('user:join 이벤트 발생 시 workspaceService의 joinUser 메서드가 호출되는지', async () => {
+      // GIVEN
+      const payload: JoinUserDTO = {
+        workspaceId: 'w1',
+        user: {
+          id: 'u1',
+          nickname: 'user1',
+          color: '#000000',
+          backgroundColor: '#ffffff',
+        },
+      };
+
+      // WHEN
+      await gateway.handleUserJoin(payload, clientMock as Socket);
+
+      // THEN
+      expect(workspaceServiceMock.joinUser).toHaveBeenCalledWith(payload, 's1');
     });
   });
 
@@ -185,10 +234,6 @@ describe('WorkspaceGateway', () => {
       // then
       expect(workspaceServiceMock.leaveUser).toHaveBeenCalledWith(socketId);
       expect(clientMock.leave).toHaveBeenCalledWith(workspaceId);
-      expect(cursorServiceMock.removeCursor).toHaveBeenCalledWith(
-        workspaceId,
-        userId,
-      );
       expect(widgetServiceMock.unlockAllByUser).toHaveBeenCalledWith(
         workspaceId,
         userId,
