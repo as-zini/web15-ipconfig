@@ -118,7 +118,7 @@ export class WidgetGateway {
     channel: 'widget:update',
     summary: '위젯 수정',
     description:
-      '클라이언트에서 위젯의 위치/내용 등을 수정할 때 서버로 보내는 이벤트입니다.',
+      '클라이언트에서 위젯의 내용 등을 수정할 때 서버로 보내는 이벤트입니다.',
     message: {
       payload: UpdateWidgetDto,
     },
