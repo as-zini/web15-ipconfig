@@ -7,7 +7,7 @@ const getApiUrl = () => {
 };
 
 export const apiClient = axios.create({
-  baseURL: getApiUrl(),
+  baseURL: getApiUrl() + '/api',
   // 일단 10초로 설정
   timeout: 10000,
   headers: {
