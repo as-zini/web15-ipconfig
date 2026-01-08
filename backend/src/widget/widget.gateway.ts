@@ -12,6 +12,7 @@ import type { IWidgetService } from './widget.interface';
 import { WIDGET_SERVICE } from './widget.interface';
 import { CreateWidgetDto } from './dto/create-widget.dto';
 import { UpdateWidgetDto } from './dto/update-widget.dto';
+import { UpdateWidgetLayoutDto } from './dto/update-widget-layout.dto';
 import { WorkspaceService } from '../workspace/workspace.service';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -75,6 +76,44 @@ export class WidgetGateway {
     return widget;
   }
 
+  // 레이아웃 변경 (이동, 크기 조절 등)
+  @AsyncApiSub({
+    channel: 'widget:move',
+    summary: '위젯 레이아웃 변경',
+    description:
+      '클라이언트에서 위젯의 위치 또는 크기를 변경할 때 서버로 보내는 이벤트입니다.',
+    message: {
+      payload: UpdateWidgetLayoutDto,
+    },
+  })
+  @AsyncApiPub({
+    channel: 'widget:moved',
+    summary: '위젯 레이아웃 변경 브로드캐스트',
+    description:
+      '위젯의 레이아웃이 수정된 이후, 동일 워크스페이스의 모든 클라이언트에게 수정된 위젯 레이아웃 정보를 브로드캐스트합니다.',
+    message: {
+      payload: UpdateWidgetLayoutDto,
+    },
+  })
+  @SubscribeMessage('widget:move')
+  async move(
+    @MessageBody() updateLayoutDto: UpdateWidgetLayoutDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const roomId = this.getRoomId(client);
+    if (!roomId) return;
+
+    const updatedWidget = await this.widgetService.updateLayout(
+      roomId,
+      updateLayoutDto,
+    );
+
+    client.to(roomId).emit('widget:moved', updatedWidget);
+
+    return updatedWidget;
+  }
+
+  // 콘텐츠 변경 (내용 수정)
   @AsyncApiSub({
     channel: 'widget:update',
     summary: '위젯 수정',
@@ -105,7 +144,9 @@ export class WidgetGateway {
       roomId,
       updateWidgetDto,
     );
-    this.server.to(roomId).emit('widget:updated', updatedWidget);
+
+    client.to(roomId).emit('widget:updated', updatedWidget);
+
     return updatedWidget;
   }
 

@@ -1,6 +1,7 @@
 import { CreateWidgetDto } from './dto/create-widget.dto';
 import { UpdateWidgetDto } from './dto/update-widget.dto';
 import { WidgetType } from './dto/widget-content.dto';
+import { UpdateWidgetLayoutDto } from './dto/update-widget-layout.dto';
 
 export interface IWidgetService {
   create(
@@ -17,6 +18,12 @@ export interface IWidgetService {
     workspaceId: string,
     updateWidgetDto: UpdateWidgetDto,
   ): Promise<CreateWidgetDto>;
+
+  updateLayout(
+    workspaceId: string,
+    updateWidgetLayoutDto: UpdateWidgetLayoutDto,
+  ): Promise<CreateWidgetDto>;
+
   remove(workspaceId: string, widgetId: string): Promise<{ widgetId: string }>;
 }
 
