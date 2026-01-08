@@ -121,7 +121,7 @@ function WorkSpacePage() {
 
   return (
     <div
-      className="dark flex h-screen flex-col overflow-hidden bg-gray-900 font-sans text-gray-100"
+      className="flex h-screen flex-col overflow-hidden bg-gray-900 font-sans text-gray-100"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
