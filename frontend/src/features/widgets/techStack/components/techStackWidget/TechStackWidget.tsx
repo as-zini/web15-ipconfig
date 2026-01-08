@@ -16,22 +16,15 @@ import { useState } from 'react';
 import { Button } from '@/common/components/shadcn/button';
 import { SUBJECT_GROUPS } from '@/common/mocks/techStacks';
 import { TechStackModal } from '@/features/widgets/techStack/components/modal';
-import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core';
-import type {
-  DragEndEvent,
-  DragStartEvent,
-  UniqueIdentifier,
-} from '@dnd-kit/core';
+import { DndContext, pointerWithin } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 
-import TechStackItem from '@/features/widgets/techStack/components/TechStackItem';
 import SelectedTechStackBox from './SelectedTechStackBox';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
-import { getTechStackName } from '@/features/widgets/techStack/utils/getTechIconUrl';
 
 function TechStackWidget({ id, position, width, height }: WidgetData) {
   const [isTechStackModalOpen, setIsTechStackModalOpen] = useState(false);
   const [selectedTechStacks, setSelectedTechStacks] = useState<TechStack[]>([]);
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -53,20 +46,10 @@ function TechStackWidget({ id, position, width, height }: WidgetData) {
         setSelectedTechStacks((prev) => [...prev, { id, name, category }]);
       }
     }
-
-    setActiveId(null);
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id);
   };
 
   return (
-    <DndContext
-      collisionDetection={pointerWithin}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
+    <DndContext collisionDetection={pointerWithin} onDragEnd={handleDragEnd}>
       <WidgetContainer
         id={id}
         position={position}
@@ -120,11 +103,6 @@ function TechStackWidget({ id, position, width, height }: WidgetData) {
           />
         )}
       </WidgetContainer>
-      <DragOverlay>
-        {activeId ? (
-          <TechStackItem techName={getTechStackName(String(activeId))} />
-        ) : null}
-      </DragOverlay>
     </DndContext>
   );
 }

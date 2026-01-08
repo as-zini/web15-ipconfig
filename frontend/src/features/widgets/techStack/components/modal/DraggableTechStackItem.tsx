@@ -14,7 +14,7 @@ function DraggableTechStackItem({ id, name, category }: TechStack) {
 
   const style = {
     // DragOverlay를 사용하므로 원본은 transform 없이 제자리에 유지
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.8 : 1,
     cursor: isDragging ? 'grabbing' : 'grab',
   };
 
