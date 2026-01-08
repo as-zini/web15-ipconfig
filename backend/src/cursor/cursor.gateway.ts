@@ -65,6 +65,6 @@ export class CursorGateway {
     };
 
     // 동일 room에 브로드캐스트
-    this.server.to(roomId).emit('cursor:moved', cursorData);
+    client.to(roomId).emit('cursor:moved', cursorData);
   }
 }

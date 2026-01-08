@@ -105,6 +105,7 @@ export const useSocket = ({
 
         setRemoteCursors((prev) => {
           const existing = prev[userId];
+
           if (!existing) {
             // 아직 join 이벤트를 못 받은 유저라면 기본값으로 생성
             return {
