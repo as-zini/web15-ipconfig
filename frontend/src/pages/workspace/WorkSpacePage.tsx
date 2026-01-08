@@ -127,17 +127,18 @@ function WorkSpacePage() {
       {/* Main Workspace */}
       <div className="relative flex flex-1 overflow-hidden">
         <ToolBar />
-        <CanvasContent
-          camera={camera}
-          containerRef={containerRef}
-          handlePointerDown={handlePointerDown}
-          handlePointerMove={handleCanvasPointerMove}
-          handlePointerUp={handlePointerUp}
-          handleWheel={handleWheel}
-          isPanning={isPanning}
-          remoteCursor={remoteCursors}
-        />
-
+        <main className="relative h-full w-full flex-1">
+          <CanvasContent
+            camera={camera}
+            containerRef={containerRef}
+            handlePointerDown={handlePointerDown}
+            handlePointerMove={handleCanvasPointerMove}
+            handlePointerUp={handlePointerUp}
+            handleWheel={handleWheel}
+            isPanning={isPanning}
+            remoteCursor={remoteCursors}
+          />
+        </main>
         <RightSidebar
           onUserHover={handleUserHover}
           onUserLeave={handleUserLeave}
