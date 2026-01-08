@@ -1,6 +1,6 @@
 import type { Camera } from '@/common/types/camera';
 import { useRef, useState } from 'react';
-import { MAX_ZOOM, MIN_ZOOM, ZOOM_SENSITIVITY } from '../constants/zoom';
+import { ZOOM_CONFIG } from '../constants/zoom';
 
 export default function useCanvas() {
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, scale: 1 });
@@ -11,8 +11,8 @@ export default function useCanvas() {
   const zoomTo = (delta: number, pivotX: number, pivotY: number) => {
     setCamera((prev) => {
       const newScale = Math.min(
-        Math.max(prev.scale + delta, MIN_ZOOM),
-        MAX_ZOOM,
+        Math.max(prev.scale + delta, ZOOM_CONFIG.MIN_ZOOM),
+        ZOOM_CONFIG.MAX_ZOOM,
       );
 
       if (newScale === prev.scale) return prev;
@@ -46,7 +46,7 @@ export default function useCanvas() {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    const zoomDelta = -e.deltaY * ZOOM_SENSITIVITY;
+    const zoomDelta = -e.deltaY * ZOOM_CONFIG.WHEEL_SENSITIVITY;
 
     zoomTo(zoomDelta, mouseX, mouseY);
   };
