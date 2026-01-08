@@ -2,12 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { AsyncApiDocumentBuilder, AsyncApiModule } from 'nestjs-asyncapi';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const isProduction = process.env.NODE_ENV === 'production';
-  const allowedOrigins = isProduction ? [] : '*';
+  const allowedOrigins = isProduction ? process.env.HOST_URL : '*';
 
   app.enableCors({
     origin: allowedOrigins,
@@ -38,6 +39,17 @@ async function bootstrap() {
 
   const documentFactory = SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('api', app, documentFactory);
+
+  // AsyncAPI 설정
+  const asyncApiOptions = new AsyncApiDocumentBuilder()
+    .setTitle('WebSocket API Docs')
+    .setDescription('Web15 IPConfig API description')
+    .setVersion('1.0')
+    .addTag('Web15 IPConfig')
+    .build();
+
+  const asyncapiDocument = AsyncApiModule.createDocument(app, asyncApiOptions);
+  await AsyncApiModule.setup('asyncapi', app, asyncapiDocument);
 
   await app.listen(process.env.PORT ?? 3000);
 }
