@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import NoContents from './NoContents';
-import { TECH_STACKS } from '../../constant/techStackInfo';
+import { TECH_STACKS } from '@/features/widgets/techStack/constant/techStackInfo';
 import DraggableTechStackItem from './DraggableTechStackItem';
 
 interface TechStackListProps {

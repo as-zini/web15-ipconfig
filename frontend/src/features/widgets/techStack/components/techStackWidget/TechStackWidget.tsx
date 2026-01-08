@@ -26,7 +26,7 @@ import type {
 import TechStackItem from '@/features/widgets/techStack/components/TechStackItem';
 import SelectedTechStackBox from './SelectedTechStackBox';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
-import { getTechStackName } from '../../utils/getTechIconUrl';
+import { getTechStackName } from '@/features/widgets/techStack/utils/getTechIconUrl';
 
 function TechStackWidget({ id, position, width, height }: WidgetData) {
   const [isTechStackModalOpen, setIsTechStackModalOpen] = useState(false);

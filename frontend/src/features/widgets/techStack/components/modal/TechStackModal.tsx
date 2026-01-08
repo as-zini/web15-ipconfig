@@ -3,7 +3,7 @@ import SearchBar from './SearchBar';
 import { useState, memo, useRef, useCallback } from 'react';
 import ModalHeader from './ModalHeader';
 import TechStackList from './TechStackList';
-import useDebounce from '../../hooks/useDebounce';
+import useDebounce from '@/features/widgets/techStack/hooks/useDebounce';
 import ReactPortal from '@/common/components/ReactPortal';
 
 interface TechStackModalProps {

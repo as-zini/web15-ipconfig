@@ -1,4 +1,4 @@
-import type { TechStack } from '../types/techStack';
+import type { TechStack } from '@/features/widgets/techStack/types/techStack';
 
 export const TECH_STACKS: TechStack[] = [
   // Frontend (Web)

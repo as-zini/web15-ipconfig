@@ -1,4 +1,7 @@
-import { iconMap, TECH_STACKS } from '../constant/techStackInfo';
+import {
+  iconMap,
+  TECH_STACKS,
+} from '@/features/widgets/techStack/constant/techStackInfo';
 
 export const getTechIconUrl = (name: string): string => {
   if (iconMap[name]) {
