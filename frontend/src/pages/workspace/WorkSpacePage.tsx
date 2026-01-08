@@ -15,9 +15,9 @@ import RightSidebar from './components/infoPanel/InfoPanel';
 import UserHoverCard from './components/UserHoverCard';
 import ZoomControls from './components/ZoomControls';
 import ExportModal from './components/ExportModal';
+import useCanvas from '@/features/canvas/hooks/useCanvas';
 
 function WorkSpacePage() {
-  const mainWorkspaceRef = useRef<HTMLDivElement>(null);
   const [remoteCursors, setRemoteCursors] = useState<Record<string, Cursor>>(
     {},
   );
@@ -31,9 +31,17 @@ function WorkSpacePage() {
   const [hoveredUser, setHoveredUser] = useState<User | null>(null);
   const [hoverPosition, setHoverPosition] = useState({ top: 0, left: 0 });
 
-  // Dragging State
-  const [draggingId, setDraggingId] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const {
+    camera,
+    containerRef,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    handleZoomButton,
+    isPanning,
+    getMousePosition,
+    handleWheel,
+  } = useCanvas();
 
   // 임시로 고정된 워크스페이스 / 사용자 정보 (실제 서비스에서는 라우팅/로그인 정보 사용)
   const workspaceId = 'w1';
@@ -68,41 +76,16 @@ function WorkSpacePage() {
   // 커서 이동 스로틀링을 위한 ref
   const lastEmitRef = useRef<number>(0);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggingId) {
-      setWidgets((prev) =>
-        prev.map((w) => {
-          if (w.id === draggingId) {
-            return {
-              ...w,
-              position: {
-                x: e.clientX - dragOffset.x,
-                y: e.clientY - dragOffset.y,
-              },
-            };
-          }
-          return w;
-        }),
-      );
-    }
+  const handleCanvasPointerMove = (e: React.PointerEvent) => {
+    handlePointerMove(e);
 
-    // --- 커서 이동 웹소켓 연동 + 스로틀링 ---
     const now = performance.now();
-    const throttleMs = 30;
-    if (now - lastEmitRef.current < throttleMs) return;
+    if (now - lastEmitRef.current < 30) return;
     lastEmitRef.current = now;
 
-    const mainWorkspaceRect = mainWorkspaceRef.current?.getBoundingClientRect();
-    if (!mainWorkspaceRect) return;
+    const { x: worldX, y: worldY } = getMousePosition(e);
 
-    const relativeX = e.clientX - mainWorkspaceRect.left;
-    const relativeY = e.clientY - mainWorkspaceRect.top;
-
-    emitCursorMove(relativeX, relativeY);
-  };
-
-  const handleMouseUp = () => {
-    setDraggingId(null);
+    emitCursorMove(worldX, worldY);
   };
 
   // User Hover Logic
@@ -120,11 +103,7 @@ function WorkSpacePage() {
   };
 
   return (
-    <div
-      className="flex h-screen flex-col overflow-hidden bg-gray-900 font-sans text-gray-100"
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
+    <div className="flex h-screen flex-col overflow-hidden bg-gray-900 font-sans text-gray-100">
       {/* Hide Scrollbar CSS */}
       <style>{`
         .scrollbar-hide::-webkit-scrollbar {
@@ -141,11 +120,18 @@ function WorkSpacePage() {
       {/* Main Workspace */}
       <div className="relative flex flex-1 overflow-hidden">
         <ToolBar />
-        <CanvasContent
-          mainWorkspaceRef={mainWorkspaceRef as React.RefObject<HTMLDivElement>}
-          remoteCursors={remoteCursors}
-        />
-
+        <main className="relative h-full w-full flex-1">
+          <CanvasContent
+            camera={camera}
+            containerRef={containerRef}
+            handlePointerDown={handlePointerDown}
+            handlePointerMove={handleCanvasPointerMove}
+            handlePointerUp={handlePointerUp}
+            handleWheel={handleWheel}
+            isPanning={isPanning}
+            remoteCursor={remoteCursors}
+          />
+        </main>
         <RightSidebar
           onUserHover={handleUserHover}
           onUserLeave={handleUserLeave}
@@ -155,7 +141,7 @@ function WorkSpacePage() {
           <UserHoverCard user={hoveredUser} position={hoverPosition} />
         )}
 
-        <ZoomControls />
+        <ZoomControls handleZoomButton={handleZoomButton} camera={camera} />
       </div>
 
       <ExportModal
