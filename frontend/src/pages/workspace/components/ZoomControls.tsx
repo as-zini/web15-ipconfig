@@ -18,7 +18,7 @@ function ZoomControls({
           <LuZoomOut size={14} />
         </button>
         <span className="px-2 font-mono text-xs text-gray-300">
-          {Math.floor(camera.z * 100)}%
+          {Math.floor(camera.scale * 100)}%
         </span>
         <button
           className="flex h-8 w-8 items-center justify-center rounded-r-lg text-gray-400 hover:bg-gray-700 hover:text-white"

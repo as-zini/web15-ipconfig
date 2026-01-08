@@ -2,26 +2,26 @@ import type { Camera } from '@/common/types/camera';
 import { useRef, useState } from 'react';
 
 export default function useCanvas() {
-  const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, z: 1 });
+  const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
   const lastMousePos = useRef<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleZoomButton = (delta: number) => {
     setCamera((prev) => {
-      const newZoom = Math.min(Math.max(prev.z + delta, 0.1), 5);
+      const newZoom = Math.min(Math.max(prev.scale + delta, 0.1), 5);
       const container = containerRef.current;
-      if (!container) return { ...prev, z: newZoom };
+      if (!container) return { ...prev, scale: newZoom };
 
       const rect = container.getBoundingClientRect();
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
       // 중앙점이 도망가지 않게 잡아당기는 계산
-      const newX = centerX - (centerX - prev.x) * (newZoom / prev.z);
-      const newY = centerY - (centerY - prev.y) * (newZoom / prev.z);
+      const newX = centerX - (centerX - prev.x) * (newZoom / prev.scale);
+      const newY = centerY - (centerY - prev.y) * (newZoom / prev.scale);
 
-      return { x: newX, y: newY, z: newZoom };
+      return { x: newX, y: newY, scale: newZoom };
     });
   };
 
@@ -56,8 +56,8 @@ export default function useCanvas() {
     const canvasX = e.clientX - rect.left;
     const canvasY = e.clientY - rect.top;
 
-    const worldX = (canvasX - camera.x) / camera.z;
-    const worldY = (canvasY - camera.y) / camera.z;
+    const worldX = (canvasX - camera.x) / camera.scale;
+    const worldY = (canvasY - camera.y) / camera.scale;
 
     return { x: worldX, y: worldY };
   };

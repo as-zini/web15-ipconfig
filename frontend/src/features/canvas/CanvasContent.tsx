@@ -43,14 +43,14 @@ function CanvasContent({
         style={{
           backgroundImage:
             'radial-gradient(rgb(51,65,85) 1px, transparent 1px)',
-          backgroundSize: `${20 * camera.z}px ${20 * camera.z}px`,
-          backgroundPosition: `${camera.x % (20 * camera.z)}px ${camera.y % (20 * camera.z)}px`,
+          backgroundSize: `${20 * camera.scale}px ${20 * camera.scale}px`,
+          backgroundPosition: `${camera.x % (20 * camera.scale)}px ${camera.y % (20 * camera.scale)}px`,
         }}
       />
       {/* World Container: 실제 변환(Transform)이 일어나는 레이어 */}
       <div
         style={{
-          transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.z})`,
+          transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`,
           transformOrigin: '0 0',
           width: '100%',
           height: '100%',
