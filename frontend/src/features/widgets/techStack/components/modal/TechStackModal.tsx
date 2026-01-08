@@ -2,7 +2,7 @@ import { LuLayers } from 'react-icons/lu';
 import SearchBar from './SearchBar';
 import { useState, memo, useRef, useCallback } from 'react';
 import ModalHeader from './ModalHeader';
-import LabelList from './LabelList';
+import TechStackList from './TechStackList';
 import useDebounce from '../../hooks/useDebounce';
 import ReactPortal from '@/common/components/ReactPortal';
 
@@ -18,7 +18,7 @@ function TechStackModal({ isOpen, onModalClose }: TechStackModalProps) {
   const debouncedSearch = useDebounce(search, 300);
 
   // 모달 위치
-  const [position, setPosition] = useState({ x: 80, y: 100 });
+  const [position, setPosition] = useState({ x: 600, y: 100 });
 
   // 드래그 상태
   const isDragging = useRef(false);
@@ -57,9 +57,9 @@ function TechStackModal({ isOpen, onModalClose }: TechStackModalProps) {
 
   return (
     <ReactPortal>
-      <div
+      <dialog
         style={{ left: position.x, top: position.y }}
-        className="dark fixed z-999 flex h-150 w-100 flex-col overflow-hidden rounded-xl border border-gray-600 bg-gray-800 shadow-2xl"
+        className="fixed z-999 flex h-150 w-100 flex-col overflow-hidden rounded-xl border border-gray-600 bg-gray-800 shadow-2xl"
       >
         {/* 헤더를 드래그 핸들로 사용 */}
         <ModalHeader
@@ -70,11 +70,11 @@ function TechStackModal({ isOpen, onModalClose }: TechStackModalProps) {
         />
 
         {/* 내부 컨텐츠 */}
-        <div className="flex flex-1 flex-col overflow-hidden px-7 py-6">
+        <div className="flex flex-1 flex-col overflow-hidden px-7 py-4">
           <SearchBar search={search} setSearch={setSearch} />
-          <LabelList keyword={debouncedSearch} />
+          <TechStackList keyword={debouncedSearch} />
         </div>
-      </div>
+      </dialog>
     </ReactPortal>
   );
 }
