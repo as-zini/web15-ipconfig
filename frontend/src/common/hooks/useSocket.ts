@@ -71,6 +71,11 @@ export const useSocket = ({
           const next = { ...prev };
 
           payload.forEach((user) => {
+            // 자기 자신 제외
+            if (user.id === currentUser.id) {
+              return;
+            }
+
             next[user.id] = {
               userId: user.id,
               nickname: user.nickname,
@@ -105,6 +110,12 @@ export const useSocket = ({
 
         setRemoteCursors((prev) => {
           const existing = prev[userId];
+
+          // 자기 자신 제외
+          if (userId === currentUser.id) {
+            return prev;
+          }
+
           if (!existing) {
             // 아직 join 이벤트를 못 받은 유저라면 기본값으로 생성
             return {
