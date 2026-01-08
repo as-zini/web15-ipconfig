@@ -1,15 +1,15 @@
 import { memo } from 'react';
 import TechStackItem from '@/features/widgets/techStack/components/TechStackItem';
 import { useDraggable } from '@dnd-kit/core';
+import type { TechStack } from '../../types/techStack';
 
-interface DraggableTechStackItemProps {
-  techName: string;
-}
-
-function DraggableTechStackItem({ techName }: DraggableTechStackItemProps) {
+function DraggableTechStackItem({ id, name, category }: TechStack) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: techName,
-    data: { techName },
+    id: `tech-stack-${id}`,
+    data: {
+      support: ['techStackWidget'] as const,
+      content: { id, name, category },
+    },
   });
 
   const style = {
@@ -20,7 +20,7 @@ function DraggableTechStackItem({ techName }: DraggableTechStackItemProps) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <TechStackItem techName={techName} />
+      <TechStackItem techName={name} />
     </div>
   );
 }

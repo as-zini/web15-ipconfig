@@ -10,7 +10,9 @@ interface TechStackListProps {
 function TechStackList({ keyword }: TechStackListProps) {
   const filteredStacks = useMemo(() => {
     const lower = keyword.toLowerCase();
-    return TECH_STACKS.filter((te) => te.name.toLowerCase().includes(lower));
+    return TECH_STACKS.filter((tech) =>
+      tech.name.toLowerCase().includes(lower),
+    );
   }, [keyword]);
 
   if (filteredStacks.length === 0) {
@@ -19,8 +21,8 @@ function TechStackList({ keyword }: TechStackListProps) {
 
   return (
     <div className="flex flex-wrap gap-2 overflow-y-auto">
-      {filteredStacks.map((te) => (
-        <DraggableTechStackItem key={te.name} techName={te.name} />
+      {filteredStacks.map((tech) => (
+        <DraggableTechStackItem key={tech.id} {...tech} />
       ))}
     </div>
   );
