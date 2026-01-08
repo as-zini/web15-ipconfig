@@ -5,6 +5,7 @@ import type { User } from '@/common/types/user';
 
 import { getRandomColor } from '@/utils/getRandomColor';
 import { useSocket } from '@/common/hooks/useSocket';
+import { useMarkdown } from '@/common/hooks/useMarkdown';
 import CanvasContent from '@/features/canvas/CanvasContent';
 import ToolBar from '@/pages/workspace/components/toolbar/ToolBar';
 import type { Cursor } from '@/common/types/cursor';
@@ -41,6 +42,12 @@ function WorkSpacePage() {
     isPanning,
     getMousePosition,
   } = useCanvas();
+  // 마크다운 관리 hook
+  const { markdown: exportMarkdown, fetchMarkdown } = useMarkdown();
+
+  // Dragging State
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   // 임시로 고정된 워크스페이스 / 사용자 정보 (실제 서비스에서는 라우팅/로그인 정보 사용)
   const workspaceId = 'w1';
@@ -101,6 +108,16 @@ function WorkSpacePage() {
     setHoveredUser(null);
   };
 
+  const handleExportClick = useCallback(async () => {
+    try {
+      await fetchMarkdown(workspaceId);
+      setIsExportModalOpen(true);
+    } catch (error) {
+      // 일단 alert를 사용했는데, 그냥 마크다운 내용으로 (마크다운 생성 실패)를 보내는 것도 나쁘지 않을 것 같습니다!
+      alert('마크다운 생성에 실패했습니다.');
+    }
+  }, [workspaceId, fetchMarkdown]);
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-gray-900 font-sans text-gray-100">
       {/* Hide Scrollbar CSS */}
@@ -114,7 +131,7 @@ function WorkSpacePage() {
         }
       `}</style>
 
-      <WorkspaceHeader onExportClick={() => setIsExportModalOpen(true)} />
+      <WorkspaceHeader onExportClick={handleExportClick} />
 
       {/* Main Workspace */}
       <div className="relative flex flex-1 overflow-hidden">
@@ -145,7 +162,7 @@ function WorkSpacePage() {
       <ExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
-        techStack={techStack}
+        markdown={exportMarkdown}
       />
     </div>
   );
