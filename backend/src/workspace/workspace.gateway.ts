@@ -74,7 +74,7 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
     channel: 'user:join',
     summary: '워크스페이스 입장',
     description:
-      '사용자가 특정 워크스페이스(room)에 처음 접속할 때 클라이언트에서 보내는 이벤트',
+      '사용자가 특정 워크스페이스(room)에 처음 접속할 때 클라이언트에서 보내는 이벤트입니다.',
     message: {
       payload: JoinUserDTO,
     },
@@ -83,7 +83,7 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
     channel: 'user:joined',
     summary: '워크스페이스 유저/커서 정보 브로드캐스트',
     description:
-      '새 유저가 입장했을 때, 같은 워크스페이스의 모든 유저와 커서 목록을 브로드캐스트합니다.',
+      '새 유저가 입장했을 때, 같은 워크스페이스의 모든 유저 목록을 브로드캐스트합니다.',
     message: {
       // allUsers, cursors 구조를 간단히 표현하기 위해 DTO 대신 any 사용
       payload: Object,
@@ -122,7 +122,7 @@ export class WorkspaceGateway implements OnGatewayDisconnect {
     channel: 'user:leave',
     summary: '워크스페이스 퇴장',
     description:
-      '사용자가 워크스페이스(room)에서 나갈 때 클라이언트에서 보내는 이벤트',
+      '사용자가 워크스페이스(room)에서 나갈 때 클라이언트에서 보내는 이벤트입니다.',
     message: {
       payload: LeaveUserDTO,
     },

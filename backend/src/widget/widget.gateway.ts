@@ -214,7 +214,7 @@ export class WidgetGateway {
     channel: 'widget:updated',
     summary: '위젯 수정 브로드캐스트',
     description:
-      '위젯이 수정된 이후, 동일 워크스페이스의 모든 클라이언트에게 수정된 위젯 정보를 브로드캐스트합니다.',
+      '위젯이 수정된 이후, 동일 워크스페이스의 모든 클라이언트에게 수정된 위젯 내용 정보를 브로드캐스트합니다.',
     message: {
       payload: Object,
     },
