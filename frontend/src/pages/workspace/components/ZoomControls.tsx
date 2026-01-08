@@ -2,13 +2,12 @@ import type { Camera } from '@/common/types/camera';
 import { ZOOM_CONFIG } from '@/features/canvas/constants/zoom';
 import { LuZoomIn, LuZoomOut } from 'react-icons/lu';
 
-function ZoomControls({
-  handleZoomButton,
-  camera,
-}: {
+interface ZoomControlsProps {
   handleZoomButton: (delta: number) => void;
   camera: Camera;
-}) {
+}
+
+function ZoomControls({ handleZoomButton, camera }: ZoomControlsProps) {
   const isMaxZoom = camera.scale >= ZOOM_CONFIG.MAX_ZOOM;
   const isMinZoom = camera.scale <= ZOOM_CONFIG.MIN_ZOOM;
 
