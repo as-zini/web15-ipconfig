@@ -3,7 +3,6 @@ import { IWidgetService } from './widget.interface';
 import { CreateWidgetDto } from './dto/create-widget.dto';
 import { UpdateWidgetDto } from './dto/update-widget.dto';
 import { UpdateWidgetLayoutDto } from './dto/update-widget-layout.dto';
-import { WidgetType } from './dto/widget-content.dto';
 
 @Injectable()
 export class WidgetMemoryService implements IWidgetService {
