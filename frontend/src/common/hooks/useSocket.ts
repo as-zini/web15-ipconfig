@@ -5,6 +5,7 @@ import type {
   WidgetData,
   WidgetType,
   CreateWidgetData,
+  UpdateWidgetData,
 } from '../types/widgetData';
 
 // Remote cursor 상태 타입
@@ -145,6 +146,16 @@ export const useSocket = ({
       setWidgets((prev) => ({ ...prev, [payload.widgetId]: payload.data }));
     });
 
+    // 6) 위젯 업데이트
+    socket.on('widget:updated', (payload: UpdateWidgetData) => {
+      setWidgets((prev) => {
+        const next = { ...prev };
+        next[payload.widgetId].content = payload.data.content;
+        return next;
+      });
+    });
+
+    // 7) 위젯 삭제
     socket.on('widget:deleted', (payload: { widgetId: string }) => {
       setWidgets((prev) => {
         const next = { ...prev };
@@ -187,7 +198,9 @@ export const useSocket = ({
 
     socket.emit('widget:update', {
       widgetId,
-      data,
+      data: {
+        content: data,
+      },
     });
   };
 

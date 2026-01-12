@@ -6,40 +6,35 @@ export type WidgetContent =
   | GroundRuleContentDto;
 
 export interface TechStackItem {
-  readonly id: string;
-  readonly category: string;
-  readonly name: string;
+  id: string;
+  category: string;
+  name: string;
 }
 
 export interface TechStackContentDto {
-  readonly widgetType: WidgetType;
-  readonly selectedItems: TechStackItem[];
+  widgetType: WidgetType;
+  selectedItems: TechStackItem[];
 }
 
 export interface PostItContentDto {
-  readonly widgetType: WidgetType;
-  readonly text: string;
-  readonly backgroundColor: string;
-  readonly fontSize: number;
+  widgetType: WidgetType;
+  text: string;
+  backgroundColor: string;
+  fontSize: number;
 }
 
 export interface GroundRuleContentDto {
-  readonly widgetType: WidgetType;
-  readonly rules: string[];
+  widgetType: WidgetType;
+  rules: string[];
 }
 
 export interface WidgetData {
-  readonly x: number;
-
-  readonly y: number;
-
-  readonly width: number;
-
-  readonly height: number;
-
-  readonly zIndex: number;
-
-  readonly content: WidgetContent;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  zIndex: number;
+  content: WidgetContent;
 }
 
 export interface CreateWidgetData {
@@ -50,5 +45,8 @@ export interface CreateWidgetData {
 
 export interface UpdateWidgetData {
   widgetId: string;
-  data: WidgetContent;
+  data: {
+    // 임시로 이렇게 할게요...
+    content: WidgetContent;
+  };
 }
