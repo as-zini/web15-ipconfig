@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import type {
   WidgetContent,
@@ -145,6 +145,14 @@ export const useSocket = ({
       setWidgets((prev) => ({ ...prev, [payload.widgetId]: payload.data }));
     });
 
+    socket.on('widget:deleted', (payload: { widgetId: string }) => {
+      setWidgets((prev) => {
+        const next = { ...prev };
+        delete next[payload.widgetId];
+        return next;
+      });
+    });
+
     return () => {
       socket.emit('user:leave', { workspaceId, userId: currentUser.id });
       socket.disconnect();
@@ -183,5 +191,20 @@ export const useSocket = ({
     });
   };
 
-  return { socketRef, emitCursorMove, emitCreateWidget, emitUpdateWidget };
+  const emitDeleteWidget = (widgetId: string) => {
+    const socket = socketRef.current;
+    if (!socket) return;
+
+    socket.emit('widget:delete', {
+      widgetId,
+    });
+  };
+
+  return {
+    socketRef,
+    emitCursorMove,
+    emitCreateWidget,
+    emitUpdateWidget,
+    emitDeleteWidget,
+  };
 };

@@ -22,13 +22,17 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import SelectedTechStackBox from './SelectedTechStackBox';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
 
+interface TechStackWidgetProps {
+  widgetId: string;
+  data: WidgetData;
+  emitDeleteWidget: (widgetId: string) => void;
+}
+
 function TechStackWidget({
   widgetId,
   data,
-}: {
-  widgetId: string;
-  data: WidgetData;
-}) {
+  emitDeleteWidget,
+}: TechStackWidgetProps) {
   const [isTechStackModalOpen, setIsTechStackModalOpen] = useState(false);
   const [selectedTechStacks, setSelectedTechStacks] = useState<TechStack[]>([]);
 
@@ -68,6 +72,7 @@ function TechStackWidget({
         <WidgetHeader
           title="기술 스택"
           icon={<LuLayers className="text-primary" size={18} />}
+          onClickDelete={() => emitDeleteWidget(widgetId)}
         />
         <section className="flex flex-col gap-4">
           <Select>

@@ -13,7 +13,8 @@ interface CanvasContainerProps {
   handlePointerUp: () => void;
   isPanning: boolean;
   remoteCursor: Record<string, Cursor>;
-  widgets: WidgetData[];
+  widgets: Record<string, WidgetData>;
+  emitDeleteWidget: (widgetId: string) => void;
 }
 
 function CanvasContent({
@@ -25,6 +26,7 @@ function CanvasContent({
   isPanning,
   remoteCursor,
   widgets,
+  emitDeleteWidget,
 }: CanvasContainerProps) {
   const [techStackPosition, setTechStackPosition] = useState({
     x: 500,
@@ -62,7 +64,12 @@ function CanvasContent({
       >
         {/* 위젯 렌더링 */}
         {Object.entries(widgets).map(([widgetId, widget]) => (
-          <TechStackWidget key={widgetId} widgetId={widgetId} data={widget} />
+          <TechStackWidget
+            key={widgetId}
+            widgetId={widgetId}
+            data={widget}
+            emitDeleteWidget={emitDeleteWidget}
+          />
         ))}
         {/* 커서 렌더링 */}
         {Object.values(remoteCursor).map((cursor) => (

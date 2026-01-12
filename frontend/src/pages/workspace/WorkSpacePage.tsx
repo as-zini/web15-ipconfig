@@ -70,7 +70,12 @@ function WorkSpacePage() {
   })[0];
 
   // ----- WebSocket 초기화 & 이벤트 바인딩 -----
-  const { emitCursorMove, emitCreateWidget } = useSocket({
+  const {
+    emitCursorMove,
+    emitCreateWidget,
+    emitUpdateWidget,
+    emitDeleteWidget,
+  } = useSocket({
     workspaceId,
     currentUser,
     setRemoteCursors,
@@ -144,6 +149,7 @@ function WorkSpacePage() {
             isPanning={isPanning}
             remoteCursor={remoteCursors}
             widgets={widgets}
+            emitDeleteWidget={emitDeleteWidget}
           />
         </main>
         <RightSidebar
