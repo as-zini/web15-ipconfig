@@ -29,24 +29,31 @@ function CanvasContent({
   });
 
   return (
+    // 뷰포트 레이어
     <div
       ref={containerRef}
-      className={`h-full w-full cursor-${isPanning ? 'grabbing' : 'default'} relative overflow-hidden bg-gray-900`}
+      className={`relative h-full w-full touch-none overflow-hidden bg-gray-900 select-none`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
+      style={{ cursor: isPanning ? 'grabbing' : 'default' }}
     >
-      {/* World Container: 실제 변환(Transform)이 일어나는 레이어 */}
+      {/* 캔버스 이동 이벤트 감지용 */}
+      <div
+        className={`absolute inset-0 h-full w-full touch-none ${
+          isPanning ? 'cursor-grabbing' : 'cursor-default'
+        }`}
+        onPointerDown={handlePointerDown}
+        style={{}}
+      />
+      {/* 캔버스 좌표계의 원점 컨테이너 */}
       <div
         style={{
           transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`,
           transformOrigin: '0 0',
-          width: 0,
-          height: 0,
-          overflow: 'visible',
         }}
-        className="relative bg-white"
+        className="pointer-events-none absolute top-0 left-0 h-0 w-0 overflow-visible"
       >
         {/* 위젯 렌더링 */}
         <TechStackWidget
@@ -62,8 +69,7 @@ function CanvasContent({
             key={cursor.userId}
             className="pointer-events-none absolute z-100"
             style={{
-              left: cursor.x,
-              top: cursor.y,
+              transform: `translate(${cursor.x}px, ${cursor.y}px)`,
             }}
           >
             <CursorWithName

@@ -11,10 +11,7 @@ function WidgetHeader({ title, icon }: HeaderProps) {
       <h4 className="flex items-center gap-2 font-bold text-white">
         {icon} {title}
       </h4>
-      <button
-        onMouseDown={(e) => e.stopPropagation()}
-        className="text-gray-500 transition-colors hover:text-red-400"
-      >
+      <button className="text-gray-500 transition-colors hover:text-red-400">
         <LuTrash2 size={16} />
       </button>
     </div>
