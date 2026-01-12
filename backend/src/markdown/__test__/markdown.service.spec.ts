@@ -18,7 +18,10 @@ describe('MarkdownService', () => {
       create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
-      findOneByWidgetType: jest.fn(),
+      lock: jest.fn(),
+      unlock: jest.fn(),
+      getLockOwner: jest.fn(),
+      unlockAllByUser: jest.fn(),
       update: jest.fn(),
       remove: jest.fn(),
       updateLayout: jest.fn(),
@@ -43,7 +46,6 @@ describe('MarkdownService', () => {
   });
 
   it('모든 위젯이 없으면 헤더, 푸터, 안내 문구를 반환한다.', async () => {
-    widgetServiceMock.findOneByWidgetType.mockResolvedValue(null);
     widgetServiceMock.findAll.mockResolvedValue([]);
 
     const markdown = await service.generateMarkdown(workspaceId);
