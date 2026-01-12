@@ -44,6 +44,7 @@ describe('MarkdownService', () => {
 
   it('모든 위젯이 없으면 헤더, 푸터, 안내 문구를 반환한다.', async () => {
     widgetServiceMock.findOneByWidgetType.mockResolvedValue(null);
+    widgetServiceMock.findAll.mockResolvedValue([]);
 
     const markdown = await service.generateMarkdown(workspaceId);
 
@@ -55,31 +56,58 @@ describe('MarkdownService', () => {
   });
 
   it('각 위젯을 마크다운 섹션으로 변환한다', async () => {
-    widgetServiceMock.findOneByWidgetType
-      .mockImplementationOnce(() => ({
+    widgetServiceMock.findAll.mockResolvedValue([
+      {
+        widgetId: 'widget-1',
+        type: WidgetType.GROUND_RULE,
         data: {
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+          zIndex: 1,
           content: {
             widgetType: WidgetType.GROUND_RULE,
             rules: ['Folder', 'Commit'],
           },
         },
-      }))
-      .mockImplementationOnce(() => ({
+      },
+      {
+        widgetId: 'widget-2',
+        type: WidgetType.TECH_STACK,
         data: {
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+          zIndex: 1,
           content: {
             widgetType: WidgetType.TECH_STACK,
-            selectedItems: ['React', 'NestJS'],
+            selectedItems: [
+              { id: '1', name: 'React', category: 'frontend' },
+              { id: '2', name: 'NestJS', category: 'backend' },
+            ],
           },
         },
-      }))
-      .mockImplementationOnce(() => ({
+      },
+      {
+        widgetId: 'widget-3',
+        type: WidgetType.POST_IT,
         data: {
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+          zIndex: 1,
           content: {
             widgetType: WidgetType.POST_IT,
             text: '기타 메모',
+            backgroundColor: '#fff',
+            fontSize: 14,
           },
         },
-      }));
+      },
+    ]);
 
     const markdown = await service.generateMarkdown(workspaceId);
     const lines = markdown.split('\n');

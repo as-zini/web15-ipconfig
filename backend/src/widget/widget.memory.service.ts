@@ -43,20 +43,6 @@ export class WidgetMemoryService implements IWidgetService {
     return Promise.resolve(widget);
   }
 
-  async findOneByWidgetType(
-    workspaceId: string,
-    widgetType: WidgetType,
-  ): Promise<CreateWidgetDto | null> {
-    const widgets = this.getWidgetsMap(workspaceId);
-    const widget = Array.from(widgets.values()).find(
-      (widget) => widget.data.content.widgetType === widgetType,
-    );
-    if (!widget) {
-      return Promise.resolve(null);
-    }
-    return Promise.resolve(widget);
-  }
-
   async update(
     workspaceId: string,
     updateWidgetDto: UpdateWidgetDto,

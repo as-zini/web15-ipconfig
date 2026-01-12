@@ -19,6 +19,9 @@ export class MarkdownService {
     if (!widgets || widgets.length === 0) return [];
 
     const lines: string[] = [];
+    lines.push('## 1. 📋 Ground Rule');
+    lines.push('| Rule | Description |');
+    lines.push('| :--- | :--- |');
     widgets.forEach((widget) => {
       const content = widget.data.content as GroundRuleContentDto;
       if (content.rules && content.rules.length > 0) {
@@ -107,7 +110,11 @@ export class MarkdownService {
     );
     markdownParts.push(...this.buildElseSection(postItWidgets));
 
-    if (!groundRuleWidgets && !techStackWidgets && !postItWidgets) {
+    if (
+      groundRuleWidgets.length === 0 &&
+      techStackWidgets.length === 0 &&
+      postItWidgets.length === 0
+    ) {
       markdownParts.push(
         '아직 적은 내용이 없는 것 같습니다! 위젯에 내용을 추가해보세요! 🚀',
       );
