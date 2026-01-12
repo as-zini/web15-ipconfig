@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import type { WidgetData, WidgetType } from '../types/widgetData';
+import type {
+  WidgetContent,
+  WidgetData,
+  WidgetType,
+} from '../types/widgetData';
 
 // Remote cursor 상태 타입
 type RemoteCursorState = Record<
@@ -22,12 +26,23 @@ interface CurrentUserInfo {
   backgroundColor: string;
 }
 
+type CreateWidgetData = {
+  widgetId: string;
+  type: WidgetType;
+  data: WidgetData;
+};
+
+type UpdateWidgetData = {
+  widgetId: string;
+  data: WidgetContent;
+};
+
 interface UseSocketParams {
   workspaceId: string;
   currentUser: CurrentUserInfo;
   setRemoteCursors: React.Dispatch<React.SetStateAction<RemoteCursorState>>;
-  createWidget: React.Dispatch<React.SetStateAction<WidgetData[]>>;
-  updateWidget: React.Dispatch<React.SetStateAction<WidgetData[]>>;
+  createWidget: React.Dispatch<React.SetStateAction<CreateWidgetData[]>>;
+  updateWidget: React.Dispatch<React.SetStateAction<UpdateWidgetData[]>>;
 }
 
 export const useSocket = ({
@@ -157,12 +172,19 @@ export const useSocket = ({
     if (!socket) return;
 
     socket.emit('widget:create', {
-      widget: {
-        // 임시 데이터 넣어서 주고 나중에 대체하기
-        widgetId: 'temp-widget-id',
-        type,
-        data,
-      },
+      widgetId: 'temp-widget-id',
+      type,
+      data,
+    });
+  };
+
+  const emitUpdateWidget = (widgetId: string, data: WidgetContent) => {
+    const socket = socketRef.current;
+    if (!socket) return;
+
+    socket.emit('widget:update', {
+      widgetId,
+      data,
     });
   };
 
