@@ -68,18 +68,19 @@ export const useSocket = ({
     // 2) 같은 workspace의 전체 유저 + 커서 목록 수신
     socket.on(
       'user:joined',
-      (
-        payload: {
+      (payload: {
+        allUsers: {
           id: string;
           nickname: string;
           color: string;
           backgroundColor: string;
-        }[],
-      ) => {
+        }[];
+        allWidgets: CreateWidgetData[];
+      }) => {
         setRemoteCursors((prev) => {
           const next = { ...prev };
 
-          payload.forEach((user) => {
+          payload.allUsers.forEach((user) => {
             next[user.id] = {
               userId: user.id,
               nickname: user.nickname,
@@ -90,6 +91,10 @@ export const useSocket = ({
               x: 10000,
               y: 10000,
             };
+          });
+
+          payload.allWidgets.forEach((widget) => {
+            setWidgets((prev) => ({ ...prev, [widget.widgetId]: widget.data }));
           });
 
           return next;
