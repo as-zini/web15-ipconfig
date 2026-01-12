@@ -2,6 +2,8 @@ import type { Camera } from '@/common/types/camera';
 import { useEffect, useRef, useState } from 'react';
 import { ZOOM_CONFIG } from '../constants/zoom';
 
+import { CANVAS_CONFIG } from '../constants/canvas';
+
 export default function useCanvas() {
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
@@ -67,7 +69,17 @@ export default function useCanvas() {
     lastMousePos.current = { x: e.clientX, y: e.clientY };
 
     if (isPanning) {
-      setCamera((prev) => ({ ...prev, x: prev.x + dx, y: prev.y + dy }));
+      setCamera((prev) => ({
+        ...prev,
+        x: Math.min(
+          Math.max(prev.x + dx, CANVAS_CONFIG.MIN_X),
+          CANVAS_CONFIG.MAX_X,
+        ),
+        y: Math.min(
+          Math.max(prev.y + dy, CANVAS_CONFIG.MIN_Y),
+          CANVAS_CONFIG.MAX_Y,
+        ),
+      }));
     }
   };
 
