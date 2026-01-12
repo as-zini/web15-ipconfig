@@ -4,6 +4,7 @@ import type {
   WidgetContent,
   WidgetData,
   WidgetType,
+  CreateWidgetData,
 } from '../types/widgetData';
 
 // Remote cursor 상태 타입
@@ -26,30 +27,18 @@ interface CurrentUserInfo {
   backgroundColor: string;
 }
 
-type CreateWidgetData = {
-  widgetId: string;
-  type: WidgetType;
-  data: WidgetData;
-};
-
-type UpdateWidgetData = {
-  widgetId: string;
-  data: WidgetContent;
-};
-
 interface UseSocketParams {
   workspaceId: string;
   currentUser: CurrentUserInfo;
   setRemoteCursors: React.Dispatch<React.SetStateAction<RemoteCursorState>>;
-  createWidget: React.Dispatch<React.SetStateAction<CreateWidgetData[]>>;
-  updateWidget: React.Dispatch<React.SetStateAction<UpdateWidgetData[]>>;
+  setWidgets: React.Dispatch<React.SetStateAction<Record<string, WidgetData>>>;
 }
 
 export const useSocket = ({
   workspaceId,
   currentUser,
   setRemoteCursors,
-  createWidget,
+  setWidgets,
 }: UseSocketParams) => {
   const socketRef = useRef<Socket | null>(null);
 
@@ -151,11 +140,16 @@ export const useSocket = ({
       },
     );
 
+    // 5) 위젯 생성
+    socket.on('widget:created', (payload: CreateWidgetData) => {
+      setWidgets((prev) => ({ ...prev, [payload.widgetId]: payload.data }));
+    });
+
     return () => {
       socket.emit('user:leave', { workspaceId, userId: currentUser.id });
       socket.disconnect();
     };
-  }, [workspaceId, currentUser, setRemoteCursors]);
+  }, [workspaceId, currentUser, setRemoteCursors, setWidgets]);
 
   const emitCursorMove = (x: number, y: number) => {
     const socket = socketRef.current;
@@ -172,7 +166,8 @@ export const useSocket = ({
     if (!socket) return;
 
     socket.emit('widget:create', {
-      widgetId: 'temp-widget-id',
+      // 임시 UUID 생성해서 반환
+      widgetId: crypto.randomUUID(),
       type,
       data,
     });
@@ -188,5 +183,5 @@ export const useSocket = ({
     });
   };
 
-  return { socketRef, emitCursorMove };
+  return { socketRef, emitCursorMove, emitCreateWidget, emitUpdateWidget };
 };

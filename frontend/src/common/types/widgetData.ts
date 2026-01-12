@@ -39,8 +39,16 @@ export interface WidgetData {
 
   readonly zIndex: number;
 
-  readonly content:
-    | TechStackContentDto
-    | PostItContentDto
-    | GroundRuleContentDto;
+  readonly content: WidgetContent;
+}
+
+export interface CreateWidgetData {
+  widgetId: string;
+  type: WidgetType;
+  data: WidgetData;
+}
+
+export interface UpdateWidgetData {
+  widgetId: string;
+  data: WidgetContent;
 }

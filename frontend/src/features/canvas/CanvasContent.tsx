@@ -3,6 +3,7 @@ import type { Cursor } from '@/common/types/cursor';
 import TechStackWidget from '@/features/widgets/techStack/components/techStackWidget/TechStackWidget';
 import { useState } from 'react';
 import type { Camera } from '@/common/types/camera';
+import type { WidgetData } from '@/common/types/widgetData';
 
 interface CanvasContainerProps {
   camera: Camera;
@@ -12,6 +13,7 @@ interface CanvasContainerProps {
   handlePointerUp: () => void;
   isPanning: boolean;
   remoteCursor: Record<string, Cursor>;
+  widgets: WidgetData[];
 }
 
 function CanvasContent({
@@ -22,6 +24,7 @@ function CanvasContent({
   handlePointerUp,
   isPanning,
   remoteCursor,
+  widgets,
 }: CanvasContainerProps) {
   const [techStackPosition, setTechStackPosition] = useState({
     x: 500,
@@ -58,13 +61,9 @@ function CanvasContent({
         className="relative"
       >
         {/* 위젯 렌더링 */}
-        <TechStackWidget
-          id="tech-stack"
-          position={techStackPosition}
-          width={200}
-          type="tech"
-          content="Tech Stack"
-        />
+        {Object.entries(widgets).map(([widgetId, widget]) => (
+          <TechStackWidget key={widgetId} widgetId={widgetId} data={widget} />
+        ))}
         {/* 커서 렌더링 */}
         {Object.values(remoteCursor).map((cursor) => (
           <div

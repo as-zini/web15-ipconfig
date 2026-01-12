@@ -1,4 +1,4 @@
-import type { WidgetData } from '@/common/types/widgetData';
+import type { WidgetContent, WidgetData } from '@/common/types/widgetData';
 import WidgetContainer from '@/common/components/widget/WidgetContainer';
 import WidgetHeader from '@/common/components/widget/WidgetHeader';
 import { LuLayers } from 'react-icons/lu';
@@ -22,7 +22,13 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import SelectedTechStackBox from './SelectedTechStackBox';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
 
-function TechStackWidget({ id, position, width, height }: WidgetData) {
+function TechStackWidget({
+  widgetId,
+  data,
+}: {
+  widgetId: string;
+  data: WidgetData;
+}) {
   const [isTechStackModalOpen, setIsTechStackModalOpen] = useState(false);
   const [selectedTechStacks, setSelectedTechStacks] = useState<TechStack[]>([]);
 
@@ -51,12 +57,13 @@ function TechStackWidget({ id, position, width, height }: WidgetData) {
   return (
     <DndContext collisionDetection={pointerWithin} onDragEnd={handleDragEnd}>
       <WidgetContainer
-        id={id}
-        position={position}
-        type="tech"
-        content="Tech Stack"
-        width={width}
-        height={height}
+        id={widgetId}
+        x={data.x}
+        y={data.y}
+        width={data.width}
+        height={data.height}
+        zIndex={data.zIndex}
+        content={data.content as WidgetContent}
       >
         <WidgetHeader
           title="기술 스택"
