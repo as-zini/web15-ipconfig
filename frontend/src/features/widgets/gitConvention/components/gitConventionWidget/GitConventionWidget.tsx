@@ -8,6 +8,7 @@ import { GIT_CONVENTION_PRESETS } from '@/features/widgets/gitConvention/constan
 import { useState } from 'react';
 import { StrategySelector } from './StrategySelector';
 import { BranchRules } from './BranchRules';
+import { CommitStyle } from './CommitStyle';
 
 function GitConventionWidget({ id, position, width, height }: WidgetData) {
   // TODO: 추후 Socket 연동 시 제거 및 대체
@@ -40,6 +41,11 @@ function GitConventionWidget({ id, position, width, height }: WidgetData) {
         />
         <div className="bg-border my-1 h-px" />
         <BranchRules rules={branchRules} onChange={actions.updateBranchRules} />
+        <div className="bg-border my-1 h-px" />
+        <CommitStyle
+          convention={localData.commitConvention}
+          onChange={actions.updateCommitConvention}
+        />
         {/* TODO: 임시 모달 UI (나중에 WarningModal로 대체) */}
         {isModalOpen && (
           <div className="bg-background/80 absolute inset-0 z-50 flex items-center justify-center p-4 text-center backdrop-blur-sm">
