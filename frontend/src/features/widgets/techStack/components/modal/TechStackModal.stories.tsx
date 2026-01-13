@@ -12,6 +12,7 @@ const meta = {
   args: {
     isOpen: true,
     onModalClose: () => {},
+    modalRootId: 'storybook-root',
   },
 } satisfies Meta<typeof TechStackModal>;
 
@@ -25,7 +26,11 @@ export const Default: Story = {
     return (
       <DndContext>
         <div className="h-screen w-screen bg-slate-900">
-          <TechStackModal isOpen={open} onModalClose={() => setOpen(false)} />
+          <TechStackModal
+            isOpen={open}
+            onModalClose={() => setOpen(false)}
+            modalRootId="storybook-root"
+          />
         </div>
       </DndContext>
     );
