@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 import WorkspaceHeader from './WorkspaceHeader';
 
 const meta = {
@@ -25,14 +26,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    onExportClick: () => console.log('Export clicked'),
+    onExportClick: fn(),
   },
 };
 
 export const WithActions: Story = {
   args: {
     onExportClick: () => {
-      console.log('Export button clicked');
       alert('문서를 내보냅니다!');
     },
   },

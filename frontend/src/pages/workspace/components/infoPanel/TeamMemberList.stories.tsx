@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 import TeamMemberList from './TeamMemberList';
 
 const meta = {
@@ -22,22 +23,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    onUserHover: (e, user) => {
-      console.log('Hovered user:', user);
-    },
-    onUserLeave: () => {
-      console.log('User leave');
-    },
+    onUserHover: fn(),
+    onUserLeave: fn(),
   },
 };
 
 export const WithInteraction: Story = {
   args: {
-    onUserHover: (e, user) => {
-      console.log('Hovered user:', user.name);
-    },
-    onUserLeave: () => {
-      console.log('Left user card');
-    },
+    onUserHover: fn(),
+    onUserLeave: fn(),
   },
 };
