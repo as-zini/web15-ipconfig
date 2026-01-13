@@ -33,7 +33,7 @@ function SubjectGuideline({
         <ItemTitle>
           [{category}] {option}
         </ItemTitle>
-        <ItemDescription className="line-clamp-none text-balance">
+        <ItemDescription className="line-clamp-none text-pretty wrap-break-word">
           {guideline}
         </ItemDescription>
       </ItemContent>
