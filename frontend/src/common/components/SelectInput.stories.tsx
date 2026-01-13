@@ -1,24 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import SelectInput from './SelectInput';
+import { SUBJECT_GROUPS } from '@/common/mocks/techStacks';
 
 const meta = {
   title: 'Common/SelectInput',
   component: SelectInput,
   parameters: {
-    layout: 'centered',
+    layout: 'padded',
   },
   tags: ['autodocs'],
   args: {
-    initialOptions: [
-      {
-        category: '프론트엔드',
-        options: ['Next.js', 'React', 'Vue', 'Angular', 'Svelte'],
-      },
-      {
-        category: '백엔드',
-        options: ['Node.js', 'Express', 'Django', 'Flask', 'Spring'],
-      },
-    ],
+    initialOptions: SUBJECT_GROUPS,
   },
 } satisfies Meta<typeof SelectInput>;
 

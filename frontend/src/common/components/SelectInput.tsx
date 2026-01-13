@@ -70,7 +70,7 @@ function SelectInput({ initialOptions }: CustomSearchSelectProps) {
           role="combobox"
           aria-expanded={open}
           className={cn(
-            'flex-1 justify-between',
+            'w-full flex-1 justify-between',
             open && 'border-primary! ring-primary/50! ring-1',
           )}
         >
