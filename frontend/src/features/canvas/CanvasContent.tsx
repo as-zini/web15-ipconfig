@@ -61,7 +61,7 @@ function CanvasContent({
         <TechStackWidget
           id="tech-stack"
           position={techStackPosition}
-          width={200}
+          width={500}
           type="tech"
           content="Tech Stack"
         />
