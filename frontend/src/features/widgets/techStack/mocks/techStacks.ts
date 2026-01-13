@@ -7,7 +7,7 @@ export const SUBJECT_GROUPS: SelectInputOption[] = [
       '언어',
       '패키지 매니저',
       '모노레포 관리 도구',
-      '코드 퀄리티(린팅)',
+      '코드 퀄리티 (린팅)',
     ],
   },
   {
@@ -22,7 +22,7 @@ export const SUBJECT_GROUPS: SelectInputOption[] = [
     category: '데이터베이스 및 스토리지',
     options: [
       '메인 DB',
-      'ORM/Query Builder',
+      'ORM 및 쿼리 빌더',
       '서버 로깅',
       '캐싱/메시지 큐',
       '파일 스토리지',
