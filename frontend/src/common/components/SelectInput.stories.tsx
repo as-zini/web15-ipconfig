@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import SelectInput from './SelectInput';
-import { SUBJECT_GROUPS } from '@/common/mocks/techStacks';
+import { useState } from 'react';
 
 const meta = {
   title: 'Common/SelectInput',
@@ -8,15 +8,25 @@ const meta = {
   parameters: {
     layout: 'padded',
   },
-  tags: ['autodocs'],
   args: {
-    initialOptions: SUBJECT_GROUPS,
+    selectedValue: '',
+    setSelectedValue: () => {},
   },
+  tags: ['autodocs'],
 } satisfies Meta<typeof SelectInput>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args) => <SelectInput {...args} />,
+  render: () => {
+    const [selectedValue, setSelectedValue] = useState('');
+
+    return (
+      <SelectInput
+        selectedValue={selectedValue}
+        setSelectedValue={setSelectedValue}
+      />
+    );
+  },
 };
