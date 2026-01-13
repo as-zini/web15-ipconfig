@@ -1,50 +1,30 @@
-export const SUBJECT_GROUPS = [
+import type { SelectInputOption } from '@/common/types/selectInput';
+
+export const SUBJECT_GROUPS: SelectInputOption[] = [
+  {
+    category: '공통 및 기반',
+    options: ['언어', '패키지 매니저', '모노레포', '코드 퀄리티'],
+  },
   {
     category: '프론트엔드',
-    subjects: [
-      {
-        value: 'fe-framework',
-        label: '프론트엔드 프레임워크',
-      },
-      {
-        value: 'fe-styling',
-        label: '프론트엔드 스타일링',
-      },
-      {
-        value: 'fe-state-management',
-        label: '프론트엔드 상태 관리',
-      },
-      {
-        value: 'fe-testing',
-        label: '프론트엔드 테스트',
-      },
-    ],
+    options: ['프레임워크', '스타일링', '상태 관리', '폼 관리'],
   },
   {
     category: '백엔드',
-    subjects: [
-      {
-        value: 'be-framework',
-        label: '백엔드 프레임워크',
-      },
+    options: ['프레임워크', 'API 아키텍처', '인증/인가', '문서화'],
+  },
+  {
+    category: '데이터베이스 및 스토리지',
+    options: [
+      '메인 DB',
+      'ORM/Query Builder',
+      '서버 로깅',
+      '캐싱/메시지 큐',
+      '파일 스토리지',
     ],
   },
   {
-    category: '데이터베이스',
-    subjects: [
-      {
-        value: 'database',
-        label: '데이터베이스',
-      },
-    ],
-  },
-  {
-    category: '데브옵스',
-    subjects: [
-      {
-        value: 'devops',
-        label: '데브옵스',
-      },
-    ],
+    category: '인프라 및 데브옵스',
+    options: ['배포 환경', 'CI/CD', '모니터링/로깅'],
   },
 ];
