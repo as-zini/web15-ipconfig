@@ -15,14 +15,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/common/components/shadcn/popover';
-
-interface GroupedOptions {
-  group: string;
-  options: string[];
-}
+import type { SelectInputOption } from '@/common/types/selectInput';
 
 interface CustomSearchSelectProps {
-  initialOptions: GroupedOptions[];
+  initialOptions: SelectInputOption[];
 }
 
 function SelectInput({ initialOptions }: CustomSearchSelectProps) {
@@ -59,7 +55,7 @@ function SelectInput({ initialOptions }: CustomSearchSelectProps) {
 
     setGroupedOptions((prev) => [
       ...prev,
-      { group: '커스텀 주제', options: [newOption] },
+      { category: '커스텀 주제', options: [newOption] },
     ]);
     setValue(newOption);
     setOpen(false);
@@ -91,8 +87,8 @@ function SelectInput({ initialOptions }: CustomSearchSelectProps) {
           <CommandList>
             {filteredGroupedOptions.map((groupedOption) => (
               <CommandGroup
-                heading={groupedOption.group}
-                key={groupedOption.group}
+                heading={groupedOption.category}
+                key={groupedOption.category}
               >
                 {groupedOption.options.map((option) => (
                   <CommandItem
