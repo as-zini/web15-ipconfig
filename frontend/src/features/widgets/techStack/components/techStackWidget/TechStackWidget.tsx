@@ -1,7 +1,6 @@
 import type {
   WidgetContent,
   WidgetData,
-  WidgetType,
   TechStackItem,
   TechStackContentDto,
 } from '@/common/types/widgetData';
@@ -18,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/common/components/shadcn/select';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/common/components/shadcn/button';
 import { SUBJECT_GROUPS } from '@/common/mocks/techStacks';
 import { TechStackModal } from '@/features/widgets/techStack/components/modal';
