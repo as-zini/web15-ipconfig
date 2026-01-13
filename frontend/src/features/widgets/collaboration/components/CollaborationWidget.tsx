@@ -22,7 +22,7 @@ export default function CollaborationWidget({
       height={height}
     >
       <WidgetHeader
-        title="Collaboration"
+        title="작업 및 협업"
         icon={<LuUsers className="text-primary" size={18} />}
       />
       <div className="grid w-[800px] grid-cols-1 gap-2 md:grid-cols-2">
