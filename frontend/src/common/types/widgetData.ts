@@ -1,4 +1,4 @@
-export type WidgetType = 'tech';
+export type WidgetType = 'tech' | 'groundrule-collaboration';
 
 export interface WidgetPosition {
   x: number;

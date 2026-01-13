@@ -3,6 +3,7 @@ import type { Cursor } from '@/common/types/cursor';
 import TechStackWidget from '@/features/widgets/techStack/components/techStackWidget/TechStackWidget';
 import { useState } from 'react';
 import type { Camera } from '@/common/types/camera';
+import CollaborationWidget from '../widgets/collaboration/CollaborationWidget';
 
 interface CanvasContainerProps {
   camera: Camera;
@@ -64,6 +65,14 @@ function CanvasContent({
           width={200}
           type="tech"
           content="Tech Stack"
+        />
+        <CollaborationWidget
+          id="collaboration"
+          position={{ x: 1000, y: 1000 }}
+          width={200}
+          height={200}
+          type="groundrule-collaboration"
+          content="Collaboration"
         />
         {/* 커서 렌더링 */}
         {Object.values(remoteCursor).map((cursor) => (
