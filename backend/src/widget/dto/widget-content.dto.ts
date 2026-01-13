@@ -118,24 +118,20 @@ export class GitConventionContentDto implements BaseContentDto {
   @IsEnum(WidgetType)
   readonly widgetType = WidgetType.GIT_CONVENTION;
 
-  @ApiProperty({ description: 'Git 전략', example: 'GITHUB_FLOW' })
-  readonly strategy: GitStrategy;
-
   @ApiProperty({
-    description: 'Git 브랜치 규칙',
-    example: { mainBranch: 'main', developBranch: 'develop', prefixes: [] },
+    example: {
+      strategy: 'GITHUB_FLOW',
+      branchRules: {
+        mainBranch: 'main',
+        developBranch: 'develop',
+        prefixes: [],
+      },
+      commitConvention: { useGitmoji: false, commitTypes: [] },
+    },
   })
   @IsObject()
   @ValidateNested()
-  readonly branchRules: BranchRuleState;
-
-  @ApiProperty({
-    description: 'Git 커밋 규칙',
-    example: { useGitmoji: false, commitTypes: [] },
-  })
-  @IsObject()
-  @ValidateNested()
-  readonly commitConvention: CommitConventionState;
+  readonly data: GitConventionData;
 }
 
 // Update용 Partial DTO Export
