@@ -40,9 +40,26 @@ function TechStackWidget({
   emitDeleteWidget,
 }: TechStackWidgetProps) {
   const [isTechStackModalOpen, setIsTechStackModalOpen] = useState(false);
-  const [selectedTechStacks, setSelectedTechStacks] = useState<TechStackItem[]>(
-    [],
-  );
+
+  const selectedTechStacks = data.content
+    ? (data.content as TechStackContentDto).selectedItems || []
+    : [];
+
+  const handleSetSelectedTechStacks = (
+    value: React.SetStateAction<TechStackItem[]>,
+  ) => {
+    let newItems: TechStackItem[];
+    if (typeof value === 'function') {
+      newItems = value(selectedTechStacks);
+    } else {
+      newItems = value;
+    }
+
+    emitUpdateWidget(widgetId, {
+      widgetType: 'TECH_STACK',
+      selectedItems: newItems,
+    } as TechStackContentDto);
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -58,7 +75,6 @@ function TechStackWidget({
     }
 
     // 드롭 영역 위에 드롭되었는지 확인
-
     if (over && over.id === 'techStackWidget') {
       const { id, name, category } = active.data.current
         .content as TechStackItem;
@@ -67,7 +83,6 @@ function TechStackWidget({
           ...selectedTechStacks,
           { id, name, category },
         ];
-        setSelectedTechStacks(newSelectedTechStacks);
         emitUpdateWidget(widgetId, {
           widgetType: 'TECH_STACK',
           selectedItems: newSelectedTechStacks,
@@ -117,7 +132,7 @@ function TechStackWidget({
 
           <SelectedTechStackBox
             selectedTechStacks={selectedTechStacks}
-            setSelectedTechStacks={setSelectedTechStacks}
+            setSelectedTechStacks={handleSetSelectedTechStacks}
             setIsTechStackModalOpen={setIsTechStackModalOpen}
           />
 
