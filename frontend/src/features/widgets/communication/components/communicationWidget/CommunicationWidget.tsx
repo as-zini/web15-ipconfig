@@ -25,7 +25,7 @@ function CommunicationWidget({ id, position, width, height }: WidgetData) {
       height={height}
     >
       <WidgetHeader
-        title="Communication Attributes"
+        title="커뮤니케이션"
         icon={<LuUsers className="text-primary" size={18} />}
       />
       <div className="flex flex-col gap-6 p-4">
