@@ -17,6 +17,8 @@ import UserHoverCard from './components/UserHoverCard';
 import ZoomControls from './components/ZoomControls';
 import ExportModal from './components/ExportModal';
 import useCanvas from '@/features/canvas/hooks/useCanvas';
+import CompactPanel from './components/infoPanel/CompactPanel';
+import { INITIAL_USERS } from '@/common/mocks/users';
 
 function WorkSpacePage() {
   const [remoteCursors, setRemoteCursors] = useState<Record<string, Cursor>>(
@@ -31,6 +33,7 @@ function WorkSpacePage() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [hoveredUser, setHoveredUser] = useState<User | null>(null);
   const [hoverPosition, setHoverPosition] = useState({ top: 0, left: 0 });
+  const [isSidebarExpanded, setSidebarExpanded] = useState(false);
 
   const {
     camera,
@@ -147,11 +150,21 @@ function WorkSpacePage() {
             remoteCursor={remoteCursors}
           />
         </main>
-        <RightSidebar
-          onUserHover={handleUserHover}
-          onUserLeave={handleUserLeave}
-        />
-
+        {isSidebarExpanded ? (
+          <RightSidebar
+            onUserHover={handleUserHover}
+            onUserLeave={handleUserLeave}
+            onToggle={() => setSidebarExpanded((p) => !p)}
+          />
+        ) : (
+          <CompactPanel
+            members={INITIAL_USERS}
+            currentAgenda={''}
+            currentTime=""
+            isExpanded={false}
+            onToggle={() => setSidebarExpanded((p) => !p)}
+          />
+        )}
         {hoveredUser && (
           <UserHoverCard user={hoveredUser} position={hoverPosition} />
         )}
