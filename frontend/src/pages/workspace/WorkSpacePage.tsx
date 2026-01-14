@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import type { WidgetData } from '@/common/types/widgetData';
 import type { User } from '@/common/types/user';
@@ -151,25 +152,44 @@ function WorkSpacePage() {
       {/* HUD: 헤더 아래 영역(여기서부터 UI 띄우기) */}
       <div className="pointer-events-none absolute inset-0 z-40 pt-[var(--header-h)]">
         <div className="pointer-events-auto">
-          {isSidebarExpanded ? (
-            <div className="pointer-events-auto absolute top-0 right-0 bottom-0">
-              <RightSidebar
-                onUserHover={handleUserHover}
-                onUserLeave={handleUserLeave}
-                onToggle={() => setSidebarExpanded((p) => !p)}
-              />
-            </div>
-          ) : (
-            <div className="absolute top-18 right-6">
-              <CompactPanel
-                members={INITIAL_USERS}
-                currentAgenda=""
-                currentTime=""
-                isExpanded={false}
-                onToggle={() => setSidebarExpanded((p) => !p)}
-              />
-            </div>
-          )}
+          {/* 2. AnimatePresence로 감싸기 (mode="wait"은 하나가 사라진 뒤 다음 것이 나오게 함. 동시 진행 원하면 제거) */}
+          <AnimatePresence mode="wait">
+            {isSidebarExpanded ? (
+              // 3. 확장된 사이드바 (오른쪽에서 슬라이드)
+              <motion.div
+                key="sidebar" // key 필수
+                initial={{ x: 300, opacity: 0 }} // 등장 전 상태
+                animate={{ x: 0, opacity: 1 }} // 등장 후 상태
+                exit={{ x: 300, opacity: 0 }} // 사라질 때 상태
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }} // 스프링 애니메이션
+                className="pointer-events-auto absolute top-0 right-0 bottom-0"
+              >
+                <RightSidebar
+                  onUserHover={handleUserHover}
+                  onUserLeave={handleUserLeave}
+                  onToggle={() => setSidebarExpanded((p) => !p)}
+                />
+              </motion.div>
+            ) : (
+              // 4. 축소된 패널 (제자리에서 페이드 인/아웃 + 살짝 스케일)
+              <motion.div
+                key="compact" // key 필수
+                initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                transition={{ duration: 0.3 }}
+                className="absolute top-18 right-6"
+              >
+                <CompactPanel
+                  members={INITIAL_USERS}
+                  currentAgenda=""
+                  currentTime=""
+                  isExpanded={false}
+                  onToggle={() => setSidebarExpanded((p) => !p)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <ZoomControls handleZoomButton={handleZoomButton} camera={camera} />
         </div>
