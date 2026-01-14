@@ -37,11 +37,6 @@ function CanvasContent({
   emitDeleteWidget,
   emitMoveWidget,
 }: CanvasContainerProps) {
-  const [techStackPosition, setTechStackPosition] = useState({
-    x: 500,
-    y: 500,
-  });
-
   return (
     <div
       ref={containerRef}

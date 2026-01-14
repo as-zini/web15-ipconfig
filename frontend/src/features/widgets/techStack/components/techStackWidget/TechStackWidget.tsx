@@ -4,11 +4,8 @@ import type {
   TechStackContentDto,
   MoveWidgetData,
 } from '@/common/types/widgetData';
-import type { TechStackItem } from '@/features/widgets/techStack/types/techStack';
-import WidgetContainer from '@/common/components/widget/WidgetContainer';
-import WidgetHeader from '@/common/components/widget/WidgetHeader';
+import WidgetShell from '@/common/components/widget/WidgetShell';
 import { LuLayers } from 'react-icons/lu';
-
 import {
   Select,
   SelectContent,
@@ -18,13 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/common/components/shadcn/select';
-import { useState } from 'react';
 import { Button } from '@/common/components/shadcn/button';
 import { SUBJECT_GROUPS } from '@/common/mocks/techStacks';
 import { TechStackModal } from '@/features/widgets/techStack/components/modal';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core';
-
+import { useTechStack } from '@/features/widgets/techStack/hooks/useTechStack';
 import SelectedTechStackBox from './SelectedTechStackBox';
 
 interface TechStackWidgetProps {
@@ -42,76 +37,28 @@ function TechStackWidget({
   emitDeleteWidget,
   emitMoveWidget,
 }: TechStackWidgetProps) {
-  const [isTechStackModalOpen, setIsTechStackModalOpen] = useState(false);
+  const techStackContent = data.content as TechStackContentDto;
 
-  const selectedTechStacks = data.content
-    ? (data.content as TechStackContentDto).selectedItems || []
-    : [];
-
-  const handleSetSelectedTechStacks = (
-    value: React.SetStateAction<TechStackItem[]>,
-  ) => {
-    let newItems: TechStackItem[];
-    if (typeof value === 'function') {
-      newItems = value(selectedTechStacks);
-    } else {
-      newItems = value;
-    }
-
-    emitUpdateWidget(widgetId, {
-      widgetType: 'TECH_STACK',
-      selectedItems: newItems,
-    } as TechStackContentDto);
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    // 전달된 데이터가 없는 경우
-    if (!active.data.current || !active.data.current?.content) {
-      return;
-    }
-
-    // 잘못된 영역에 드롭한 경우
-    if (!active.data.current.support.includes(String(over?.id))) {
-      return;
-    }
-
-    // 드롭 영역 위에 드롭되었는지 확인
-    if (over && over.id === 'techStackWidget') {
-      const { id, name, category } = active.data.current
-        .content as TechStackItem;
-      if (!selectedTechStacks.some((tech) => tech.id === id)) {
-        const newSelectedTechStacks = [
-          ...selectedTechStacks,
-          { id, name, category },
-        ];
-        emitUpdateWidget(widgetId, {
-          widgetType: 'TECH_STACK',
-          selectedItems: newSelectedTechStacks,
-        } as TechStackContentDto);
-      }
-    }
-  };
+  const { selectedTechStacks, isModalOpen, actions } = useTechStack({
+    data: techStackContent,
+    onDataChange: (nextData) => {
+      emitUpdateWidget(widgetId, nextData);
+    },
+  });
 
   return (
-    <DndContext collisionDetection={pointerWithin} onDragEnd={handleDragEnd}>
-      <WidgetContainer
-        id={widgetId}
-        x={data.x}
-        y={data.y}
-        width={data.width}
-        height={data.height}
-        zIndex={data.zIndex}
-        content={data.content as WidgetContent}
-        emitMoveWidget={emitMoveWidget}
+    <DndContext
+      collisionDetection={pointerWithin}
+      onDragEnd={actions.handleDragEnd}
+    >
+      <WidgetShell
+        widgetId={widgetId}
+        data={data}
+        title="기술 스택"
+        icon={<LuLayers className="text-primary" size={18} />}
         emitDeleteWidget={emitDeleteWidget}
+        emitMoveWidget={emitMoveWidget}
       >
-        <WidgetHeader
-          title="기술 스택"
-          icon={<LuLayers className="text-primary" size={18} />}
-          onClickDelete={() => emitDeleteWidget(widgetId)}
-        />
         <section className="flex flex-col gap-4">
           <Select>
             <div className="flex items-center gap-2 font-bold">
@@ -137,8 +84,8 @@ function TechStackWidget({
 
           <SelectedTechStackBox
             selectedTechStacks={selectedTechStacks}
-            setSelectedTechStacks={handleSetSelectedTechStacks}
-            setIsTechStackModalOpen={setIsTechStackModalOpen}
+            setSelectedTechStacks={actions.setSelectedTechStacks}
+            setIsTechStackModalOpen={actions.openModal}
           />
 
           <footer className="flex items-center justify-end gap-2 font-bold">
@@ -146,13 +93,13 @@ function TechStackWidget({
             <Button>확정</Button>
           </footer>
         </section>
-        {isTechStackModalOpen && (
+        {isModalOpen && (
           <TechStackModal
-            isOpen={isTechStackModalOpen}
-            onModalClose={() => setIsTechStackModalOpen(false)}
+            isOpen={isModalOpen}
+            onModalClose={actions.closeModal}
           />
         )}
-      </WidgetContainer>
+      </WidgetShell>
     </DndContext>
   );
 }
