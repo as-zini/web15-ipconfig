@@ -1,3 +1,4 @@
+import { Button } from '@/common/components/shadcn/button';
 import type { User } from '@/common/types/user';
 import { LuChevronRight, LuChevronLeft } from 'react-icons/lu';
 import { LuExpand } from 'react-icons/lu';
@@ -17,10 +18,8 @@ function getUserLabel(u: User) {
 
 function getAvatarStyleAndClass(u: User) {
   const c = u?.color;
-  // tailwind bg-* 클래스면 className으로 처리
   if (typeof c === 'string' && c.startsWith('bg-'))
     return { className: c, style: undefined };
-  // hex/rgb 등 컬러 문자열이면 inline style로 처리
   if (typeof c === 'string' && (c.startsWith('#') || c.startsWith('rgb'))) {
     return {
       className: '',
@@ -38,34 +37,7 @@ export default function CompactPanel({
   onToggle,
 }: CompactPanelProps) {
   return (
-    <aside
-      className={[
-        'border border-gray-700 bg-gray-800/90 shadow-2xl backdrop-blur-xl',
-        'rounded-xl',
-        'relative',
-        // 핵심: 콘텐츠 기반 폭
-        'inline-flex items-center',
-        // 높이는 고정(원하면 min-h로)
-        'h-16',
-        // 버튼 영역 확보
-        'pr-14 pl-4',
-      ].join(' ')}
-      style={{ width: 'fit-content' }} // Tailwind만으로도 되지만, 확실히 하려면 추가
-    >
-      <button
-        type="button"
-        onClick={onToggle}
-        className="absolute right-3 z-10 grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-white/10"
-        aria-label={isExpanded ? '패널 접기' : '패널 펼치기'}
-      >
-        {isExpanded ? (
-          <LuChevronLeft size={20} className="text-gray-300" />
-        ) : (
-          <LuChevronLeft size={20} className="text-gray-300" />
-        )}
-      </button>
-
-      {/* collapsed 콘텐츠(이제 부모 폭에 반영됨) */}
+    <aside className="relative inline-flex h-16 items-center rounded-xl border border-gray-700 bg-gray-800/90 pr-14 pl-4 shadow-2xl backdrop-blur-xl">
       <div className="flex items-center gap-4">
         <div className="flex shrink-0 -space-x-2">
           {members.slice(0, 6).map((member) => {
@@ -96,7 +68,6 @@ export default function CompactPanel({
         <div className="h-8 w-px shrink-0 bg-white/10" />
 
         <div className="relative flex min-w-0 flex-col justify-center">
-          {/* 상단: 상태 뱃지 */}
           <div className="text-primary flex w-full items-center justify-center gap-2 text-[9px] font-medium">
             <span className="relative flex h-1.5 w-1.5">
               <span className="bg-primary/70 absolute inline-flex h-full w-full animate-ping rounded-full" />
@@ -115,6 +86,13 @@ export default function CompactPanel({
           </div>
         </div>
       </div>
+      <Button
+        variant="ghost"
+        onClick={onToggle}
+        className="absolute right-3 z-10 cursor-pointer"
+      >
+        <LuChevronLeft size={20} className="text-gray-300" />
+      </Button>
     </aside>
   );
 }

@@ -149,19 +149,17 @@ function WorkSpacePage() {
         </div>
       </div>
 
-      {/* HUD: 헤더 아래 영역(여기서부터 UI 띄우기) */}
+      {/* HUD 레이어 */}
       <div className="pointer-events-none absolute inset-0 z-40 pt-[var(--header-h)]">
         <div className="pointer-events-auto">
-          {/* 2. AnimatePresence로 감싸기 (mode="wait"은 하나가 사라진 뒤 다음 것이 나오게 함. 동시 진행 원하면 제거) */}
           <AnimatePresence mode="wait">
             {isSidebarExpanded ? (
-              // 3. 확장된 사이드바 (오른쪽에서 슬라이드)
               <motion.div
-                key="sidebar" // key 필수
-                initial={{ x: 300, opacity: 0 }} // 등장 전 상태
-                animate={{ x: 0, opacity: 1 }} // 등장 후 상태
-                exit={{ x: 300, opacity: 0 }} // 사라질 때 상태
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }} // 스프링 애니메이션
+                key="sidebar"
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 300, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 className="pointer-events-auto absolute top-0 right-0 bottom-0"
               >
                 <RightSidebar
@@ -171,9 +169,8 @@ function WorkSpacePage() {
                 />
               </motion.div>
             ) : (
-              // 4. 축소된 패널 (제자리에서 페이드 인/아웃 + 살짝 스케일)
               <motion.div
-                key="compact" // key 필수
+                key="compact"
                 initial={{ opacity: 0, scale: 0.95, y: -5 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -5 }}

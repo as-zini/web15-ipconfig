@@ -3,6 +3,7 @@ import TeamMemberList from './TeamMemberList';
 import AgendaTimeline from './AgendaTimeline';
 import { LuChevronRight, LuChevronLeft } from 'react-icons/lu';
 import { LuX } from 'react-icons/lu';
+import { Button } from '@/common/components/shadcn/button';
 
 interface InfoPanelProps {
   onUserHover: (e: React.MouseEvent, user: User) => void;
@@ -14,14 +15,9 @@ function InfoPanel({ onUserHover, onUserLeave, onToggle }: InfoPanelProps) {
   return (
     <aside className="relative z-40 mt-18 flex h-full w-72 shrink-0 flex-col rounded-xl border border-gray-700 bg-gray-800">
       <div className="flex items-center justify-end pt-2 pr-3">
-        <button
-          type="button"
-          onClick={onToggle}
-          className="top-3 right-3 z-10 grid h-5 w-5 cursor-pointer place-items-center rounded-full transition-colors hover:bg-white/10"
-          aria-label="패널 접기"
-        >
+        <Button variant="ghost" onClick={onToggle} className="cursor-pointer">
           <LuX size={20} className="text-gray-300" />
-        </button>
+        </Button>
       </div>
       <div className="flex items-center justify-between border-b border-gray-700 p-4">
         <h3 className="text-sm font-bold text-gray-300">AGENDA</h3>

@@ -11,9 +11,7 @@ function ToolBar() {
           label="Select"
           active
         />
-
         <div className="h-px w-8 bg-gray-700" />
-
         <ToolButton icon={<LuLayers size={20} />} label="기술 스택" />
       </div>
     </div>
