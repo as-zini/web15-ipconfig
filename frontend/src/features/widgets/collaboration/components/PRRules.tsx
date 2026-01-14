@@ -47,7 +47,6 @@ export default function PRRules() {
     },
   ];
 
-  // PR 라벨
   const labelCandidates = [
     'feature',
     'fix',
@@ -68,7 +67,6 @@ export default function PRRules() {
     );
   };
 
-  // 병합 전략
   const strategies = [
     {
       key: 'squash',
@@ -94,7 +92,6 @@ export default function PRRules() {
     <div className="max-w-[400px] space-y-6 rounded-2xl border border-gray-700 p-6 text-gray-200">
       <h2 className="flex items-center gap-2 text-xl font-semibold">PR 규칙</h2>
 
-      {/* Versioning */}
       <div>
         <p className="mb-2 text-sm text-gray-300">버전 관리 방식</p>
 
@@ -115,9 +112,9 @@ export default function PRRules() {
                 {v.title}
               </button>
 
-              {/* Tooltip */}
+              {/* Tooltip 부분 */}
               {hoverVersion === v.key && (
-                <div className="absolute bottom-full left-1/2 z-10 mb-1 w-max max-w-[160px] -translate-x-1/2 rounded border border-gray-600 bg-black/80 px-3 py-2 text-[10px] break-words text-gray-200 shadow-lg">
+                <div className="absolute bottom-full left-1/2 z-10 mb-1 w-max max-w-[160px] -translate-x-1/2 rounded border border-gray-600 bg-black/80 px-3 py-2 text-[10px] text-gray-200 shadow-lg">
                   {v.desc}
                 </div>
               )}
@@ -125,8 +122,6 @@ export default function PRRules() {
           ))}
         </div>
       </div>
-
-      {/* PR Labels */}
       <div>
         <p className="mb-2 text-sm text-gray-300">PR 라벨 선택</p>
         <div className="flex flex-wrap gap-2">
@@ -146,7 +141,6 @@ export default function PRRules() {
         </div>
       </div>
 
-      {/* Merge Strategy */}
       <div>
         <p className="mb-2 text-sm text-gray-300">병합 전략</p>
 
@@ -167,7 +161,7 @@ export default function PRRules() {
                 {s.title}
               </button>
 
-              {/* Tooltip */}
+              {/* Tooltip 부분*/}
               {hoverStrategy === s.key && (
                 <div className="absolute bottom-full left-1/2 z-10 mb-1 w-max max-w-[160px] -translate-x-1/2 rounded border border-gray-600 bg-black/80 px-3 py-2 text-[12px] text-gray-200 shadow-lg">
                   {s.desc}
