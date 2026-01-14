@@ -13,7 +13,15 @@ export interface CommunicationData {
     coreTimeEnd: string;
   };
   meeting: {
-    noMeetingDay: 'None' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri';
+    noMeetingDay:
+      | 'None'
+      | 'Mon'
+      | 'Tue'
+      | 'Wed'
+      | 'Thu'
+      | 'Fri'
+      | 'Sat'
+      | 'Sun';
     feedbackStyle: 'Soft' | 'Honest' | 'Retrospective';
   };
 }
