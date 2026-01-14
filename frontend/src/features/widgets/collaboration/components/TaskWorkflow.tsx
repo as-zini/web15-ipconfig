@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { CollaborationState } from './CollaborationWidget';
 import {
   Select,
   SelectContent,
@@ -8,12 +9,18 @@ import {
 } from '@/common/components/shadcn/select';
 
 import CounterInput from './CounterInput';
+import { platforms } from '../constants/options';
 
-export default function TaskWorkflow() {
-  const platforms = ['GitHub Projects', 'Jira', 'Linear', 'Notion'];
-  const [cycleValue, setCycleValue] = useState<number>(2);
+interface TaskWorkflowProps {
+  data: CollaborationState['workflow'];
+  onUpdate: <K extends keyof CollaborationState['workflow']>(
+    key: K,
+    value: CollaborationState['workflow'][K],
+  ) => void;
+}
+
+export default function TaskWorkflow({ data, onUpdate }: TaskWorkflowProps) {
   const [editCycleValue, setEditCycleValue] = useState<boolean>(false);
-  const [cycleUnit, setCycleUnit] = useState('week');
 
   return (
     <div className="max-w-[400px] rounded-2xl border border-gray-700 p-6 text-gray-200">
@@ -23,7 +30,10 @@ export default function TaskWorkflow() {
 
       <div className="mt-6">
         <p className="mb-2 text-sm">사용 플랫폼</p>
-        <Select>
+        <Select
+          value={data.platform}
+          onValueChange={(value) => onUpdate('platform', value)}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="사용 플랫폼 선택" />
           </SelectTrigger>
@@ -41,13 +51,16 @@ export default function TaskWorkflow() {
         <p className="flex-1 text-sm">스프린트 주기</p>
 
         <CounterInput
-          value={cycleValue}
-          setValue={setCycleValue}
+          value={data.cycleValue}
+          setValue={(value) => onUpdate('cycleValue', value as number)}
           editValue={editCycleValue}
           setEditValue={setEditCycleValue}
         />
 
-        <Select value={cycleUnit} onValueChange={setCycleUnit}>
+        <Select
+          value={data.cycleUnit}
+          onValueChange={(value) => onUpdate('cycleUnit', value)}
+        >
           <SelectTrigger className="w-16">
             <SelectValue />
           </SelectTrigger>

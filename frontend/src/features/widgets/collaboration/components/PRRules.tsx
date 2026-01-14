@@ -1,92 +1,31 @@
 import { useState } from 'react';
-import {
-  LuLayers,
-  LuCalendarDays,
-  LuListChecks,
-  LuWrench,
-  LuMerge,
-  LuGitBranch,
-  LuGitMerge,
-} from 'react-icons/lu';
 
-export default function PRRules() {
-  const [activeVersion, setActiveVersion] = useState('semantic');
+import type { CollaborationState } from './CollaborationWidget';
+import {
+  labelCandidates,
+  strategies,
+  versionTypes,
+} from '../constants/options';
+
+interface PRRulesProps {
+  data: CollaborationState['prRules'];
+  onUpdate: <K extends keyof CollaborationState['prRules']>(
+    key: K,
+    value: CollaborationState['prRules'][K],
+  ) => void;
+}
+
+export default function PRRules({ data, onUpdate }: PRRulesProps) {
   const [hoverVersion, setHoverVersion] = useState<string | null>(null);
-  const [selectedLabels, setSelectedLabels] = useState<string[]>([
-    'feature',
-    'fix',
-    'refactor',
-  ]);
-  const [activeStrategy, setActiveStrategy] = useState('squash');
   const [hoverStrategy, setHoverStrategy] = useState<string | null>(null);
 
-  const versionTypes = [
-    {
-      key: 'semantic',
-      title: '시맨틱',
-      desc: 'MAJOR.MINOR.PATCH 기반 버전 증가',
-      icon: <LuLayers size={20} />,
-    },
-    {
-      key: 'calendar',
-      title: '캘린더',
-      desc: 'YYYY.MM 또는 YYYY.MM.DD 날짜 기반',
-      icon: <LuCalendarDays size={20} />,
-    },
-    {
-      key: 'conventional',
-      title: '컨벤셔널',
-      desc: '커밋 메시지 규칙 기반 자동 릴리즈',
-      icon: <LuListChecks size={20} />,
-    },
-    {
-      key: 'custom',
-      title: '커스텀',
-      desc: '팀에서 정의한 맞춤 버저닝',
-      icon: <LuWrench size={20} />,
-    },
-  ];
-
-  const labelCandidates = [
-    'feature',
-    'fix',
-    'refactor',
-    'docs',
-    'chore',
-    'performance',
-    'test',
-    'ci',
-    'build',
-    'style',
-    'hotfix',
-  ];
-
   const toggleLabel = (label: string) => {
-    setSelectedLabels((prev) =>
-      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label],
-    );
+    const prev = data.selectedLabels;
+    const newValue = prev.includes(label)
+      ? prev.filter((l) => l !== label)
+      : [...prev, label];
+    onUpdate('selectedLabels', newValue);
   };
-
-  const strategies = [
-    {
-      key: 'squash',
-      title: 'Squash',
-      desc: '여러 커밋을 하나로 압축하여 병합',
-      icon: <LuMerge size={20} />,
-    },
-    {
-      key: 'rebase',
-      title: 'Rebase',
-      desc: '선형 히스토리 유지',
-      icon: <LuGitBranch size={20} />,
-    },
-    {
-      key: 'merge',
-      title: 'Merge',
-      desc: '병합 커밋 생성 방식',
-      icon: <LuGitMerge size={20} />,
-    },
-  ];
 
   return (
     <div className="max-w-[400px] space-y-6 rounded-2xl border border-gray-700 p-6 text-gray-200">
@@ -101,10 +40,10 @@ export default function PRRules() {
               <button
                 onMouseEnter={() => setHoverVersion(v.key)}
                 onMouseLeave={() => setHoverVersion(null)}
-                onClick={() => setActiveVersion(v.key)}
+                onClick={() => onUpdate('activeVersion', v.key)}
                 className={`flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-md border text-sm font-medium transition ${
-                  activeVersion === v.key
-                    ? 'border-green-500 bg-green-900/30 text-green-300'
+                  data.activeVersion === v.key
+                    ? 'border-primary text-primary bg-green-900/40'
                     : 'border-gray-700 text-gray-300'
                 }`}
               >
@@ -130,8 +69,8 @@ export default function PRRules() {
               key={label}
               onClick={() => toggleLabel(label)}
               className={`text-s rounded-md border px-3 py-1 ${
-                selectedLabels.includes(label)
-                  ? 'border-green-500 bg-green-700/40 text-green-300'
+                data.selectedLabels.includes(label)
+                  ? 'border-primary text-primary bg-green-900/40'
                   : 'border-gray-700 text-gray-300'
               }`}
             >
@@ -150,10 +89,10 @@ export default function PRRules() {
               <button
                 onMouseEnter={() => setHoverStrategy(s.key)}
                 onMouseLeave={() => setHoverStrategy(null)}
-                onClick={() => setActiveStrategy(s.key)}
+                onClick={() => onUpdate('activeStrategy', s.key)}
                 className={`flex h-24 w-24 flex-col items-center justify-center gap-1 rounded-md border text-xs font-medium transition ${
-                  activeStrategy === s.key
-                    ? 'border-green-500 bg-green-900/30 text-green-300'
+                  data.activeStrategy === s.key
+                    ? 'border-primary text-primary bg-green-900/30'
                     : 'border-gray-700 text-gray-300'
                 }`}
               >

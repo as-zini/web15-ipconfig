@@ -6,7 +6,7 @@ export default function CounterInput({
   isTime,
 }: {
   value: number;
-  setValue: React.Dispatch<React.SetStateAction<number>>;
+  setValue: (value: number) => void;
   editValue: boolean;
   setEditValue: (value: boolean) => void;
   isTime?: boolean;
@@ -21,7 +21,7 @@ export default function CounterInput({
     <div className="flex w-fit items-center gap-3 rounded-lg border border-gray-700 px-2 py-1">
       <button
         className="hover:bg-primary rounded bg-gray-700 px-2 py-1 text-gray-200 hover:text-black"
-        onClick={() => setValue((p: number) => Math.max(1, p - 1))}
+        onClick={() => setValue(Math.max(1, value - 1))}
       >
         -
       </button>
@@ -54,7 +54,7 @@ export default function CounterInput({
 
       <button
         className="hover:bg-primary rounded bg-gray-700 px-2 py-1 text-gray-200 hover:text-black"
-        onClick={() => setValue((p: number) => p + 1)}
+        onClick={() => setValue(value + 1)}
       >
         +
       </button>
