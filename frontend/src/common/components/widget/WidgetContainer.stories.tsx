@@ -11,21 +11,25 @@ const meta = {
   },
   args: {
     id: 'widget-default',
-    type: 'tech',
-    position: { x: 0, y: 0 },
-    content: '샘플 컨텐츠',
+    x: 0,
+    y: 0,
     width: 300,
     height: 200,
+    zIndex: 1,
   },
   tags: ['autodocs'],
   argTypes: {
-    position: {
-      control: 'object',
-      description: '위젯 위치 (x, y 좌표)',
-    },
     id: {
       control: 'text',
       description: '위젯 ID',
+    },
+    x: {
+      control: 'number',
+      description: 'X 좌표',
+    },
+    y: {
+      control: 'number',
+      description: 'Y 좌표',
     },
     width: {
       control: 'number',
@@ -35,6 +39,10 @@ const meta = {
       control: 'number',
       description: '위젯 높이',
     },
+    zIndex: {
+      control: 'number',
+      description: 'Z-Index',
+    },
   },
 } satisfies Meta<typeof WidgetContainer>;
 
@@ -43,13 +51,19 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    position: { x: 100, y: 100 },
+    x: 100,
+    y: 100,
     id: 'widget-1',
     width: 300,
     height: 200,
+    zIndex: 1,
     children: (
       <>
-        <WidgetHeader title="샘플 위젯" icon={<LuFileText size={18} />} />
+        <WidgetHeader
+          title="샘플 위젯"
+          icon={<LuFileText size={18} />}
+          onClickDelete={() => console.log('Delete clicked')}
+        />
         <div className="text-white">
           <p>위젯 컨텐츠 영역</p>
         </div>
@@ -60,13 +74,19 @@ export const Default: Story = {
 
 export const SmallWidget: Story = {
   args: {
-    position: { x: 50, y: 50 },
+    x: 50,
+    y: 50,
     id: 'widget-2',
     width: 200,
     height: 150,
+    zIndex: 1,
     children: (
       <>
-        <WidgetHeader title="작은 위젯" icon={<LuFileText size={18} />} />
+        <WidgetHeader
+          title="작은 위젯"
+          icon={<LuFileText size={18} />}
+          onClickDelete={() => console.log('Delete clicked')}
+        />
         <div className="text-sm text-white">
           <p>작은 크기의 위젯</p>
         </div>
@@ -77,13 +97,19 @@ export const SmallWidget: Story = {
 
 export const LargeWidget: Story = {
   args: {
-    position: { x: 150, y: 150 },
+    x: 150,
+    y: 150,
     id: 'widget-3',
     width: 500,
     height: 400,
+    zIndex: 1,
     children: (
       <>
-        <WidgetHeader title="큰 위젯" icon={<LuFileText size={18} />} />
+        <WidgetHeader
+          title="큰 위젯"
+          icon={<LuFileText size={18} />}
+          onClickDelete={() => console.log('Delete clicked')}
+        />
         <div className="text-white">
           <p>큰 크기의 위젯입니다.</p>
           <p className="mt-2">더 많은 컨텐츠를 담을 수 있습니다.</p>
