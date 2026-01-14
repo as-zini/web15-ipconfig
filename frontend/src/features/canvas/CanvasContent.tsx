@@ -1,6 +1,7 @@
 import CursorWithName from '@/common/components/CursorWithName';
 import type { Cursor } from '@/common/types/cursor';
 import TechStackWidget from '@/features/widgets/techStack/components/techStackWidget/TechStackWidget';
+import { GitConventionWidget } from '@/features/widgets/gitConvention/components/gitConventionWidget';
 import { useState } from 'react';
 import type { Camera } from '@/common/types/camera';
 import type { WidgetContent, WidgetData } from '@/common/types/widgetData';
