@@ -12,7 +12,7 @@ interface InfoPanelProps {
 
 function InfoPanel({ onUserHover, onUserLeave, onToggle }: InfoPanelProps) {
   return (
-    <aside className="relative z-40 flex w-72 shrink-0 flex-col border-l border-gray-700 bg-gray-800">
+    <aside className="relative z-40 mt-18 flex h-full w-72 shrink-0 flex-col rounded-xl border-l border-gray-700 bg-gray-800">
       <div className="flex items-center justify-end pt-2 pr-3">
         <button
           type="button"

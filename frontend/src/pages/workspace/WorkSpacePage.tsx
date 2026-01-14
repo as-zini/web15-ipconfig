@@ -122,61 +122,72 @@ function WorkSpacePage() {
   }, [workspaceId, fetchMarkdown]);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-gray-900 font-sans text-gray-100">
-      {/* Hide Scrollbar CSS */}
-      <style>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-
-      <WorkspaceHeader onExportClick={handleExportClick} />
-
-      {/* Main Workspace */}
-      <div className="relative flex flex-1 overflow-hidden">
-        <ToolBar />
-        <main className="relative h-full w-full flex-1">
-          <CanvasContent
-            camera={camera}
-            containerRef={containerRef}
-            handlePointerDown={handlePointerDown}
-            handlePointerMove={handleCanvasPointerMove}
-            handlePointerUp={handlePointerUp}
-            isPanning={isPanning}
-            remoteCursor={remoteCursors}
-          />
-        </main>
-        {isSidebarExpanded ? (
-          <RightSidebar
-            onUserHover={handleUserHover}
-            onUserLeave={handleUserLeave}
-            onToggle={() => setSidebarExpanded((p) => !p)}
-          />
-        ) : (
-          <CompactPanel
-            members={INITIAL_USERS}
-            currentAgenda={''}
-            currentTime=""
-            isExpanded={false}
-            onToggle={() => setSidebarExpanded((p) => !p)}
-          />
-        )}
-        {hoveredUser && (
-          <UserHoverCard user={hoveredUser} position={hoverPosition} />
-        )}
-
-        <ZoomControls handleZoomButton={handleZoomButton} camera={camera} />
+    <div className="relative h-screen overflow-hidden bg-gray-900 text-gray-100 [--header-h:4rem]">
+      {/* 캔버스: 화면 전체 */}
+      <div className="absolute inset-0">
+        <div className="relative flex h-full overflow-hidden">
+          <ToolBar />
+          <main className="relative h-full w-full flex-1">
+            <CanvasContent
+              camera={camera}
+              containerRef={containerRef}
+              handlePointerDown={handlePointerDown}
+              handlePointerMove={handleCanvasPointerMove}
+              handlePointerUp={handlePointerUp}
+              isPanning={isPanning}
+              remoteCursor={remoteCursors}
+            />
+          </main>
+        </div>
       </div>
 
+      {/* 헤더: 최상단 오버레이 */}
+      <div className="pointer-events-none absolute top-0 left-0 z-50 w-full">
+        <div className="pointer-events-auto">
+          <WorkspaceHeader onExportClick={handleExportClick} />
+        </div>
+      </div>
+
+      {/* HUD: 헤더 아래 영역(여기서부터 UI 띄우기) */}
+      <div className="pointer-events-none absolute inset-0 z-40 pt-[var(--header-h)]">
+        <div className="pointer-events-auto">
+          {isSidebarExpanded ? (
+            <div className="pointer-events-auto absolute top-0 right-0 bottom-0">
+              <RightSidebar
+                onUserHover={handleUserHover}
+                onUserLeave={handleUserLeave}
+                onToggle={() => setSidebarExpanded((p) => !p)}
+              />
+            </div>
+          ) : (
+            <div className="absolute top-18 right-6">
+              <CompactPanel
+                members={INITIAL_USERS}
+                currentAgenda=""
+                currentTime=""
+                isExpanded={false}
+                onToggle={() => setSidebarExpanded((p) => !p)}
+              />
+            </div>
+          )}
+
+          <ZoomControls handleZoomButton={handleZoomButton} camera={camera} />
+        </div>
+      </div>
+
+      {hoveredUser && (
+        <UserHoverCard user={hoveredUser} position={hoverPosition} />
+      )}
       <ExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         markdown={exportMarkdown}
       />
+      <div className="pointer-events-none absolute top-0 left-0 z-50 w-full">
+        <div className="pointer-events-auto">
+          <WorkspaceHeader onExportClick={handleExportClick} />
+        </div>
+      </div>
     </div>
   );
 }

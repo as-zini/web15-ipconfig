@@ -40,7 +40,6 @@ export default function CompactPanel({
   return (
     <aside
       className={[
-        'fixed top-6 right-6 z-50',
         'border border-gray-700 bg-gray-800/90 shadow-2xl backdrop-blur-xl',
         'rounded-xl',
         'relative',

@@ -34,7 +34,7 @@ function CanvasContent({
     <div
       ref={containerRef}
       className={cn(
-        `relative h-full w-full touch-none overflow-hidden bg-gray-900 select-none`,
+        `relative mt-4 h-full w-full touch-none overflow-hidden bg-gray-900 select-none`,
         isPanning && 'cursor-grabbing',
       )}
       onPointerMove={handlePointerMove}
