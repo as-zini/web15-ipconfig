@@ -3,6 +3,7 @@ import { TechStackWidget } from '../widgets/techStack/components/techStackWidget
 import { useState } from 'react';
 import type { Camera } from '@/common/types/camera';
 import CursorWithName from '@/common/components/CursorWithName';
+import { cn } from '@/common/lib/utils';
 
 interface CanvasContainerProps {
   camera: Camera;
@@ -32,17 +33,18 @@ function CanvasContent({
     // 뷰포트 레이어
     <div
       ref={containerRef}
-      className={`relative h-full w-full touch-none overflow-hidden bg-gray-900 select-none`}
+      className={cn(
+        `relative h-full w-full touch-none overflow-hidden bg-gray-900 select-none`,
+        isPanning && 'cursor-grabbing',
+      )}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
-      style={{ cursor: isPanning ? 'grabbing' : 'default' }}
     >
       {/* 캔버스 이동 이벤트 감지용 */}
       <div
-        className={`absolute inset-0 h-full w-full touch-none ${isPanning ? 'cursor-grabbing' : 'cursor-default'}`}
         onPointerDown={handlePointerDown}
-        style={{}}
+        className={`absolute inset-0 h-full w-full touch-none ${isPanning ? 'cursor-grabbing' : 'cursor-default'}`}
       />
       {/* 캔버스 좌표계의 원점 컨테이너 */}
       <div
