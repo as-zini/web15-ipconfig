@@ -35,8 +35,6 @@ export const Default: Story = {
   args: {
     title: '위젯 제목',
     icon: <LuFileText size={18} />,
-    onClickDelete: () => {
-      console.log('Delete clicked');
-    },
+    onClickDelete: () => {},
   },
 };

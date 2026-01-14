@@ -62,7 +62,7 @@ export const Default: Story = {
         <WidgetHeader
           title="샘플 위젯"
           icon={<LuFileText size={18} />}
-          onClickDelete={() => console.log('Delete clicked')}
+          onClickDelete={() => {}}
         />
         <div className="text-white">
           <p>위젯 컨텐츠 영역</p>
@@ -85,7 +85,7 @@ export const SmallWidget: Story = {
         <WidgetHeader
           title="작은 위젯"
           icon={<LuFileText size={18} />}
-          onClickDelete={() => console.log('Delete clicked')}
+          onClickDelete={() => {}}
         />
         <div className="text-sm text-white">
           <p>작은 크기의 위젯</p>
@@ -108,7 +108,7 @@ export const LargeWidget: Story = {
         <WidgetHeader
           title="큰 위젯"
           icon={<LuFileText size={18} />}
-          onClickDelete={() => console.log('Delete clicked')}
+          onClickDelete={() => {}}
         />
         <div className="text-white">
           <p>큰 크기의 위젯입니다.</p>
