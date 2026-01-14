@@ -10,7 +10,7 @@ import { StrategySelector } from './StrategySelector';
 import { BranchRules } from './BranchRules';
 import { CommitStyle } from './CommitStyle';
 
-function GitConventionWidget({ id, position, width, height }: WidgetData) {
+function GitConventionWidget({ x, y, width, height }: WidgetData) {
   // TODO: 추후 Socket 연동 시 제거 및 대체
   const [localData, setLocalData] = useState<GitConventionData>(
     GIT_CONVENTION_PRESETS.GITHUB_FLOW,
@@ -23,16 +23,17 @@ function GitConventionWidget({ id, position, width, height }: WidgetData) {
 
   return (
     <WidgetContainer
-      id={id}
-      position={position}
-      type="git-convention"
-      content="Git Convention"
-      width={width}
-      height={height}
+      id="git-convention-widget"
+      x={100}
+      y={100}
+      width={300}
+      height={200}
+      zIndex={1}
     >
       <WidgetHeader
         title="Git Convention"
         icon={<LuGitBranch className="text-primary" size={18} />}
+        onClickDelete={() => {}}
       />
       <section className="relative flex h-full flex-col gap-4 p-1">
         <StrategySelector
