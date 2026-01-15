@@ -18,6 +18,7 @@ export interface GitConventionData {
 }
 
 export interface GitConventionWidgetProps {
+  widgetId: string;
   data: GitConventionData;
   onDataChange: (data: GitConventionData) => void;
 }

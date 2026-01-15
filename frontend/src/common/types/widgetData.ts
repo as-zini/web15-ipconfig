@@ -5,7 +5,8 @@ export type WidgetType =
   | 'TECH_STACK'
   | 'POST_IT'
   | 'GROUND_RULE'
-  | 'GIT_CONVENTION';
+  | 'GIT_CONVENTION'
+  | 'GROUNDRULE_COLLABORATION';
 
 export type WidgetContent =
   | TechStackContentDto
@@ -38,9 +39,9 @@ export interface GitConventionContentDto {
 export interface WidgetData {
   x: number;
   y: number;
-  width: number;
-  height: number;
-  zIndex: number;
+  width?: number;
+  height?: number;
+  zIndex?: number;
   content: WidgetContent;
 }
 

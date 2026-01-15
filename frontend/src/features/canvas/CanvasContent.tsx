@@ -1,4 +1,3 @@
-import CursorWithName from '@/common/components/CursorWithName';
 import type { Cursor } from '@/common/types/cursor';
 import TechStackWidget from '@/features/widgets/techStack/components/techStackWidget/TechStackWidget';
 import { GitConventionWidget } from '@/features/widgets/gitConvention/components/gitConventionWidget';
@@ -9,6 +8,9 @@ import type {
   WidgetData,
   MoveWidgetData,
 } from '@/common/types/widgetData';
+import CollaborationWidget from '../widgets/collaboration/components/CollaborationWidget';
+import CursorWithName from '@/common/components/CursorWithName';
+import { cn } from '@/common/lib/utils';
 
 interface CanvasContainerProps {
   camera: Camera;
@@ -37,39 +39,30 @@ function CanvasContent({
   emitDeleteWidget,
   emitMoveWidget,
 }: CanvasContainerProps) {
-  const [techStackPosition, setTechStackPosition] = useState({
-    x: 500,
-    y: 500,
-  });
-
   return (
+    // 뷰포트 레이어
     <div
       ref={containerRef}
-      className={`h-full w-full cursor-${isPanning ? 'grabbing' : 'default'}`}
-      onPointerDown={handlePointerDown}
+      className={cn(
+        `relative h-full w-full touch-none overflow-hidden bg-gray-900 select-none`,
+        isPanning && 'cursor-grabbing',
+      )}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
-      {/* 배경 패턴 */}
+      {/* 캔버스 이동 이벤트 감지용 */}
       <div
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        style={{
-          backgroundImage:
-            'radial-gradient(rgb(51,65,85) 1px, transparent 1px)',
-          backgroundSize: `${20 * camera.scale}px ${20 * camera.scale}px`,
-          backgroundPosition: `${camera.x % (20 * camera.scale)}px ${camera.y % (20 * camera.scale)}px`,
-        }}
+        onPointerDown={handlePointerDown}
+        className={`absolute inset-0 h-full w-full touch-none ${isPanning ? 'cursor-grabbing' : 'cursor-default'}`}
       />
-      {/* World Container: 실제 변환(Transform)이 일어나는 레이어 */}
+      {/* 캔버스 좌표계의 원점 컨테이너 */}
       <div
         style={{
           transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`,
           transformOrigin: '0 0',
-          width: '100%',
-          height: '100%',
         }}
-        className="relative"
+        className="pointer-events-none absolute top-0 left-0 h-0 w-0 overflow-visible"
       >
         {/* 위젯 렌더링 */}
         {Object.entries(widgets).map(([widgetId, widget]) => {
@@ -100,14 +93,24 @@ function CanvasContent({
               return null;
           }
         })}
+        <CollaborationWidget
+          key={'GROUNDRULE_COLLABORATION'}
+          widgetId={'GROUNDRULE_COLLABORATION'}
+          data={{
+            x: 300,
+            y: 400,
+            width: 850,
+            height: 600,
+            zIndex: 1,
+          }}
+        />
         {/* 커서 렌더링 */}
         {Object.values(remoteCursor).map((cursor) => (
           <div
             key={cursor.userId}
             className="pointer-events-none absolute z-100"
             style={{
-              left: cursor.x,
-              top: cursor.y,
+              transform: `translate(${cursor.x}px, ${cursor.y}px)`,
             }}
           >
             <CursorWithName
