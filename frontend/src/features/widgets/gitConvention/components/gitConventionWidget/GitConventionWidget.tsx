@@ -44,7 +44,7 @@ function GitConventionWidget({
     <WidgetShell
       widgetId={widgetId}
       data={data}
-      title="Git Convention"
+      title="Git 컨벤션"
       icon={<LuGitBranch className="text-primary" size={18} />}
       emitDeleteWidget={emitDeleteWidget}
       emitMoveWidget={emitMoveWidget}
