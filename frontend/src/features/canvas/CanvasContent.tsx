@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { Camera } from '@/common/types/camera';
 import CursorWithName from '@/common/components/CursorWithName';
 import { cn } from '@/common/lib/utils';
+import type { WidgetContent, WidgetData } from '@/common/types/widgetData';
 
 interface CanvasContainerProps {
   camera: Camera;
@@ -14,6 +15,9 @@ interface CanvasContainerProps {
   handlePointerUp: () => void;
   isPanning: boolean;
   remoteCursor: Record<string, Cursor>;
+  widgets: Record<string, WidgetData>;
+  emitUpdateWidget: (widgetId: string, data: WidgetContent) => void;
+  emitDeleteWidget: (widgetId: string) => void;
 }
 
 function CanvasContent({
@@ -24,6 +28,9 @@ function CanvasContent({
   handlePointerUp,
   isPanning,
   remoteCursor,
+  widgets,
+  emitUpdateWidget,
+  emitDeleteWidget,
 }: CanvasContainerProps) {
   const [techStackPosition, setTechStackPosition] = useState({
     x: 500,
@@ -56,21 +63,16 @@ function CanvasContent({
         className="pointer-events-none absolute top-0 left-0 h-0 w-0 overflow-visible"
       >
         {/* 위젯 렌더링 */}
-        <TechStackWidget
-          id="tech-stack"
-          position={techStackPosition}
-          width={200}
-          type="tech"
-          content="Tech Stack"
-        />
-        <GitConventionWidget
-          id="git-convention-test"
-          // TODO: 임시 위치
-          position={{ x: 1200, y: 500 }}
-          width={420}
-          type="git-convention"
-          content="Git Convention"
-        />
+        {Object.entries(widgets).map(([widgetId, widget]) => (
+          // TODO: 나중에 위젯 타입에 따라 분기처리 필요
+          <TechStackWidget
+            key={widgetId}
+            widgetId={widgetId}
+            data={widget}
+            emitDeleteWidget={emitDeleteWidget}
+            emitUpdateWidget={emitUpdateWidget}
+          />
+        ))}
         {/* 커서 렌더링 */}
         {Object.values(remoteCursor).map((cursor) => (
           <div

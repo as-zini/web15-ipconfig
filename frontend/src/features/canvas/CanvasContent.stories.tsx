@@ -20,6 +20,9 @@ const meta = {
     handlePointerUp: () => {},
     isPanning: false,
     remoteCursor: {},
+    widgets: {},
+    emitUpdateWidget: () => {},
+    emitDeleteWidget: () => {},
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof CanvasContent>;
@@ -70,6 +73,9 @@ export const Default: Story = {
           handlePointerUp={() => {}}
           isPanning={isPanning}
           remoteCursor={{}}
+          widgets={{}}
+          emitUpdateWidget={() => {}}
+          emitDeleteWidget={() => {}}
         />
       </div>
     );
@@ -92,6 +98,9 @@ export const WithCursors: Story = {
           handlePointerUp={() => {}}
           isPanning={isPanning}
           remoteCursor={mockCursors}
+          widgets={{}}
+          emitUpdateWidget={() => {}}
+          emitDeleteWidget={() => {}}
         />
       </div>
     );
@@ -114,6 +123,9 @@ export const Zoomed: Story = {
           handlePointerUp={() => {}}
           isPanning={isPanning}
           remoteCursor={mockCursors}
+          widgets={{}}
+          emitUpdateWidget={() => {}}
+          emitDeleteWidget={() => {}}
         />
       </div>
     );
@@ -136,6 +148,9 @@ export const Panning: Story = {
           handlePointerUp={() => {}}
           isPanning={isPanning}
           remoteCursor={mockCursors}
+          widgets={{}}
+          emitUpdateWidget={() => {}}
+          emitDeleteWidget={() => {}}
         />
       </div>
     );
