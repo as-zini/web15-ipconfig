@@ -7,6 +7,7 @@ import { UpdateWidgetLayoutDto } from './dto/update-widget-layout.dto';
 @Injectable()
 export class WidgetMemoryService implements IWidgetService {
   private readonly workspaces = new Map<string, Map<string, CreateWidgetDto>>();
+  private readonly locks = new Map<string, string>();
 
   private getWidgetsMap(workspaceId: string): Map<string, CreateWidgetDto> {
     if (!this.workspaces.has(workspaceId)) {
@@ -41,11 +42,10 @@ export class WidgetMemoryService implements IWidgetService {
     return Promise.resolve(widget);
   }
 
-  // 콘텐츠 내용 수정 (Deep Merge)
   async update(
     workspaceId: string,
     updateWidgetDto: UpdateWidgetDto,
-  ): Promise<CreateWidgetDto> {
+  ): Promise<UpdateWidgetDto> {
     const widgets = this.getWidgetsMap(workspaceId);
     const existingWidget = widgets.get(updateWidgetDto.widgetId);
 
@@ -67,14 +67,21 @@ export class WidgetMemoryService implements IWidgetService {
     } as CreateWidgetDto;
 
     widgets.set(updateWidgetDto.widgetId, updatedWidget);
-    return Promise.resolve(updatedWidget);
+
+    const updatedWidgetDto = {
+      ...updateWidgetDto,
+      data: {
+        ...updateWidgetDto.data,
+        content: updatedWidget.data.content,
+      },
+    } as UpdateWidgetDto;
+    return Promise.resolve(updatedWidgetDto);
   }
 
-  // 레이아웃 수정 (Shallow Merge for Layout Props)
   async updateLayout(
     workspaceId: string,
     layoutDto: UpdateWidgetLayoutDto,
-  ): Promise<CreateWidgetDto> {
+  ): Promise<UpdateWidgetLayoutDto> {
     const widgets = this.getWidgetsMap(workspaceId);
     const existingWidget = widgets.get(layoutDto.widgetId);
 
@@ -84,19 +91,23 @@ export class WidgetMemoryService implements IWidgetService {
       );
     }
 
-    // 변경된 레이아웃 속성만 추출
-    const { widgetId, ...layoutChanges } = layoutDto;
+    const { widgetId, data } = layoutDto;
 
     const updatedWidget = {
       ...existingWidget,
       data: {
         ...existingWidget.data,
-        ...layoutChanges, // x, y, width, height, zIndex 덮어쓰기
+        ...data,
       },
     } as CreateWidgetDto;
 
     widgets.set(widgetId, updatedWidget);
-    return Promise.resolve(updatedWidget);
+
+    const updatedWidgetLayoutDto = {
+      widgetId,
+      data,
+    } as UpdateWidgetLayoutDto;
+    return Promise.resolve(updatedWidgetLayoutDto);
   }
 
   async remove(
@@ -108,6 +119,60 @@ export class WidgetMemoryService implements IWidgetService {
       throw new NotFoundException(`Widget with ID ${widgetId} not found`);
     }
     widgets.delete(widgetId);
+    this.locks.delete(widgetId);
     return Promise.resolve({ widgetId });
+  }
+
+  async lock(
+    workspaceId: string,
+    widgetId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const widgets = this.getWidgetsMap(workspaceId);
+    if (!widgets.has(widgetId)) {
+      throw new NotFoundException(`Widget with ID ${widgetId} not found`);
+    }
+
+    const currentOwner = this.locks.get(widgetId);
+    if (currentOwner && currentOwner !== userId) {
+      return Promise.resolve(false);
+    }
+
+    this.locks.set(widgetId, userId);
+    return Promise.resolve(true);
+  }
+
+  async unlock(
+    workspaceId: string,
+    widgetId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const currentOwner = this.locks.get(widgetId);
+    if (currentOwner === userId) {
+      this.locks.delete(widgetId);
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(false);
+  }
+
+  async getLockOwner(
+    workspaceId: string,
+    widgetId: string,
+  ): Promise<string | null> {
+    return Promise.resolve(this.locks.get(widgetId) || null);
+  }
+
+  async unlockAllByUser(
+    workspaceId: string,
+    userId: string,
+  ): Promise<string[]> {
+    const unlockedWidgetIds: string[] = [];
+    for (const [widgetId, ownerId] of this.locks.entries()) {
+      if (ownerId === userId) {
+        this.locks.delete(widgetId);
+        unlockedWidgetIds.push(widgetId);
+      }
+    }
+    return Promise.resolve(unlockedWidgetIds);
   }
 }

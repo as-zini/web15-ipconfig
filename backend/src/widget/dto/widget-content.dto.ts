@@ -5,12 +5,16 @@ import {
   IsNumber,
   IsString,
   IsOptional,
+  ValidateNested,
+  IsObject,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export enum WidgetType {
   TECH_STACK = 'TECH_STACK',
   POST_IT = 'POST_IT',
   GROUND_RULE = 'GROUND_RULE',
+  GIT_CONVENTION = 'GIT_CONVENTION',
 }
 
 /**
@@ -22,6 +26,20 @@ export abstract class BaseContentDto {
   readonly widgetType: WidgetType;
 }
 
+export class TechStackItem {
+  @ApiProperty({ description: '기술 스택 ID', example: 'react' })
+  @IsString()
+  readonly id: string;
+
+  @ApiProperty({ description: '카테고리', example: 'Frontend' })
+  @IsString()
+  readonly category: string;
+
+  @ApiProperty({ description: '기술 스택 이름', example: 'React' })
+  @IsString()
+  readonly name: string;
+}
+
 export class TechStackContentDto implements BaseContentDto {
   @ApiProperty({ example: WidgetType.TECH_STACK })
   @IsEnum(WidgetType)
@@ -29,12 +47,16 @@ export class TechStackContentDto implements BaseContentDto {
 
   @ApiProperty({
     description: '선택된 기술 스택 리스트',
-    example: ['React', 'NestJS', 'TypeScript'],
-    type: [String],
+    example: [
+      { id: 'react', category: 'Frontend', name: 'React' },
+      { id: 'nestjs', category: 'Backend', name: 'NestJS' },
+    ],
+    type: [TechStackItem],
   })
   @IsArray()
-  @IsString({ each: true })
-  readonly selectedItems: string[];
+  @ValidateNested({ each: true })
+  @Type(() => TechStackItem)
+  readonly selectedItems: TechStackItem[];
 }
 
 export class PostItContentDto implements BaseContentDto {
@@ -72,6 +94,46 @@ export class GroundRuleContentDto implements BaseContentDto {
   readonly rules?: string[];
 }
 
+export type GitStrategy = 'GITHUB_FLOW' | 'GIT_FLOW' | 'TRUNK_BASED';
+
+export interface BranchRuleState {
+  mainBranch: string;
+  developBranch?: string;
+  prefixes: string[];
+}
+
+export interface CommitConventionState {
+  useGitmoji: boolean;
+  commitTypes: string[];
+}
+
+export interface GitConventionData {
+  strategy: GitStrategy;
+  branchRules: BranchRuleState;
+  commitConvention: CommitConventionState;
+}
+
+export class GitConventionContentDto implements BaseContentDto {
+  @ApiProperty({ example: WidgetType.GIT_CONVENTION })
+  @IsEnum(WidgetType)
+  readonly widgetType = WidgetType.GIT_CONVENTION;
+
+  @ApiProperty({
+    example: {
+      strategy: 'GITHUB_FLOW',
+      branchRules: {
+        mainBranch: 'main',
+        developBranch: 'develop',
+        prefixes: [],
+      },
+      commitConvention: { useGitmoji: false, commitTypes: [] },
+    },
+  })
+  @IsObject()
+  @ValidateNested()
+  readonly data: GitConventionData;
+}
+
 // Update용 Partial DTO Export
 export class PartialTechStackContentDto extends PartialType(
   TechStackContentDto,
@@ -79,4 +141,7 @@ export class PartialTechStackContentDto extends PartialType(
 export class PartialPostItContentDto extends PartialType(PostItContentDto) {}
 export class PartialGroundRuleContentDto extends PartialType(
   GroundRuleContentDto,
+) {}
+export class PartialGitConventionContentDto extends PartialType(
+  GitConventionContentDto,
 ) {}
