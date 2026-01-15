@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import WidgetContainer from '@/common/components/widget/WidgetContainer';
 import CodeReviewPolicy from './CodeReviewPolicy';
 import PRRules from './PRRules';
