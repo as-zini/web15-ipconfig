@@ -1,15 +1,27 @@
-import type { WidgetData } from '@/common/types/widgetData';
-
 import { useState } from 'react';
 import type { ComponentProps } from 'react';
+import type { WidgetContent } from '@/common/types/widgetData';
+
+interface WidgetContainerProps extends Omit<ComponentProps<'div'>, 'content'> {
+  id: string;
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+  zIndex?: number;
+  content?: WidgetContent;
+}
 
 function WidgetContainer({
   children,
-  position,
   id,
+  x,
+  y,
   width,
   height,
-}: ComponentProps<'div'> & WidgetData) {
+  zIndex,
+  content,
+}: WidgetContainerProps) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
@@ -30,12 +42,13 @@ function WidgetContainer({
     <div
       className="animate-pop-in pointer-events-auto absolute rounded-xl shadow-2xl"
       style={{
-        left: position.x,
-        top: position.y,
+        left: x,
+        top: y,
         minWidth: width ?? 'auto',
         minHeight: height ?? 'auto',
+        zIndex: zIndex ?? 1,
       }}
-      onMouseDown={(e) => handleMouseDown(e, id, position.x, position.y)}
+      onMouseDown={(e) => handleMouseDown(e, id, x, y)}
     >
       <div className="cursor-auto rounded-xl border border-gray-700 bg-gray-800 p-5">
         {children}
