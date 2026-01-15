@@ -6,21 +6,15 @@ import type {
 } from '@/common/types/widgetData';
 import WidgetShell from '@/common/components/widget/WidgetShell';
 import { LuLayers } from 'react-icons/lu';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/common/components/shadcn/select';
-import { Button } from '@/common/components/shadcn/button';
-import { SUBJECT_GROUPS } from '@/common/mocks/techStacks';
 import { TechStackModal } from '@/features/widgets/techStack/components/modal';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
 import { useTechStack } from '@/features/widgets/techStack/hooks/useTechStack';
+import type { TechStack } from '@/features/widgets/techStack/types/techStack';
+import { useState } from 'react';
 import SelectedTechStackBox from './SelectedTechStackBox';
+import SelectInput from '@/common/components/SelectInput';
+import SubjectGuideline from './SubjectGuideline';
+import { useSubject } from '@/features/widgets/techStack/hooks/techStackWidget/useSubject';
 
 interface TechStackWidgetProps {
   widgetId: string;
@@ -45,6 +39,7 @@ function TechStackWidget({
       emitUpdateWidget(widgetId, nextData);
     },
   });
+  const { selectedSubject, setSelectedSubject, parsedSubject } = useSubject();
 
   return (
     <DndContext
@@ -60,38 +55,27 @@ function TechStackWidget({
         emitMoveWidget={emitMoveWidget}
       >
         <section className="flex flex-col gap-4">
-          <Select>
-            <div className="flex items-center gap-2 font-bold">
-              <div className="shrink-0">주제 :</div>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="논의할 주제를 선택해주세요." />
-              </SelectTrigger>
-            </div>
+          <div className="flex items-center gap-2 font-bold">
+            <div className="shrink-0">주제 :</div>
+            <SelectInput
+              selectedValue={selectedSubject}
+              setSelectedValue={setSelectedSubject}
+            />
+          </div>
 
-            <SelectContent>
-              {SUBJECT_GROUPS.map((group) => (
-                <SelectGroup key={group.category}>
-                  <SelectLabel>{group.category}</SelectLabel>
-                  {group.subjects.map((subject) => (
-                    <SelectItem key={subject.value} value={subject.value}>
-                      {subject.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
-            </SelectContent>
-          </Select>
+          {parsedSubject && (
+            <SubjectGuideline
+              key={`${parsedSubject.category}-${parsedSubject.option}`}
+              category={parsedSubject.category}
+              option={parsedSubject.option}
+            />
+          )}
 
           <SelectedTechStackBox
             selectedTechStacks={selectedTechStacks}
             setSelectedTechStacks={actions.setSelectedTechStacks}
             setIsTechStackModalOpen={actions.openModal}
           />
-
-          <footer className="flex items-center justify-end gap-2 font-bold">
-            <Button variant="secondary">투표</Button>
-            <Button>확정</Button>
-          </footer>
         </section>
         {isModalOpen && (
           <TechStackModal

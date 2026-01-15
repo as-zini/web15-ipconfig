@@ -97,7 +97,7 @@ function WidgetContainer({
 
   return (
     <div
-      className="animate-pop-in absolute rounded-xl shadow-2xl"
+      className="animate-pop-in pointer-events-auto absolute rounded-xl shadow-2xl"
       style={{
         left: displayPosition.x,
         top: displayPosition.y,

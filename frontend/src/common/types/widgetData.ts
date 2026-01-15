@@ -1,11 +1,13 @@
 import type { GitConventionData } from '@/features/widgets/gitConvention/types/gitConvention';
-import type { TechStackItem } from '@/features/widgets/techStack/types/techStack';
+import type { TechStack } from '@/features/widgets/techStack/types/techStack';
 
 export type WidgetType =
   | 'TECH_STACK'
   | 'POST_IT'
   | 'GROUND_RULE'
-  | 'GIT_CONVENTION';
+  | 'GIT_CONVENTION'
+  | 'GROUNDRULE_COLLABORATION'
+  | 'COMMUNICATION';
 
 export type WidgetContent =
   | TechStackContentDto
@@ -15,7 +17,7 @@ export type WidgetContent =
 
 export interface TechStackContentDto {
   widgetType: WidgetType;
-  selectedItems: TechStackItem[];
+  selectedItems: TechStack[];
 }
 
 export interface PostItContentDto {
@@ -38,9 +40,9 @@ export interface GitConventionContentDto {
 export interface WidgetData {
   x: number;
   y: number;
-  width: number;
-  height: number;
-  zIndex: number;
+  width?: number;
+  height?: number;
+  zIndex?: number;
   content: WidgetContent;
 }
 

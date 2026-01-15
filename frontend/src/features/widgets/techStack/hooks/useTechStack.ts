@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
-import type { TechStackItem } from '../types/techStack';
+import type { TechStack } from '../types/techStack';
 import type { TechStackContentDto } from '@/common/types/widgetData';
 
 interface UseTechStackProps {
@@ -13,10 +13,8 @@ export function useTechStack({ data, onDataChange }: UseTechStackProps) {
 
   const selectedTechStacks = data.selectedItems || [];
 
-  const setSelectedTechStacks = (
-    value: React.SetStateAction<TechStackItem[]>,
-  ) => {
-    let newItems: TechStackItem[];
+  const setSelectedTechStacks = (value: React.SetStateAction<TechStack[]>) => {
+    let newItems: TechStack[];
     if (typeof value === 'function') {
       newItems = value(selectedTechStacks);
     } else {
@@ -44,8 +42,7 @@ export function useTechStack({ data, onDataChange }: UseTechStackProps) {
 
     // 드롭 영역 위에 드롭되었는지 확인
     if (over && over.id === 'techStackWidget') {
-      const { id, name, category } = active.data.current
-        .content as TechStackItem;
+      const { id, name, category } = active.data.current.content as TechStack;
       if (!selectedTechStacks.some((tech) => tech.id === id)) {
         const newSelectedTechStacks = [
           ...selectedTechStacks,

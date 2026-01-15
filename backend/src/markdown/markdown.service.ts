@@ -24,7 +24,7 @@ export class MarkdownService {
     }
 
     const lines: string[] = [];
-    lines.push('### 1.1. 깃 컨벤션');
+    lines.push('### 깃 컨벤션');
     lines.push('| 전략 | 설명 |');
     lines.push('| :--- | :--- |');
 
@@ -63,7 +63,7 @@ export class MarkdownService {
     }
 
     const lines: string[] = [];
-    lines.push('### 1.2. 깃 브랜치 규칙');
+    lines.push('### 깃 브랜치 규칙');
     lines.push('| 메인 브랜치 | 개발 브랜치 | 브랜치 접두사 |');
     lines.push('| :--- | :--- | :--- |');
 
@@ -90,20 +90,17 @@ export class MarkdownService {
     }
 
     const lines: string[] = [];
-    lines.push('### 1.3. 깃 커밋 규칙');
-    lines.push('| Gitmoji 사용 | 커밋 타입 |');
-    lines.push('| :--- | :--- |');
+    lines.push('### 깃 커밋 규칙');
+    lines.push('| 커밋 타입 |');
+    lines.push('| :--- |');
 
     gitConventionWidgets.forEach((content) => {
-      const useGitmoji = content.data.commitConvention.useGitmoji
-        ? '사용'
-        : '미사용';
       const commitTypes =
         content.data.commitConvention.commitTypes.length > 0
           ? content.data.commitConvention.commitTypes.join(', ')
           : '-';
 
-      lines.push(`| ${useGitmoji} | ${commitTypes} |`);
+      lines.push(`| ${commitTypes} |`);
     });
 
     lines.push('');
@@ -114,7 +111,7 @@ export class MarkdownService {
     if (!widgets || widgets.length === 0) return [];
 
     const lines: string[] = [];
-    lines.push('## 1. 📋 그라운드 룰');
+    lines.push('## 📋 그라운드 룰');
 
     // Git Convention 위젯 필터링
     const gitConventionWidgets = widgets
@@ -136,7 +133,7 @@ export class MarkdownService {
     if (!widgets || widgets.length === 0) return [];
 
     const lines: string[] = [];
-    lines.push('## 2. 🛠 기술 스택 선택');
+    lines.push('## 🛠 기술 스택 선택');
     lines.push('| 기술 스택 이름 | 버전 |');
     lines.push('| :--- | :--- |');
 
@@ -158,7 +155,7 @@ export class MarkdownService {
 
     const lines: string[] = [];
 
-    lines.push('## 3. 그 외');
+    lines.push('## 그 외');
     lines.push('---');
 
     widgets.forEach((widget) => {
