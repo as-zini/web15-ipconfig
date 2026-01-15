@@ -9,14 +9,14 @@ interface ToolBarProps {
 
 function ToolBar({ onTechStackClick }: ToolBarProps) {
   return (
-    <div className="fixed top-1/2 left-6 z-50 flex -translate-y-1/2 flex-col gap-2 rounded-2xl border border-gray-700 bg-gray-800 p-2 shadow-2xl backdrop-blur-xl transition-all hover:scale-105">
-      <div className="flex flex-col items-center justify-center gap-4">
+    <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2 rounded-2xl border border-gray-700 bg-gray-800 p-1.5 shadow-2xl backdrop-blur-xl transition-all hover:scale-105">
+      <div className="flex items-center justify-center gap-2">
         <ToolButton
           icon={<LuMousePointer2 size={20} />}
           label="Select"
           active
         />
-        <div className="h-px w-8 bg-gray-700" />
+        <div className="h-6 w-px gap-2 bg-gray-500" />
 
         <ToolButton
           icon={<LuLayers size={20} />}
