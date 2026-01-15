@@ -1,9 +1,9 @@
 import { LuShare2 } from 'react-icons/lu';
-import type { User } from '@/common/types/user';
+import type { UserExtended } from '@/common/types/user';
 import { INITIAL_USERS } from '@/common/mocks/users';
 
 interface TeamMemberListProps {
-  onUserHover: (e: React.MouseEvent, user: User) => void;
+  onUserHover: (e: React.MouseEvent, user: UserExtended) => void;
   onUserLeave: () => void;
 }
 
@@ -33,10 +33,12 @@ function TeamMemberList({ onUserHover, onUserLeave }: TeamMemberListProps) {
             <div
               className={`h-8 w-8 rounded-full ${user.color} flex items-center justify-center text-xs font-bold text-gray-900`}
             >
-              {user.name[0]}
+              {user.nickname[0]}
             </div>
             <div>
-              <div className="text-sm font-bold text-gray-200">{user.name}</div>
+              <div className="text-sm font-bold text-gray-200">
+                {user.nickname}
+              </div>
               <div
                 className={`text-xs ${
                   user.status === '준비중' ? 'text-gray-500' : user.textColor

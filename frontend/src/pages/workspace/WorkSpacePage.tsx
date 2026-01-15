@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
 
-import type { User } from '@/common/types/user';
+import type { UserExtended } from '@/common/types/user';
 
 import { getRandomColor } from '@/utils/color';
 import { useSocket } from '@/common/hooks/useSocket';
@@ -26,7 +26,7 @@ function WorkSpacePage() {
 
   // UI State
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [hoveredUser, setHoveredUser] = useState<User | null>(null);
+  const [hoveredUser, setHoveredUser] = useState<UserExtended | null>(null);
   const [hoverPosition, setHoverPosition] = useState({ top: 0, left: 0 });
 
   const {
@@ -90,7 +90,7 @@ function WorkSpacePage() {
   };
 
   // User Hover Logic
-  const handleUserHover = (e: React.MouseEvent, user: User) => {
+  const handleUserHover = (e: React.MouseEvent, user: UserExtended) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setHoverPosition({
       top: Math.min(rect.top, window.innerHeight - 250),
