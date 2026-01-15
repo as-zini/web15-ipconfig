@@ -1,12 +1,7 @@
 import type { CommunicationData } from '@/features/widgets/communication/types/communication';
-import { COMMUNICATION_OPTIONS } from '@/features/widgets/communication/constants/communication';
+
 import { cn } from '@/common/lib/utils';
-import {
-  LuSiren,
-  LuMessageCircle,
-  LuFileText,
-  LuMegaphone,
-} from 'react-icons/lu';
+import { COMMUNICATION_ITEMS } from '@/features/widgets/communication/constants/communicationItems';
 
 interface CommunicationSectionProps {
   data: CommunicationData['communication'];
@@ -28,44 +23,13 @@ export function CommunicationSection({
   data,
   onChange,
 }: CommunicationSectionProps) {
-  const items = [
-    {
-      key: 'urgent',
-      label: '긴급',
-      icon: LuSiren,
-      options: COMMUNICATION_OPTIONS.urgent,
-      color: 'text-red-500',
-    },
-    {
-      key: 'sync',
-      label: '동기',
-      icon: LuMessageCircle,
-      options: COMMUNICATION_OPTIONS.sync,
-      color: 'text-green-500',
-    },
-    {
-      key: 'async',
-      label: '비동기',
-      icon: LuFileText,
-      options: COMMUNICATION_OPTIONS.async,
-      color: 'text-blue-500',
-    },
-    {
-      key: 'official',
-      label: '공식',
-      icon: LuMegaphone,
-      options: COMMUNICATION_OPTIONS.official,
-      color: 'text-yellow-500',
-    },
-  ] as const;
-
   return (
     <div className="space-y-3">
       <h3 className="text-secondary-foreground flex items-center gap-2 text-sm font-semibold">
         소통 방식
       </h3>
       <div className="grid grid-cols-2 gap-3">
-        {items.map((item) => (
+        {COMMUNICATION_ITEMS.map((item) => (
           <div
             key={item.key}
             className="flex flex-col gap-2 rounded-lg border p-3"
