@@ -1,5 +1,6 @@
 import { LuMousePointer2 } from 'react-icons/lu';
-import { getBrightenedColor } from '@/utils/color';
+import { getBrightenedColor, getContrastClass } from '@/utils/color';
+import { cn } from '@/common/lib/utils';
 
 interface CursorWithNameProps {
   nickname: string;
@@ -24,7 +25,12 @@ function CursorWithName({ nickname, color, x, y }: CursorWithNameProps) {
         className="flex translate-x-5 -translate-y-1.5 items-center justify-center rounded-md px-2 py-0.5"
         style={{ backgroundColor: color }}
       >
-        <span className="w-auto text-center text-[12px] font-semibold whitespace-nowrap">
+        <span
+          className={cn(
+            'w-auto text-center text-[12px] font-semibold whitespace-nowrap',
+            getContrastClass(color),
+          )}
+        >
           {nickname}
         </span>
       </div>
