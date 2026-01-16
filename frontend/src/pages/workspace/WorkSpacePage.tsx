@@ -6,7 +6,7 @@ import type { UserExtended } from '@/common/types/user';
 import { getRandomColor } from '@/utils/color';
 import { useSocket } from '@/common/hooks/useSocket';
 import { useMarkdown } from '@/common/hooks/useMarkdown';
-import CanvasContent from '@/features/canvas/CanvasContent';
+import CanvasContent from '@/common/components/canvas/CanvasContent';
 import ToolBar from '@/pages/workspace/components/toolbar/ToolBar';
 import type { Cursor } from '@/common/types/cursor';
 import type { WidgetData } from '@/common/types/widgetData';
@@ -17,7 +17,7 @@ import RightSidebar from './components/infoPanel/InfoPanel';
 import UserHoverCard from './components/UserHoverCard';
 import ZoomControls from './components/ZoomControls';
 import ExportModal from './components/ExportModal';
-import useCanvas from '@/features/canvas/hooks/useCanvas';
+import useCanvas from '@/common/components/canvas/hooks/useCanvas';
 import CompactPanel from './components/infoPanel/CompactPanel';
 import { INITIAL_USERS } from '@/common/mocks/users';
 
