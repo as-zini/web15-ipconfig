@@ -97,7 +97,7 @@ function CanvasContent({
           key={'GROUNDRULE_COLLABORATION'}
           widgetId={'GROUNDRULE_COLLABORATION'}
           data={{
-            x: 300,
+            x: 800,
             y: 400,
             width: 850,
             height: 600,
@@ -106,7 +106,7 @@ function CanvasContent({
         />
         <CommunicationWidget
           id="communication"
-          position={{ x: 800, y: 1000 }}
+          position={{ x: 800, y: 1200 }}
           width={600}
           onDelete={() => emitDeleteWidget('communication')}
         />
