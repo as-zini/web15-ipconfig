@@ -97,7 +97,7 @@ function CanvasContent({
           key={'GROUNDRULE_COLLABORATION'}
           widgetId={'GROUNDRULE_COLLABORATION'}
           data={{
-            x: 300,
+            x: 800,
             y: 400,
             width: 850,
             height: 600,
