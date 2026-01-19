@@ -1,9 +1,5 @@
 import type { ReactNode } from 'react';
-import type {
-  MoveWidgetData,
-  WidgetContent,
-  WidgetData,
-} from '@/common/types/widgetData';
+import type { WidgetContent, WidgetData } from '@/common/types/widgetData';
 import WidgetContainer from './WidgetContainer';
 import WidgetHeader from './WidgetHeader';
 
