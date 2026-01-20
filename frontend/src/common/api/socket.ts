@@ -119,7 +119,7 @@ export function emitCursorMove(x: number, y: number) {
 // 위젯 생성 함수
 export function emitCreateWidget(widgetData: WidgetData) {
   const { widgetId, type, layout, content } = widgetData;
-  const data = { ...layout, content };
+  const data = { ...layout, content: { ...content, widgetType: type } };
   socket.emit('widget:create', {
     widgetId,
     type,
@@ -149,14 +149,19 @@ socket.on(
  * @param payload 위젯 내용
  */
 export function emitUpdateWidget(widgetId: string, payload: WidgetContent) {
+  const widgetType = useWorkspaceWidgetStore
+    .getState()
+    .widgetList.find((widget) => widget.widgetId === widgetId)?.type;
+  const content = widgetType ? { ...payload, widgetType } : payload;
+
   socket.emit('widget:update', {
     widgetId,
     data: {
-      content: payload,
+      content,
     },
   });
   const { updateWidget } = useWorkspaceWidgetStore.getState();
-  updateWidget(widgetId, { content: payload });
+  updateWidget(widgetId, { content });
 }
 
 // 다른 유저의 위젯 업데이트 반영
