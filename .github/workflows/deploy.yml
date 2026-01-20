@@ -83,8 +83,23 @@ jobs:
             mkdir -p ~/app
             cd ~/app
 
-            # 환경 변수 파일 생성
-            echo "${{ secrets.BACKEND_ENV_FILE }}" > .env
+            # .env 파일 생성 (Secrets 조합)
+            # Redis 및 기타 환경변수를 포함하여 .env 파일을 새로 작성합니다.
+            cat <<EOF > .env
+            NODE_ENV=production
+            HOST_URL=${{ secrets.HOST_URL }}
+
+            # Docker 이미지 정보 (docker-compose 변수 치환용)
+            NCP_REGISTRY_ENDPOINT=${{ secrets.NCP_REGISTRY_ENDPOINT }}
+            BACKEND_IMAGE=${{ env.BACKEND_IMAGE }}
+            FRONTEND_IMAGE=${{ env.FRONTEND_IMAGE }}
+
+            # Redis 접속 정보 (NCP Cloud DB for Redis)
+            REDIS_HOST=${{ secrets.PROD_REDIS_HOST }}
+            REDIS_PORT=${{ secrets.PROD_REDIS_PORT }}
+            REDIS_PASSWORD=${{ secrets.PROD_REDIS_PASSWORD }}
+            REDIS_TLS=false
+            EOF
 
             # NCP Container Registry 로그인
             echo "${{ secrets.NCP_SECRET_KEY }}" | docker login \
@@ -95,12 +110,8 @@ jobs:
             docker pull ${{ secrets.NCP_REGISTRY_ENDPOINT }}/${{ env.BACKEND_IMAGE }}
             docker pull ${{ secrets.NCP_REGISTRY_ENDPOINT }}/${{ env.FRONTEND_IMAGE }}
 
-            # 환경 변수 설정
-            export NCP_REGISTRY_ENDPOINT=${{ secrets.NCP_REGISTRY_ENDPOINT }}
-            export BACKEND_IMAGE=${{ env.BACKEND_IMAGE }}
-            export FRONTEND_IMAGE=${{ env.FRONTEND_IMAGE }}
-
-            # 기존 컨테이너 중지 및 제거
+            # 4. 컨테이너 재시작
+            # .env 파일이 존재하므로 docker-compose가 자동으로 환경변수를 로드합니다.
             docker-compose -f docker-compose.prod.yml down || true
 
             # 새 컨테이너 시작
