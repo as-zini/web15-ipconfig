@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { UserExtended } from '@/common/types/user';
 
 import { useMarkdown } from '@/common/hooks/useMarkdown';
-import type { Cursor } from '@/common/types/cursor';
-import type { WidgetData } from '@/common/types/widgetData';
 
 // Page-specific components
 import WorkspaceHeader from './components/WorkspaceHeader';
@@ -17,8 +15,8 @@ import { INITIAL_USERS } from '@/common/mocks/users';
 import { Canvas } from '@/common/components/canvas';
 import ToolBar from './components/toolbar/ToolBar';
 import { joinRoom, leaveRoom } from '@/common/api/socket';
-import { getRandomColor } from '@/utils/color';
 import { useWorkspaceInfoStore } from '@/common/store/workspace';
+import { generateCurrentUser } from '@/common/lib/user';
 
 function WorkSpacePage() {
   // UI State
@@ -28,43 +26,16 @@ function WorkSpacePage() {
   const [isSidebarExpanded, setSidebarExpanded] = useState(false);
   const { workspaceId } = useWorkspaceInfoStore();
 
-  const currentUser = useState(() => {
-    const randomNickname = Math.floor(Math.random() * 10000);
-
-    return {
-      id: crypto.randomUUID(),
-      nickname: `임시 유저 ${randomNickname}`,
-      color: getRandomColor(),
-    };
-  })[0];
-
   useEffect(() => {
     // 소켓 연결
-    joinRoom(currentUser);
+    joinRoom(generateCurrentUser());
     return () => {
       leaveRoom();
     };
-  }, [currentUser]);
+  }, []);
 
   // 마크다운 관리 hook
   const { markdown: exportMarkdown, fetchMarkdown } = useMarkdown();
-
-  // ----- WebSocket 초기화 & 이벤트 바인딩 -----
-  // const {
-  //   emitCursorMove,
-  //   emitCreateWidget,
-  //   emitUpdateWidget,
-  //   emitDeleteWidget,
-  //   emitMoveWidget,
-  // } = useSocket({
-  //   workspaceId,
-  //   currentUser,
-  //   setRemoteCursors,
-  //   setWidgets,
-  // });
-
-  // 커서 이동 스로틀링을 위한 ref
-  // const lastEmitRef = useRef<number>(0);
 
   // User Hover Logic
   const handleUserHover = (e: React.MouseEvent, user: UserExtended) => {
@@ -92,13 +63,6 @@ function WorkSpacePage() {
 
   return (
     <div className="relative h-screen overflow-hidden bg-gray-900 text-gray-100 [--header-h:4rem]">
-      {/* 캔버스: 화면 전체 */}
-      <div className="absolute inset-0">
-        <main className="relative h-full w-full flex-1">
-          <Canvas />
-        </main>
-      </div>
-
       {/* 헤더: 최상단 오버레이 */}
       <div className="pointer-events-none absolute top-0 left-0 z-50 w-full">
         <div className="pointer-events-auto">
@@ -106,11 +70,18 @@ function WorkSpacePage() {
         </div>
       </div>
 
+      {/* 캔버스: 화면 전체 */}
+      <div className="absolute inset-0">
+        <main className="relative h-full w-full flex-1">
+          <Canvas />
+        </main>
+      </div>
+
       {/* HUD 레이어 */}
       <div className="pointer-events-none absolute inset-0 z-40 pt-[var(--header-h)]">
         <div className="pointer-events-auto">
           <div className="absolute top-0 left-0">
-            <ToolBar onToolClick={() => {}} />
+            <ToolBar />
           </div>
           <AnimatePresence mode="sync">
             {isSidebarExpanded ? (
