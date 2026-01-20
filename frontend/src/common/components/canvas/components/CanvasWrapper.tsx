@@ -15,7 +15,7 @@ import {
 } from '../lib/positionTransform';
 import { emitCursorMove } from '@/common/api/socket';
 import { cn } from '@/common/lib/utils';
-import { useThrottledCallback } from '@/common/hooks/useThrottleCllback';
+import { useThrottledCallback } from '@/common/hooks/useThrottledCallback';
 
 export function CanvasWrapper({ children }: PropsWithChildren) {
   const { camera, setCamera, frameRef, getFrameInfo } = useCanvas();
