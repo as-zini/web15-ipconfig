@@ -18,9 +18,10 @@ import type { Cursor } from '../types/cursor';
 import { CURSOR_INITIAL_POSITION } from '../components/cursor/constants';
 
 const socketUrl =
-  import.meta.env.MODE === 'production'
+  import.meta.env.VITE_BACKEND_URL ??
+  (import.meta.env.MODE === 'production'
     ? window.location.origin
-    : 'http://localhost:3000';
+    : 'http://localhost:3000');
 
 export const socket = io(`${socketUrl}/workspace`, {
   transports: ['polling', 'websocket'],
