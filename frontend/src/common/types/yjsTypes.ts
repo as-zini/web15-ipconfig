@@ -1,38 +1,30 @@
-// 공통 Option 구조 (확장성 고려)
-export interface WidgetOptionItem<T = string> {
-  id: string;
-  value: T; // 로직용 값 (예: 'GITHUB_FLOW')
-  label: string; // UI 표시용 값 (예: 'GitHub Flow')
-  emoji?: string;
+// Selector 공통 타입
+export interface OptionItem {
+  value: string;
   createdAt: number;
 }
 
-export interface WidgetOptionSet<T = string> {
+export interface Selector {
   selectedId: string;
-  options: Record<string, WidgetOptionItem<T>>;
+  options: Record<string, OptionItem>;
 }
 
-// 위젯별 Content 타입 정의
-export type WidgetType =
-  | 'TECH_STACK'
-  | 'GIT_CONVENTION'
-  | 'COMMUNICATION'
-  | 'POST_IT'
-  | 'COLLABORATION';
-
-// 예시: Git Convention 위젯 컨텐츠
-export interface GitConventionContent {
-  strategySet: WidgetOptionSet<'GITHUB_FLOW' | 'GIT_FLOW' | 'TRUNK_BASED'>;
-  branchRules: {
-    mainBranch: string;
-    developBranch: string | null;
-    prefixSet: WidgetOptionSet<string>;
-  };
-  // ... 필요한 필드 추가
+export interface MultiSelector {
+  selectedIds: string[];
+  options: Record<string, OptionItem>;
 }
 
-// 통합 위젯 데이터 인터페이스
-export interface WidgetData {
+// Union Content Type
+export type WidgetContent =
+  | TechStackContent
+  | GitConventionContent
+  | CommunicationContent
+  | CollaborationContent
+  | PostItContent
+  | Record<string, unknown>;
+
+// Main Widget Data Interface
+export interface WidgetData<T extends WidgetContent = WidgetContent> {
   widgetId: string;
   type: WidgetType;
   layout: {
@@ -40,8 +32,93 @@ export interface WidgetData {
     y: number;
     width: number;
     height: number;
-    zIndex: number; // 렌더링 시 계산된 값 (저장될 땐 사용 안 함)
+    zIndex: number;
   };
-  content: GitConventionContent | undefined;
+  content: T; // 위젯별 커스텀
   createdAt: number;
+}
+
+export interface WorkspaceData {
+  root: {
+    schemaVersion: number;
+    workspace: {
+      id: string;
+      createdAt: number;
+    };
+    widgets: Record<string, WidgetData>;
+    widgetOrder: string[];
+  };
+}
+
+// Widget Types
+export type WidgetType =
+  | 'TECH_STACK'
+  | 'POST_IT'
+  | 'GIT_CONVENTION'
+  | 'GROUNDRULE_COLLABORATION'
+  | 'COMMUNICATION';
+
+// 이 밑에서부터는 위젯별 컨텐츠 타입이라 각 위젯 연결할때 세분화하면 좋을 것 같습니다.
+
+// 1. TECH_STACK
+export interface TechStackContent {
+  subject: Selector;
+  techItems: Array<{
+    id: string;
+    name: string;
+    category: string;
+  }>;
+}
+
+// 2. GIT_CONVENTION
+export interface GitConventionContent {
+  strategy: Selector;
+  branchRules: {
+    mainBranch: string;
+    developBranch: string;
+    prefixes: MultiSelector;
+  };
+  commitConvention: {
+    useGitmoji: boolean;
+    commitTypes: MultiSelector;
+  };
+}
+
+// 3. COMMUNICATION
+export interface CommunicationContent {
+  strategy: Selector;
+  branchRules: {
+    mainBranch: string;
+    developBranch: string;
+    prefixes: MultiSelector;
+  };
+  commitConvention: {
+    useGitmoji: boolean;
+    commitTypes: MultiSelector;
+  };
+}
+
+// 4. GROUNDRULE_COLLABORATION
+export interface CollaborationContent {
+  prRules: {
+    activeVersion: Selector;
+    activeStrategy: Selector;
+    labelRules: MultiSelector;
+  };
+  reviewPolicy: {
+    approves: number;
+    maxReviewHours: number;
+    blockMerge: boolean;
+  };
+  workflow: {
+    platform: Selector;
+    cycleValue: number;
+    cycleUnit: string;
+  };
+}
+
+// 5. POST_IT (Example placeholder)
+export interface PostItContent {
+  text: string;
+  color: string;
 }

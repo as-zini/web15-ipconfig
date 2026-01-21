@@ -20,7 +20,6 @@ export interface EditingState {
     height?: number;
   };
 }
-
 // Awareness 전체 상태 구조
 export interface LocalState {
   user: UserState;
