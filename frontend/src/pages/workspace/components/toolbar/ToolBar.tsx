@@ -1,13 +1,10 @@
 import ToolButton from './ToolButton';
 import { LuMousePointer2, LuGitBranch } from 'react-icons/lu';
 import { LuLayers } from 'react-icons/lu';
-import type { WidgetType, WidgetData } from '@/common/types/widgetData';
+import type { TechStackData } from '@/common/types/widgetData';
+import { emitCreateWidget } from '@/common/api/socket';
 
-interface ToolBarProps {
-  onToolClick: (type: WidgetType, data: WidgetData) => void;
-}
-
-function ToolBar({ onToolClick }: ToolBarProps) {
+function ToolBar() {
   return (
     <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 gap-2 rounded-2xl border border-gray-700 bg-gray-800 p-1.5 shadow-2xl backdrop-blur-xl transition-all hover:scale-105">
       <div className="flex items-center justify-center gap-2">
@@ -22,12 +19,12 @@ function ToolBar({ onToolClick }: ToolBarProps) {
           icon={<LuLayers size={20} />}
           label="기술 스택"
           onClick={() => {
-            onToolClick('TECH_STACK', {
-              x: 0,
-              y: 0,
-              width: 500,
-              zIndex: 1,
-              content: { widgetType: 'TECH_STACK', selectedItems: [] },
+            const widgetId = crypto.randomUUID();
+            emitCreateWidget({
+              widgetId,
+              type: 'TECH_STACK',
+              layout: { x: 200, y: 200, width: 500 },
+              content: { selectedItems: [] } as TechStackData,
             });
           }}
         />
@@ -35,21 +32,27 @@ function ToolBar({ onToolClick }: ToolBarProps) {
           icon={<LuGitBranch size={20} />}
           label="Git Convention"
           onClick={() => {
-            onToolClick('GIT_CONVENTION', {
-              x: 0,
-              y: 0,
-              width: 500,
-              zIndex: 1,
+            const widgetId = crypto.randomUUID();
+            emitCreateWidget({
+              widgetId,
+              type: 'GIT_CONVENTION',
+              layout: { x: 500, y: 500, width: 500 },
               content: {
-                widgetType: 'GIT_CONVENTION',
-                data: {
-                  strategy: 'GITHUB_FLOW',
-                  branchRules: {
-                    mainBranch: 'main',
-                    developBranch: 'develop',
-                    prefixes: [],
-                  },
-                  commitConvention: { useGitmoji: false, commitTypes: [] },
+                strategy: 'GITHUB_FLOW',
+                branchRules: {
+                  mainBranch: 'main',
+                  prefixes: ['feature', 'fix', 'refactor'],
+                },
+                commitConvention: {
+                  useGitmoji: false,
+                  commitTypes: [
+                    'feat',
+                    'fix',
+                    'refactor',
+                    'chore',
+                    'docs',
+                    'test',
+                  ],
                 },
               },
             });
