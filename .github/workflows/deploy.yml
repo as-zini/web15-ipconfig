@@ -98,6 +98,7 @@ jobs:
             REDIS_HOST=${{ secrets.PROD_REDIS_HOST }}
             REDIS_PORT=${{ secrets.PROD_REDIS_PORT }}
             REDIS_PASSWORD=${{ secrets.PROD_REDIS_PASSWORD }}
+            USE_REDIS_EXTENSION=${{ secrets.USE_REDIS_EXTENSION }}
             REDIS_TLS=false
             EOF
 
