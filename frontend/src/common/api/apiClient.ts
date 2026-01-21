@@ -1,9 +1,12 @@
 import axios from 'axios';
 
 const getApiUrl = () => {
-  return import.meta.env.MODE === 'production'
-    ? window.location.origin
-    : 'http://localhost:3000';
+  return (
+    import.meta.env.VITE_BACKEND_URL ??
+    (import.meta.env.MODE === 'production'
+      ? window.location.origin
+      : 'http://localhost:3000')
+  );
 };
 
 export const apiClient = axios.create({
