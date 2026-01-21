@@ -5,7 +5,6 @@ import {
   LuMessageSquare,
   LuTrash2,
   LuUsers,
-  LuText,
 } from 'react-icons/lu';
 import { useWidgetIdAndType } from './context/WidgetContext';
 import { emitDeleteWidget } from '@/common/api/socket';

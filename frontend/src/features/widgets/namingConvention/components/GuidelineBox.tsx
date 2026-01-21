@@ -1,5 +1,11 @@
-import { motion } from 'framer-motion';
-import type { NamingCase } from '../types/namingConvention';
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/common/components/shadcn/item';
+import { SparklesIcon } from 'lucide-react';
 
 interface GuidelineBoxProps {
   category: string;
@@ -8,15 +14,19 @@ interface GuidelineBoxProps {
 
 export function GuidelineBox({ category, description }: GuidelineBoxProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mt-4 rounded-md border border-gray-700 bg-gray-800 p-4 text-sm text-gray-300 shadow-md"
+    <Item
+      variant="outline"
+      className="border-primary/70 animate-in fade-in max-w-full duration-500"
     >
-      <h4 className="mb-1 font-semibold text-indigo-400">
-        {category} Naming Tip
-      </h4>
-      <p className="leading-relaxed">{description}</p>
-    </motion.div>
+      <ItemMedia>
+        <SparklesIcon className="text-primary size-4" />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>[{category}] 팁</ItemTitle>
+        <ItemDescription className="line-clamp-none text-pretty wrap-break-word">
+          {description}
+        </ItemDescription>
+      </ItemContent>
+    </Item>
   );
 }
