@@ -23,7 +23,7 @@ function ToolBar() {
             createWidgetAction({
               widgetId,
               type: 'TECH_STACK',
-              layout: { x: 200, y: 200, width: 500 },
+              layout: { x: 200, y: 200 },
               content: { selectedItems: [] },
             });
           }}
@@ -36,7 +36,7 @@ function ToolBar() {
             createWidgetAction({
               widgetId,
               type: 'GIT_CONVENTION',
-              layout: { x: 500, y: 500, width: 500 },
+              layout: { x: 500, y: 500 },
               content: {
                 strategy: 'GITHUB_FLOW',
                 branchRules: {
@@ -79,7 +79,7 @@ function ToolBar() {
             createWidgetAction({
               widgetId,
               type: 'COMMUNICATION',
-              layout: { x: 200, y: 200, width: 500 },
+              layout: { x: 200, y: 200 },
               content: { selectedItems: [] },
             });
           }}
@@ -92,7 +92,7 @@ function ToolBar() {
             createWidgetAction({
               widgetId,
               type: 'NAMING_CONVENTION',
-              layout: { x: 200, y: 200, width: 500 },
+              layout: { x: 200, y: 200 },
               content: { selectedItems: [] },
             });
           }}

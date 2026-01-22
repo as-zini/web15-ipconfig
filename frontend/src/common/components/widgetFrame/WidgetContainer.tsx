@@ -23,6 +23,8 @@ function WidgetContainer({ children }: PropsWithChildren) {
     y: 400,
   };
 
+  console.log(width, height);
+
   // 다른 사용자의 드래그 상태 감지
   const remoteInteraction = useRemoteWidgetInteraction(widgetId);
 
