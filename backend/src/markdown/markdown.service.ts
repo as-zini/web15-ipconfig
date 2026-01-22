@@ -5,6 +5,7 @@ import type {
   YjsGitConventionContent,
   YjsTechStackContent,
   YjsPostItContent,
+  YjsCollaborationContent,
 } from '../collaboration/types/yjs-widget.types';
 import {
   getSelectedValue,
@@ -150,6 +151,50 @@ export class MarkdownService {
     return lines;
   }
 
+  private buildCollaborationSection(widgets: YjsWidgetData[]): string[] {
+    if (!widgets || widgets.length === 0) return [];
+
+    const lines: string[] = [];
+    lines.push('## 🤝 협업 규칙');
+
+    widgets.forEach((widget) => {
+      const content = widget.content as unknown as YjsCollaborationContent;
+
+      // PR 규칙 섹션
+      lines.push('### PR 규칙');
+      const version = getSelectedValue(content.prRules.activeVersion) || '-';
+      const strategy = getSelectedValue(content.prRules.activeStrategy) || '-';
+      const labels = getSelectedValues(content.prRules.labelRules);
+      const labelsStr = labels.length > 0 ? labels.join(', ') : '-';
+      lines.push(`| 버전 관리 | 머지 전략 | 라벨 |`);
+      lines.push(`| :--- | :--- | :--- |`);
+      lines.push(`| ${version} | ${strategy} | ${labelsStr} |`);
+      lines.push('');
+
+      // 리뷰 정책 섹션
+      lines.push('### 리뷰 정책');
+      lines.push(`| 필요 승인 수 | 최대 리뷰 시간 | 승인 전 머지 차단 |`);
+      lines.push(`| :--- | :--- | :--- |`);
+      const approves = content.reviewPolicy.approves ?? 0;
+      const maxHours = content.reviewPolicy.maxReviewHours ?? 0;
+      const blockMerge = content.reviewPolicy.blockMerge ? '예' : '아니오';
+      lines.push(`| ${approves}명 | ${maxHours}시간 | ${blockMerge} |`);
+      lines.push('');
+
+      // 워크플로우 섹션
+      lines.push('### 워크플로우');
+      const platform = getSelectedValue(content.workflow.platform) || '-';
+      const cycleValue = content.workflow.cycleValue ?? 0;
+      const cycleUnit = content.workflow.cycleUnit || '-';
+      lines.push(`| 플랫폼 | 스프린트 주기 |`);
+      lines.push(`| :--- | :--- |`);
+      lines.push(`| ${platform} | ${cycleValue}${cycleUnit} |`);
+      lines.push('');
+    });
+
+    return lines;
+  }
+
   private buildElseSection(widgets: YjsWidgetData[]): string[] {
     if (!widgets || widgets.length === 0) return [];
 
@@ -193,6 +238,11 @@ export class MarkdownService {
     );
     markdownParts.push(...this.buildGroundRuleSection(groundRuleWidgets));
 
+    const collaborationWidgets = allWidgets.filter(
+      (widget) => widget.type === 'GROUNDRULE_COLLABORATION',
+    );
+    markdownParts.push(...this.buildCollaborationSection(collaborationWidgets));
+
     const techStackWidgets = allWidgets.filter(
       (widget) => widget.type === 'TECH_STACK',
     );
@@ -205,6 +255,7 @@ export class MarkdownService {
 
     if (
       groundRuleWidgets.length === 0 &&
+      collaborationWidgets.length === 0 &&
       techStackWidgets.length === 0 &&
       postItWidgets.length === 0
     ) {
