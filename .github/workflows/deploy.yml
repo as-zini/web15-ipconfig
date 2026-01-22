@@ -111,7 +111,7 @@ jobs:
             docker pull ${{ secrets.NCP_REGISTRY_ENDPOINT }}/${{ env.BACKEND_IMAGE }}
             docker pull ${{ secrets.NCP_REGISTRY_ENDPOINT }}/${{ env.FRONTEND_IMAGE }}
 
-            # 4. 컨테이너 재시작
+            # 컨테이너 재시작
             # .env 파일이 존재하므로 docker-compose가 자동으로 환경변수를 로드합니다.
             docker-compose -f docker-compose.prod.yml down || true
 
