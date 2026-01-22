@@ -8,7 +8,10 @@ import {
   clearEditingState,
   updateEditingState,
 } from '@/common/api/yjs/awareness';
-import { updateWidgetLayoutAction } from '@/common/api/yjs/actions/widgetFrame';
+import {
+  updateWidgetLayoutAction,
+  bringToFrontAction,
+} from '@/common/api/yjs/actions/widgetFrame';
 import { useRemoteWidgetInteraction } from '@/common/api/yjs/hooks/useRemoteWidgetInteraction';
 
 function WidgetContainer({ children }: PropsWithChildren) {
@@ -22,8 +25,6 @@ function WidgetContainer({ children }: PropsWithChildren) {
     x: 400,
     y: 400,
   };
-
-  console.log(width, height);
 
   // 다른 사용자의 드래그 상태 감지
   const remoteInteraction = useRemoteWidgetInteraction(widgetId);
@@ -39,10 +40,13 @@ function WidgetContainer({ children }: PropsWithChildren) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
 
-  // 스로틀링을 위한 ref
+  // 스로틀링 위한 ref
   const lastEmitRef = useRef<number>(0);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // 위젯 클릭 시 최상단으로 이동 (z-index)
+    bringToFrontAction(widgetId);
+
     // 헤더 영역이 아닌 곳에서는 드래그 시작하지 않음
     const target = e.target as HTMLElement;
     const isHeader = target.closest('[data-widget-header="true"]');
