@@ -40,12 +40,10 @@ function WidgetEditingPreviewLayer() {
     const awareness = provider.awareness;
 
     const recompute = () => {
-      console.log('🟢 awareness update fired');
       const next: Preview[] = [];
       const states = awareness.getStates();
 
       states.forEach((value) => {
-        console.log('🔵 raw awareness state', value);
         const state = value as LocalState;
         const user = state.user;
         const editing = state.editing;
@@ -79,8 +77,6 @@ function WidgetEditingPreviewLayer() {
       awareness.off('update', recompute);
     };
   }, [myUserId, layoutById]);
-
-  console.log('🟡 previews', previews);
 
   return (
     <>

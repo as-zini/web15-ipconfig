@@ -25,14 +25,6 @@ export const updateLocalCursor = (x: number, y: number) => {
 export function updateEditingState(editing: EditingState) {
   const provider = getProvider();
   if (!provider?.awareness) return;
-  console.log(
-    '✋ updateEditingState',
-    editing,
-    'provider alive:',
-    !!provider,
-    'awareness:',
-    !!provider?.awareness,
-  );
 
   provider.awareness.setLocalStateField('editing', {
     widgetId: editing.widgetId,
