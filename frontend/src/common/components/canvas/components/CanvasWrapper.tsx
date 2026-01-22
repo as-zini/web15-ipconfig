@@ -11,6 +11,7 @@ import { ZOOM_CONFIG } from '../constants/zoom';
 import {
   getNewCameraState,
   zoomByDeltaAtPivot,
+  browserToCanvasPosition,
 } from '../lib/positionTransform';
 import { cn } from '@/common/lib/utils';
 import { updateLocalCursor } from '@/common/api/yjs/awareness';
@@ -62,7 +63,7 @@ export function CanvasWrapper({ children }: PropsWithChildren) {
         }));
       }
     },
-    [isPanning, setCamera, getNewCameraState],
+    [isPanning, setCamera],
   );
 
   const handlePointerUp = () => {
@@ -71,7 +72,14 @@ export function CanvasWrapper({ children }: PropsWithChildren) {
   };
 
   const handleMouseMove = useThrottledCallback((e: React.MouseEvent) => {
-    updateLocalCursor(e.clientX, e.clientY);
+    const frameInfo = getFrameInfo();
+    const canvasPosition = browserToCanvasPosition(
+      { x: e.clientX, y: e.clientY },
+      { x: frameInfo.left, y: frameInfo.top },
+      camera,
+    );
+
+    updateLocalCursor(canvasPosition.x, canvasPosition.y);
   }, 50);
 
   useEffect(() => {
