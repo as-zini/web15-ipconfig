@@ -24,8 +24,8 @@ export interface WidgetData<T extends WidgetContent = WidgetContent> {
   layout: {
     x: number;
     y: number;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     zIndex: number;
   };
   content: T; // 위젯별 커스텀
