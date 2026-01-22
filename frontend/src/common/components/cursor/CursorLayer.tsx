@@ -18,7 +18,7 @@ function CursorLayer() {
             left: `${cursor.x}px`,
             top: `${cursor.y}px`,
             transform: 'translate(-50%, -50%)',
-            transition: 'all 0.1s ease-in',
+            transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
           }}
         >
           <CursorWithName
