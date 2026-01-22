@@ -1,10 +1,15 @@
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
 import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useWidgetIdAndType } from './context/WidgetContext';
-import { emitUpdateWidgetLayout } from '@/common/api/socket';
 import { useCanvas } from '../canvas/context/CanvasProvider';
+import {
+  clearEditingState,
+  updateEditingState,
+} from '@/common/api/yjs/awareness';
+import { updateWidgetLayoutAction } from '@/common/api/yjs/actions/widgetFrame';
+import { useRemoteWidgetInteraction } from '@/common/api/yjs/hooks/useRemoteWidgetInteraction';
 
 function WidgetContainer({ children }: PropsWithChildren) {
   const { widgetId } = useWidgetIdAndType();
@@ -18,6 +23,9 @@ function WidgetContainer({ children }: PropsWithChildren) {
     y: 400,
   };
 
+  // 다른 사용자의 드래그 상태 감지
+  const remoteInteraction = useRemoteWidgetInteraction(widgetId);
+
   // 드래그 시작 시점의 데이터 저장
   const dragStartRef = useRef({
     mouseX: 0,
@@ -27,6 +35,7 @@ function WidgetContainer({ children }: PropsWithChildren) {
   });
 
   const [isDragging, setIsDragging] = useState(false);
+  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
 
   // 스로틀링을 위한 ref
   const lastEmitRef = useRef<number>(0);
@@ -42,6 +51,7 @@ function WidgetContainer({ children }: PropsWithChildren) {
     e.preventDefault();
 
     setIsDragging(true);
+    setDragPos({ x, y });
 
     // 시작 시점의 위치 정보 저장
     dragStartRef.current = {
@@ -73,11 +83,32 @@ function WidgetContainer({ children }: PropsWithChildren) {
       if (now - lastEmitRef.current < 30) return;
       lastEmitRef.current = now;
 
-      emitUpdateWidgetLayout(widgetId, { x: actualX, y: actualY });
+      // 1) 로컬은 즉시 움직이게(UX)
+      setDragPos({ x: actualX, y: actualY });
+
+      // 2) 드래그 중에는 awareness로 "프리뷰"만 전파
+      updateEditingState({
+        widgetId,
+        kind: 'move',
+        preview: {
+          x: actualX,
+          y: actualY,
+          width: width ?? undefined,
+          height: height ?? undefined,
+        },
+      });
     };
 
     const handlePointerUp = () => {
+      const finalPos = dragPos;
       setIsDragging(false);
+      setDragPos(null);
+
+      // 드래그 종료: 프리뷰 제거 + Doc에 최종 반영
+      clearEditingState();
+      if (finalPos) {
+        updateWidgetLayoutAction(widgetId, { x: finalPos.x, y: finalPos.y });
+      }
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -87,14 +118,29 @@ function WidgetContainer({ children }: PropsWithChildren) {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     };
-  }, [isDragging, widgetId, camera.scale]);
+  }, [isDragging, widgetId, camera.scale, width, height, dragPos]);
+
+  const renderedPos = useMemo(() => {
+    // 1. 내가 드래그 중이면 내 로컬 state 우선
+    if (isDragging && dragPos) return dragPos;
+    // 2. 다른 사람이 드래그 중이면 awareness state 우선
+    if (remoteInteraction)
+      return { x: remoteInteraction.x, y: remoteInteraction.y };
+    // 3. 둘 다 아니면 store state
+    return { x, y };
+  }, [isDragging, dragPos, remoteInteraction, x, y]);
+
+  // 다른 사람이 드래그 중일 때 스타일 처리
+  const isRemoteMoving = !!remoteInteraction;
+  const remoteColor = remoteInteraction?.user.color;
+  const remoteNickname = remoteInteraction?.user.nickname;
 
   return (
     <div
-      className="pointer-events-auto absolute w-fit rounded-xl border border-gray-700 bg-gray-800"
+      className="pointer-events-auto absolute w-fit rounded-xl border border-gray-700 bg-gray-800 transition-shadow duration-200"
       style={{
-        left: x,
-        top: y,
+        left: renderedPos.x,
+        top: renderedPos.y,
         width: width ?? 'auto',
         height: height ?? 'auto',
         zIndex: zIndex ?? 1,

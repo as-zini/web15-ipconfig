@@ -7,18 +7,25 @@ export const doc = new Y.Doc();
 
 // Provider는 나중에 방(workspaceId)에 들어갈 때 초기화
 let provider: HocuspocusProvider | null = null;
+let currentWorkspaceId: string | null = null;
 
-export const connectProvider = (workspaceId: string, token?: string) => {
-  if (provider) {
-    provider.destroy(); // 기존 연결 끊기
+export const connectProvider = (workspaceId: string) => {
+  if (provider && currentWorkspaceId === workspaceId) {
+    return provider; // ✅ 재사용
   }
+
+  if (provider) {
+    provider.destroy(); // workspace 변경 시만
+  }
+
+  currentWorkspaceId = workspaceId;
 
   const url =
     import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:3000/collaboration';
 
   provider = new HocuspocusProvider({
     url,
-    name: `workspace:${workspaceId}`, // 방 이름
+    name: `workspace:${workspaceId}`,
     document: doc,
     onConnect: () => {
       doc.transact(() => {

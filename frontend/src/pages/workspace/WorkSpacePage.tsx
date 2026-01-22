@@ -18,6 +18,7 @@ import { joinRoom, leaveRoom } from '@/common/api/socket';
 import { useWorkspaceInfoStore } from '@/common/store/workspace';
 import { generateCurrentUser } from '@/common/lib/user';
 import { useCollaboration } from '@/common/hooks/useCollaboration';
+import useUserStore from '@/common/store/user';
 
 function WorkSpacePage() {
   // UI State
@@ -26,15 +27,22 @@ function WorkSpacePage() {
   const [hoverPosition, setHoverPosition] = useState({ top: 0, left: 0 });
   const [isSidebarExpanded, setSidebarExpanded] = useState(false);
   const { workspaceId } = useWorkspaceInfoStore();
-  useCollaboration(workspaceId);
+  const setUser = useUserStore((s) => s.setUser);
+  const [currentUser] = useState(() => generateCurrentUser());
+
+  useEffect(() => {
+    setUser(currentUser);
+  }, [currentUser, setUser]);
+
+  useCollaboration(workspaceId, currentUser);
 
   useEffect(() => {
     // 소켓 연결
-    joinRoom(generateCurrentUser());
+    joinRoom(currentUser);
     return () => {
       leaveRoom();
     };
-  }, []);
+  }, [currentUser]);
 
   // 마크다운 관리 hook
   const { markdown: exportMarkdown, fetchMarkdown } = useMarkdown();

@@ -34,6 +34,7 @@ const mockUser: UserExtended = {
   time: '오전 9:00 - 오후 6:00',
   style: '빠른 개발과 실험을 선호',
   activity: [60, 80, 70, 90, 65, 75, 85],
+  backgroundColor: 'bg-blue-100',
 };
 
 export const Default: Story = {

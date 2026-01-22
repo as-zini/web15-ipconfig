@@ -11,6 +11,7 @@ export const INITIAL_USERS: UserExtended[] = [
     time: '10 AM - 6 PM',
     status: '준비중',
     activity: [30, 80, 40, 20, 90],
+    backgroundColor: 'bg-purple-100',
   },
   {
     id: 'u2',
@@ -22,6 +23,7 @@ export const INITIAL_USERS: UserExtended[] = [
     time: '2 PM - 10 PM',
     status: '준비중',
     activity: [10, 20, 90, 80, 60],
+    backgroundColor: 'bg-teal-100',
   },
   {
     id: 'u3',
@@ -33,6 +35,7 @@ export const INITIAL_USERS: UserExtended[] = [
     time: '9 AM - 6 PM',
     status: '준비완료',
     activity: [50, 50, 50, 50, 50],
+    backgroundColor: 'bg-pink-100',
   },
   {
     id: 'u4',
@@ -44,5 +47,6 @@ export const INITIAL_USERS: UserExtended[] = [
     time: '9 AM - 6 PM',
     status: '준비완료',
     activity: [50, 50, 50, 50, 50],
+    backgroundColor: 'bg-green-100',
   },
 ];
