@@ -11,6 +11,10 @@ services:
     environment:
       - NODE_ENV=production
       - HOST_URL=http://49.50.138.164/
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - USE_REDIS_EXTENSION=${USE_REDIS_EXTENSION}
     restart: unless-stopped
 
   frontend:
