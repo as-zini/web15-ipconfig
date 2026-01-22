@@ -1,4 +1,4 @@
-import type { WidgetType } from '@/common/types/yjsTypes';
+import type { WidgetType } from '@/common/types/yjsDoc';
 import { getWidgetMap } from './getMaps';
 import * as Y from 'yjs';
 

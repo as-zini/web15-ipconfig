@@ -1,6 +1,6 @@
 import * as Y from 'yjs';
 import { getWidgetMap } from '../utils/getMaps';
-import type { OptionItem, WidgetType } from '@/common/types/yjsTypes';
+import type { OptionItem, WidgetType } from '@/common/types/yjsDoc';
 import { doc } from '../instance';
 import { getMappedPath, getTargetMap } from '../utils/getWidgetPath';
 import { toYType } from '../utils/translateData';

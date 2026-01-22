@@ -3,7 +3,7 @@ import type {
   WidgetContent,
   WidgetData,
   WidgetType,
-} from '../../../types/yjsTypes';
+} from '../../../types/yjsDoc';
 
 /**
  * JS 객체/배열을 재귀적으로 Yjs 타입으로 변환

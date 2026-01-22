@@ -1,18 +1,4 @@
-// Selector 공통 타입
-export interface OptionItem {
-  value: string;
-  createdAt: number;
-}
-
-export interface Selector {
-  selectedId: string;
-  options: Record<string, OptionItem>;
-}
-
-export interface MultiSelector {
-  selectedIds: string[];
-  options: Record<string, OptionItem>;
-}
+import type { MultiSelector, Selector } from './yjsDoc';
 
 // Union Content Type
 export type WidgetContent =
@@ -22,41 +8,6 @@ export type WidgetContent =
   | CollaborationContent
   | PostItContent
   | Record<string, unknown>;
-
-// Main Widget Data Interface
-export interface WidgetData<T extends WidgetContent = WidgetContent> {
-  widgetId: string;
-  type: WidgetType;
-  layout: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    zIndex: number;
-  };
-  content: T; // 위젯별 커스텀
-  createdAt: number;
-}
-
-export interface WorkspaceData {
-  root: {
-    schemaVersion: number;
-    workspace: {
-      id: string;
-      createdAt: number;
-    };
-    widgets: Record<string, WidgetData>;
-    widgetOrder: string[];
-  };
-}
-
-// Widget Types
-export type WidgetType =
-  | 'TECH_STACK'
-  | 'POST_IT'
-  | 'GIT_CONVENTION'
-  | 'GROUNDRULE_COLLABORATION'
-  | 'COMMUNICATION';
 
 // 이 밑에서부터는 위젯별 컨텐츠 타입이라 각 위젯 연결할때 세분화하면 좋을 것 같습니다.
 
