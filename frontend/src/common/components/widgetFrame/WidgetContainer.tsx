@@ -12,7 +12,7 @@ import {
   updateWidgetLayoutAction,
   bringToFrontAction,
 } from '@/common/api/yjs/actions/widgetFrame';
-import { useRemoteWidgetInteraction } from '@/common/api/yjs/hooks/useRemoteWidgetInteraction';
+import { useRemoteWidgetInteraction } from '@/common/hooks/useRemoteWidgetInteraction';
 
 function WidgetContainer({ children }: PropsWithChildren) {
   const { widgetId } = useWidgetIdAndType();

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getProvider } from '../instance';
+import { getProvider } from '../api/yjs/instance';
 import type { LocalState, UserState } from '@/common/types/yjsawareness';
 import useUserStore from '@/common/store/user';
 
