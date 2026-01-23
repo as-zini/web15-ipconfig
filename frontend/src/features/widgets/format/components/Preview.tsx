@@ -29,6 +29,10 @@ function Preview({ formattedCode }: PreviewProps) {
           </SyntaxHighlighter>
         </div>
       </div>
+      {/* 미리보기 연결선 */}
+      <div className="absolute top-1/2 -right-15 translate-y-1/2">
+        <div className="w-[60px] border border-gray-600"></div>
+      </div>
     </div>
   );
 }
