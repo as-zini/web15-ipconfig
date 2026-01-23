@@ -37,7 +37,7 @@ export const connectProvider = (workspaceId: string) => {
       },
     });
     currentWorkspaceId = workspaceId;
-  } catch (error) {
+  } catch {
     provider = null;
     currentWorkspaceId = null;
   }

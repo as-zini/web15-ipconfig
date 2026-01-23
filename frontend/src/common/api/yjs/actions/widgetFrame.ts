@@ -5,7 +5,7 @@ import {
   getWidgetOrderArray,
   getWidgetMap,
 } from '../utils/getMaps';
-import { toYType, yWidgetToWidgetData } from '../utils/translateData';
+import { toYType } from '../utils/translateData';
 import type { WidgetData } from '../../../types/yjsDoc';
 
 // 1. 위젯 생성
