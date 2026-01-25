@@ -11,7 +11,7 @@ import {
   updateWidgetLayoutAction,
   bringToFrontAction,
 } from '@/common/api/yjs/actions/widgetFrame';
-import { useRemoteWidgetInteraction } from '@/common/hooks/useRemoteWidgetInteraction';
+import { useWidgetInteractionStore } from '@/common/store/widgetInteraction';
 import type { WidgetLayout } from '@/common/types/widgetData';
 
 interface WidgetContainerProps {
@@ -32,8 +32,9 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
       y: 400,
     };
 
-  // 다른 사용자의 드래그 상태 감지
-  const remoteInteraction = useRemoteWidgetInteraction(widgetId);
+  const interaction = useWidgetInteractionStore((state) =>
+    state.getInteraction(widgetId),
+  );
 
   // 드래그 시작 시점의 데이터 저장
   const dragStartRef = useRef({
@@ -44,7 +45,6 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
   });
 
   const [isDragging, setIsDragging] = useState(false);
-  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
 
   // 스로틀링 위한 ref
   const lastEmitRef = useRef<number>(0);
@@ -63,7 +63,6 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
     e.preventDefault();
 
     setIsDragging(true);
-    setDragPos({ x, y });
 
     // 시작 시점의 위치 정보 저장
     dragStartRef.current = {
@@ -95,10 +94,7 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
       if (now - lastEmitRef.current < 30) return;
       lastEmitRef.current = now;
 
-      // 1) 로컬은 즉시 움직이게(UX)
-      setDragPos({ x: actualX, y: actualY });
-
-      // 2) 드래그 중에는 awareness로 "프리뷰"만 전파
+      // 드래그 중에는 awareness로 "프리뷰"만 전파 (내 상호작용도 이걸로 처리)
       updateEditingState({
         widgetId,
         kind: 'move',
@@ -112,14 +108,21 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
     };
 
     const handlePointerUp = () => {
-      const finalPos = dragPos;
       setIsDragging(false);
-      setDragPos(null);
 
       // 드래그 종료: 프리뷰 제거 + Doc에 최종 반영
+      // 종료 시점의 위치는 store에 있는 마지막 interaction 위치를 사용
+      const finalInteraction = useWidgetInteractionStore
+        .getState()
+        .getInteraction(widgetId);
+
       clearEditingState();
-      if (finalPos) {
-        updateWidgetLayoutAction(widgetId, { x: finalPos.x, y: finalPos.y });
+
+      if (finalInteraction) {
+        updateWidgetLayoutAction(widgetId, {
+          x: finalInteraction.x,
+          y: finalInteraction.y,
+        });
       }
     };
 
@@ -130,17 +133,16 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     };
-  }, [isDragging, widgetId, camera.scale, width, height, dragPos]);
+  }, [isDragging, widgetId, camera.scale, width, height]);
 
   const renderedPos = useMemo(() => {
-    // 1. 내가 드래그 중이면 내 로컬 state 우선
-    if (isDragging && dragPos) return dragPos;
-    // 2. 다른 사람이 드래그 중이면 awareness state 우선
-    if (remoteInteraction)
-      return { x: remoteInteraction.x, y: remoteInteraction.y };
-    // 3. 둘 다 아니면 store state
+    // 1. Interaction(내꺼/남의꺼) 있으면 그거 우선
+    if (interaction) {
+      return { x: interaction.x, y: interaction.y };
+    }
+    // 2. 없으면 Yjs Doc state
     return { x, y };
-  }, [isDragging, dragPos, remoteInteraction, x, y]);
+  }, [interaction, x, y]);
 
   return (
     <div
