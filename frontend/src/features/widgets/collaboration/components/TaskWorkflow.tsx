@@ -13,9 +13,9 @@ import { platforms } from '../constants/options';
 
 interface TaskWorkflowProps {
   data: CollaborationData['workflow'];
-  onUpdate: <K extends keyof CollaborationData['workflow']>(
-    key: K,
-    value: CollaborationData['workflow'][K],
+  onUpdate: (
+    key: keyof CollaborationData['workflow'],
+    value: string | number,
   ) => void;
 }
 
@@ -31,7 +31,7 @@ export default function TaskWorkflow({ data, onUpdate }: TaskWorkflowProps) {
       <div className="mt-6">
         <p className="mb-2 text-sm">사용 플랫폼</p>
         <Select
-          value={data.platform}
+          value={data.platform?.selectedId}
           onValueChange={(value) => onUpdate('platform', value)}
         >
           <SelectTrigger className="w-full">
