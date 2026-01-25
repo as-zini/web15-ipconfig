@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type React from 'react';
-import type { PropsWithChildren } from 'react';
 import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useWidgetIdAndType } from './context/WidgetContext';
 import { useCanvas } from '../canvas/context/CanvasProvider';
@@ -13,18 +12,25 @@ import {
   bringToFrontAction,
 } from '@/common/api/yjs/actions/widgetFrame';
 import { useRemoteWidgetInteraction } from '@/common/hooks/useRemoteWidgetInteraction';
+import type { WidgetLayout } from '@/common/types/widgetData';
 
-function WidgetContainer({ children }: PropsWithChildren) {
+interface WidgetContainerProps {
+  children: React.ReactNode;
+  defaultLayout?: WidgetLayout;
+}
+
+function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
   const { widgetId } = useWidgetIdAndType();
   const { camera } = useCanvas();
   const widgetData = useWorkspaceWidgetStore((state) =>
     state.widgetList.find((widget) => widget.widgetId === widgetId),
   );
 
-  const { x, y, width, height, zIndex } = widgetData?.layout ?? {
-    x: 400,
-    y: 400,
-  };
+  const { x, y, width, height, zIndex } = widgetData?.layout ??
+    defaultLayout ?? {
+      x: 400,
+      y: 400,
+    };
 
   // 다른 사용자의 드래그 상태 감지
   const remoteInteraction = useRemoteWidgetInteraction(widgetId);

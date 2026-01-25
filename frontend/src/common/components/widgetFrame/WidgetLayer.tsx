@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import type { WidgetType } from '@/common/types/widgetData';
 import CollaborationWidget from '@/features/widgets/collaboration/components/CollaborationWidget';
 import CommunicationWidget from '@/features/widgets/communication/components/communicationWidget/CommunicationWidget';
-import GitConventionWidget from '@/features/widgets/gitConvention/components/gitConventionWidget/GitConventionWidget';
 import TechStackWidget from '@/features/widgets/techStack/components/techStackWidget/TechStackWidget';
-import WidgetFrame from './WidgetFrame';
 import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useShallow } from 'zustand/react/shallow';
 import NamingConventionWidget from '@/features/widgets/namingConvention/components/NamingConventionWidget';
+import { WidgetProvider } from './context/WidgetContext';
+import { GitConventionWidget } from '@/features/widgets/gitConvention';
 
 function WidgetLayer() {
   const widgetKeys = useWorkspaceWidgetStore(
@@ -26,9 +26,9 @@ function WidgetLayer() {
   return (
     <>
       {widgetIds.map(({ widgetId, type }) => (
-        <WidgetFrame key={widgetId} widgetId={widgetId} type={type}>
+        <WidgetProvider widgetId={widgetId} type={type}>
           <WidgetContent type={type} />
-        </WidgetFrame>
+        </WidgetProvider>
       ))}
     </>
   );
