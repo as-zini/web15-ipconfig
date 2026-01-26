@@ -1,14 +1,11 @@
-import { Terminal, Layout } from 'lucide-react';
-import { Button } from '@/common/components/shadcn/button';
+import { Terminal } from 'lucide-react';
 
 interface NavbarProps {
   scrolled: boolean;
-  isMenuOpen: boolean;
-  setIsMenuOpen: (open: boolean) => void;
 }
 
 // 버튼 색이 마음에 안 듬...
-const Navbar = ({ scrolled, isMenuOpen, setIsMenuOpen }: NavbarProps) => {
+const Navbar = ({ scrolled }: NavbarProps) => {
   return (
     <nav
       className={`fixed z-50 w-full transition-all duration-300 ${
@@ -24,21 +21,7 @@ const Navbar = ({ scrolled, isMenuOpen, setIsMenuOpen }: NavbarProps) => {
             team<span className="text-green-400">.config</span>
           </span>
         </div>
-        <div className="hidden items-center gap-8 text-sm font-medium text-slate-400 md:flex">
-          <Button className="rounded-full border border-slate-700 bg-green-600 px-5 py-2 text-white transition-all hover:bg-green-500">
-            Log in
-          </Button>
-          <Button className="rounded-full border border-slate-700 bg-slate-800 px-5 py-2 text-white transition-all hover:bg-slate-700">
-            Sign In
-          </Button>
-        </div>
-        {/* Mobile Menu Button */}
-        <Button
-          className="text-white md:hidden"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <Layout />
-        </Button>
+        <div className="hidden items-center gap-8 text-sm font-medium text-slate-400 md:flex"></div>
       </div>
     </nav>
   );
