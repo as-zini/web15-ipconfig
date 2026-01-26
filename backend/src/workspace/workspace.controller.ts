@@ -13,21 +13,16 @@ import { customAlphabet } from 'nanoid';
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
-  @Get(':workspaceId')
-  getWorkspaceIsExists(@Param('workspaceId') workspaceId: string) {
-    return this.workspaceService.isExistsWorkspace(workspaceId);
-  }
-
-  @Get(':workspaceId/join')
-  joinWorkspace(@Param('workspaceId') workspaceId: string) {
+  @Get('join/:workspaceId')
+  joinWorkspaceByPath(@Param('workspaceId') workspaceId: string) {
     if (!this.workspaceService.isExistsWorkspace(workspaceId)) {
       throw new NotFoundException(`'${workspaceId}' 는 존재하지 않습니다.`);
     }
     return { workspaceId };
   }
 
-  @Post()
-  createWorkspaceWithRandomId() {
+  @Post('make')
+  createWorkspaceWithRandomIdMake() {
     let workspaceId = customAlphabet(
       '0123456789abcdefghijklmnopqrstuvwxyz',
       10,
@@ -44,7 +39,7 @@ export class WorkspaceController {
     return { workspaceId };
   }
 
-  @Post(':workspaceId')
+  @Post('make/:workspaceId')
   createWorkspaceWithId(@Param('workspaceId') workspaceId: string) {
     if (this.workspaceService.isExistsWorkspace(workspaceId)) {
       throw new ConflictException(
