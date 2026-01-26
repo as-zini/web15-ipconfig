@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import type { CollaborationData } from './CollaborationWidget';
 import {
   labelCandidates,
   strategies,
   versionTypes,
 } from '../constants/options';
+import type { CollaborationData } from '../types/CollaborationData';
 
 interface PRRulesProps {
   data: CollaborationData['prRules'];

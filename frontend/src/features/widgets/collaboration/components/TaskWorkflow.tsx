@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import type { CollaborationData } from './CollaborationWidget';
 import {
   Select,
   SelectContent,
@@ -10,6 +9,7 @@ import {
 
 import CounterInput from './CounterInput';
 import { platforms } from '../constants/options';
+import type { CollaborationData } from '../types/CollaborationData';
 
 interface TaskWorkflowProps {
   data: CollaborationData['workflow'];
