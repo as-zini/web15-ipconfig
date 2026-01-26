@@ -108,10 +108,22 @@ describe('MarkdownService', () => {
       createdAt: Date.now(),
       content: {
         communication: {
-          urgent: '전화',
-          sync: 'Zoom',
-          async: 'Slack',
-          official: '이메일',
+          urgent: {
+            selectedId: 'u1',
+            options: { u1: { value: '전화', createdAt: 0 } },
+          },
+          sync: {
+            selectedId: 's1',
+            options: { s1: { value: 'Zoom', createdAt: 0 } },
+          },
+          async: {
+            selectedId: 'a1',
+            options: { a1: { value: 'Slack', createdAt: 0 } },
+          },
+          official: {
+            selectedId: 'o1',
+            options: { o1: { value: '이메일', createdAt: 0 } },
+          },
         },
         sla: {
           responseTime: 24,
