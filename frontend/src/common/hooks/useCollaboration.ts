@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import useUserStore from '../store/user';
 import { connectProvider } from '../api/yjs/instance';
 import { setLocalUser } from '../api/yjs/awareness';
+import { bindYjsToZustand } from '../api/yjs/sync';
 
 export const useCollaboration = (documentName: string) => {
   const user = useUserStore((state) => state.user);
@@ -21,5 +22,11 @@ export const useCollaboration = (documentName: string) => {
         backgroundColor: user.backgroundColor,
       });
     }
+
+    const cleanupSync = bindYjsToZustand();
+
+    return () => {
+      cleanupSync();
+    };
   }, [documentName, user]);
 };
