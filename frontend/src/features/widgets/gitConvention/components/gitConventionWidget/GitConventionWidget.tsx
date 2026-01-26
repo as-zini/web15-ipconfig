@@ -1,55 +1,41 @@
-import type {
-  WidgetData,
-  WidgetContent,
-  GitConventionContentDto,
-  MoveWidgetData,
-} from '@/common/types/widgetData';
-import WidgetShell from '@/common/components/widget/WidgetShell';
-import { LuGitBranch } from 'react-icons/lu';
+import type { GitConventionData } from '@/features/widgets/gitConvention/types/gitConvention';
 import { useGitConvention } from '@/features/widgets/gitConvention/hooks/useGitConvention';
 import { StrategySelector } from './StrategySelector';
 import { BranchRules } from './BranchRules';
 import { CommitStyle } from './CommitStyle';
+import { useWidgetIdAndType } from '@/common/components/widgetFrame/context/WidgetContext';
+import { useWorkspaceWidgetStore } from '@/common/store/workspace';
+import { useShallow } from 'zustand/react/shallow';
+import { emitUpdateWidget } from '@/common/api/socket';
+import WidgetFrame from '@/common/components/widgetFrame/WidgetFrame';
+import { LuGitBranch } from 'react-icons/lu';
 
-interface GitConventionWidgetProps {
-  widgetId: string;
-  data: WidgetData;
-  emitUpdateWidget: (widgetId: string, data: WidgetContent) => void;
-  emitDeleteWidget: (widgetId: string) => void;
-  emitMoveWidget: (widgetId: string, data: MoveWidgetData) => void;
-}
-
-function GitConventionWidget({
-  widgetId,
-  data,
-  emitDeleteWidget,
-  emitUpdateWidget,
-  emitMoveWidget,
-}: GitConventionWidgetProps) {
+function GitConventionWidget() {
+  const { widgetId } = useWidgetIdAndType();
+  const content = useWorkspaceWidgetStore(
+    useShallow(
+      (state) =>
+        state.widgetList.find((widget) => widget.widgetId === widgetId)
+          ?.content,
+    ),
+  );
   // GitConventionContentDto 임을 명시하고, 이후에 data 사용
-  const gitConventionContent = data.content as GitConventionContentDto;
+  const gitConventionContent = content as GitConventionData;
 
   const { strategy, branchRules, commitConvention, isModalOpen, actions } =
     useGitConvention({
-      data: gitConventionContent.data,
+      data: gitConventionContent,
       onDataChange: (nextData) => {
-        emitUpdateWidget(widgetId, {
-          widgetType: 'GIT_CONVENTION',
-          data: nextData,
-        });
+        emitUpdateWidget(widgetId, nextData);
       },
     });
 
   return (
-    <WidgetShell
-      widgetId={widgetId}
-      data={data}
+    <WidgetFrame
       title="Git 컨벤션"
-      icon={<LuGitBranch className="text-primary" size={18} />}
-      emitDeleteWidget={emitDeleteWidget}
-      emitMoveWidget={emitMoveWidget}
+      icon={<LuGitBranch className="text-green-500" />}
     >
-      <section className="relative flex h-full flex-col gap-4 p-1">
+      <section className="relative flex h-full w-[400px] flex-col gap-4 p-1">
         <StrategySelector
           value={strategy}
           onChange={actions.requestChangeStrategy}
@@ -87,7 +73,7 @@ function GitConventionWidget({
           </div>
         )}
       </section>
-    </WidgetShell>
+    </WidgetFrame>
   );
 }
 

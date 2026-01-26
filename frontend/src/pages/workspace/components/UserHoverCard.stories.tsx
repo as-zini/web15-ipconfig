@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import UserHoverCard from './UserHoverCard';
-import type { User } from '@/common/types/user';
+import type { UserExtended } from '@/common/types/user';
 
 const meta = {
   title: 'Pages/Workspace/UserHoverCard',
@@ -24,11 +24,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockUser: User = {
+const mockUser: UserExtended = {
   id: '1',
-  name: '김개발',
+  nickname: '김개발',
   role: 'Frontend Developer',
   color: 'bg-blue-400',
+  backgroundColor: 'bg-blue-400',
   textColor: 'text-blue-400',
   status: '작업중',
   time: '오전 9:00 - 오후 6:00',
@@ -48,9 +49,10 @@ export const BackendDeveloper: Story = {
     user: {
       ...mockUser,
       id: '2',
-      name: '이서버',
+      nickname: '이서버',
       role: 'Backend Developer',
       color: 'bg-green-400',
+      backgroundColor: 'bg-green-400',
       textColor: 'text-green-400',
       time: '오전 10:00 - 오후 7:00',
       style: '체계적이고 안정적인 개발',
@@ -65,9 +67,10 @@ export const Designer: Story = {
     user: {
       ...mockUser,
       id: '3',
-      name: '박디자인',
+      nickname: '박디자인',
       role: 'UI/UX Designer',
       color: 'bg-purple-400',
+      backgroundColor: 'bg-purple-400',
       textColor: 'text-purple-400',
       status: '준비중',
       time: '오전 11:00 - 오후 8:00',

@@ -1,11 +1,12 @@
-import type { User } from '@/common/types/user';
+import type { UserExtended } from '@/common/types/user';
 
-export const INITIAL_USERS: User[] = [
+export const INITIAL_USERS: UserExtended[] = [
   {
     id: 'u1',
-    name: 'as-zini',
+    nickname: 'as-zini',
     role: 'Frontend',
     color: 'bg-purple-500',
+    backgroundColor: 'bg-purple-500',
     textColor: 'text-purple-500',
     style: 'Morning Person',
     time: '10 AM - 6 PM',
@@ -14,9 +15,10 @@ export const INITIAL_USERS: User[] = [
   },
   {
     id: 'u2',
-    name: 'Grit03',
+    nickname: 'Grit03',
     role: 'Backend',
     color: 'bg-teal-500',
+    backgroundColor: 'bg-teal-500',
     textColor: 'text-teal-500',
     style: 'Night Owl',
     time: '2 PM - 10 PM',
@@ -25,9 +27,10 @@ export const INITIAL_USERS: User[] = [
   },
   {
     id: 'u3',
-    name: 'davidpro08',
+    nickname: 'davidpro08',
     role: 'PM',
     color: 'bg-pink-500',
+    backgroundColor: 'bg-pink-500',
     textColor: 'text-pink-500',
     style: 'Flexible',
     time: '9 AM - 6 PM',
@@ -36,9 +39,10 @@ export const INITIAL_USERS: User[] = [
   },
   {
     id: 'u4',
-    name: 'snailw',
+    nickname: 'snailw',
     role: 'PM',
     color: 'bg-green-500',
+    backgroundColor: 'bg-green-500',
     textColor: 'text-pink-500',
     style: 'Flexible',
     time: '9 AM - 6 PM',

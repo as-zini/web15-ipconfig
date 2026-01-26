@@ -1,58 +1,44 @@
-import type {
-  WidgetContent,
-  WidgetData,
-  TechStackContentDto,
-  MoveWidgetData,
-} from '@/common/types/widgetData';
-import WidgetShell from '@/common/components/widget/WidgetShell';
-import { LuLayers } from 'react-icons/lu';
 import { TechStackModal } from '@/features/widgets/techStack/components/modal';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
-import { useTechStack } from '@/features/widgets/techStack/hooks/useTechStack';
+import { useTechStack } from '@/features/widgets/techStack/hooks/techStackWidget/useTechStack';
 import SelectedTechStackBox from './SelectedTechStackBox';
 import SelectInput from '@/common/components/SelectInput';
 import SubjectGuideline from './SubjectGuideline';
 import { useSubject } from '@/features/widgets/techStack/hooks/techStackWidget/useSubject';
+import type { TechStackData } from '@/common/types/widgetData';
+import { useWorkspaceWidgetStore } from '@/common/store/workspace';
+import { useWidgetIdAndType } from '@/common/components/widgetFrame/context/WidgetContext';
+import { emitUpdateWidget } from '@/common/api/socket';
+import WidgetFrame from '@/common/components/widgetFrame/WidgetFrame';
+import { LuLayers } from 'react-icons/lu';
 
-interface TechStackWidgetProps {
-  widgetId: string;
-  data: WidgetData;
-  emitUpdateWidget: (widgetId: string, data: WidgetContent) => void;
-  emitDeleteWidget: (widgetId: string) => void;
-  emitMoveWidget: (widgetId: string, data: MoveWidgetData) => void;
-}
+function TechStackWidget() {
+  const { widgetId } = useWidgetIdAndType();
+  const content = useWorkspaceWidgetStore(
+    (state) =>
+      state.widgetList.find((widget) => widget.widgetId === widgetId)?.content,
+  );
 
-function TechStackWidget({
-  widgetId,
-  data,
-  emitUpdateWidget,
-  emitDeleteWidget,
-  emitMoveWidget,
-}: TechStackWidgetProps) {
-  const techStackContent = data.content as TechStackContentDto;
+  const { selectedSubject, setSelectedSubject, parsedSubject } = useSubject();
 
+  const techStackContent = content as TechStackData;
   const { selectedTechStacks, isModalOpen, actions } = useTechStack({
     data: techStackContent,
     onDataChange: (nextData) => {
       emitUpdateWidget(widgetId, nextData);
     },
   });
-  const { selectedSubject, setSelectedSubject, parsedSubject } = useSubject();
 
   return (
-    <DndContext
-      collisionDetection={pointerWithin}
-      onDragEnd={actions.handleDragEnd}
+    <WidgetFrame
+      title="기술 스택"
+      icon={<LuLayers className="text-blue-500" />}
     >
-      <WidgetShell
-        widgetId={widgetId}
-        data={data}
-        title="기술 스택"
-        icon={<LuLayers className="text-primary" size={18} />}
-        emitDeleteWidget={emitDeleteWidget}
-        emitMoveWidget={emitMoveWidget}
+      <DndContext
+        collisionDetection={pointerWithin}
+        onDragEnd={actions.handleDragEnd}
       >
-        <section className="flex flex-col gap-4">
+        <section className="flex w-[450px] flex-col gap-4">
           <div className="flex items-center gap-2 font-bold">
             <div className="shrink-0">주제 :</div>
             <SelectInput
@@ -81,8 +67,8 @@ function TechStackWidget({
             onModalClose={actions.closeModal}
           />
         )}
-      </WidgetShell>
-    </DndContext>
+      </DndContext>
+    </WidgetFrame>
   );
 }
 

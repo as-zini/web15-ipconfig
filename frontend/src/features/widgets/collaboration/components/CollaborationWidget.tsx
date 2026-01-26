@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import WidgetContainer from '@/common/components/widget/WidgetContainer';
 import CodeReviewPolicy from './CodeReviewPolicy';
 import PRRules from './PRRules';
 import TaskWorkflow from './TaskWorkflow';
-import type { WidgetContent } from '@/common/types/widgetData';
-import WidgetHeader from '@/common/components/widget/WidgetHeader';
+import { useWidgetIdAndType } from '@/common/components/widgetFrame/context/WidgetContext';
+import { useWorkspaceWidgetStore } from '@/common/store/workspace';
+import { useShallow } from 'zustand/react/shallow';
+import WidgetFrame from '@/common/components/widgetFrame/WidgetFrame';
 import { LuUsers } from 'react-icons/lu';
 
-export interface CollaborationState {
+export interface CollaborationData {
   prRules: {
     activeVersion: string;
     selectedLabels: string[];
@@ -25,54 +26,42 @@ export interface CollaborationState {
   };
 }
 
-interface CollaborationWidgetProps {
-  widgetId: string;
-  data: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    zIndex: number;
-  };
-}
-export default function CollaborationWidget({
-  widgetId,
-  data,
-}: CollaborationWidgetProps) {
-  const [prRules, setPrRules] = useState<CollaborationState['prRules']>({
+export default function CollaborationWidget() {
+  const { widgetId } = useWidgetIdAndType();
+  const widgetData = useWorkspaceWidgetStore(
+    useShallow(
+      (state) =>
+        state.widgetList.find((widget) => widget.widgetId === widgetId)
+          ?.content,
+    ),
+  );
+
+  const [prRules, setPrRules] = useState<CollaborationData['prRules']>({
     activeVersion: 'semantic',
     selectedLabels: ['feature', 'fix', 'refactor'],
     activeStrategy: 'squash',
   });
 
   const [reviewPolicy, setReviewPolicy] = useState<
-    CollaborationState['reviewPolicy']
+    CollaborationData['reviewPolicy']
   >({
     approves: 2,
     maxReviewHours: 24,
     blockMerge: true,
   });
 
-  const [workflow, setWorkflow] = useState<CollaborationState['workflow']>({
+  const [workflow, setWorkflow] = useState<CollaborationData['workflow']>({
     platform: '',
     cycleValue: 2,
     cycleUnit: 'week',
   });
 
   return (
-    <WidgetContainer
-      id={widgetId}
-      x={data.x}
-      y={data.y}
-      width={850}
-      height={data.height}
-      zIndex={data.zIndex}
+    <WidgetFrame
+      title="작업 및 협업"
+      icon={<LuUsers className="text-purple-500" />}
+      defaultLayout={{ x: 1000, y: 1000 }}
     >
-      <WidgetHeader
-        title="작업 및 협업"
-        icon={<LuUsers className="text-primary" size={18} />}
-        onClickDelete={() => {}}
-      />
       <div className="grid w-[800px] grid-cols-1 gap-2 md:grid-cols-2">
         <div className="w-full justify-self-center">
           <CodeReviewPolicy
@@ -100,6 +89,6 @@ export default function CollaborationWidget({
           />
         </div>
       </div>
-    </WidgetContainer>
+    </WidgetFrame>
   );
 }
