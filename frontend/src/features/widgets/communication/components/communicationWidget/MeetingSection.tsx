@@ -4,7 +4,7 @@ import { LuCheck } from 'react-icons/lu';
 
 interface MeetingSectionProps {
   data: CommunicationData['meeting'];
-  onChange: (key: keyof CommunicationData['meeting'], value: string) => void;
+  onChange: (key: string, value: string) => void;
 }
 
 const FEEDBACK_STYLES = ['Soft', 'Honest', 'Retrospective'] as const;
