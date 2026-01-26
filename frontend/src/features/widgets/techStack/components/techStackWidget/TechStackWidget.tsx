@@ -1,31 +1,29 @@
 import { TechStackModal } from '@/features/widgets/techStack/components/modal';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
 import { useTechStack } from '@/features/widgets/techStack/hooks/techStackWidget/useTechStack';
+import { useMemo } from 'react';
 import SelectedTechStackBox from './SelectedTechStackBox';
 import SelectInput from '@/common/components/SelectInput';
 import SubjectGuideline from './SubjectGuideline';
-import { useSubject } from '@/features/widgets/techStack/hooks/techStackWidget/useSubject';
-import type { TechStackData } from '@/common/types/widgetData';
-import { useWorkspaceWidgetStore } from '@/common/store/workspace';
-import { useWidgetIdAndType } from '@/common/components/widgetFrame/context/WidgetContext';
-import { emitUpdateWidget } from '@/common/api/socket';
+
+import useTechStackWidget from '../../hooks/useTechStackWidget';
 import WidgetFrame from '@/common/components/widgetFrame/WidgetFrame';
 import { LuLayers } from 'react-icons/lu';
+import { parseSubject } from '../../utils/parsing';
 
 function TechStackWidget() {
-  const { widgetId } = useWidgetIdAndType();
-  const content = useWorkspaceWidgetStore(
-    (state) =>
-      state.widgetList.find((widget) => widget.widgetId === widgetId)?.content,
+  const { subject, techItems, handleSubjectUpdate, handleTechItemsUpdate } =
+    useTechStackWidget();
+
+  const parsedSubject = useMemo(
+    () => parseSubject(subject.selectedId),
+    [subject.selectedId],
   );
 
-  const { selectedSubject, setSelectedSubject, parsedSubject } = useSubject();
-
-  const techStackContent = content as TechStackData;
-  const { selectedTechStacks, isModalOpen, actions } = useTechStack({
-    data: techStackContent,
+  const { isModalOpen, actions } = useTechStack({
+    data: { subject, techItems },
     onDataChange: (nextData) => {
-      emitUpdateWidget(widgetId, nextData);
+      handleTechItemsUpdate(nextData.techItems);
     },
   });
 
@@ -38,12 +36,12 @@ function TechStackWidget() {
         collisionDetection={pointerWithin}
         onDragEnd={actions.handleDragEnd}
       >
-        <section className="flex flex-col gap-4">
+        <section className="flex w-[450px] flex-col gap-4">
           <div className="flex items-center gap-2 font-bold">
             <div className="shrink-0">주제 :</div>
             <SelectInput
-              selectedValue={selectedSubject}
-              setSelectedValue={setSelectedSubject}
+              selectedValue={subject.selectedId}
+              setSelectedValue={handleSubjectUpdate}
             />
           </div>
 
@@ -56,7 +54,7 @@ function TechStackWidget() {
           )}
 
           <SelectedTechStackBox
-            selectedTechStacks={selectedTechStacks}
+            selectedTechStacks={techItems}
             setSelectedTechStacks={actions.setSelectedTechStacks}
             setIsTechStackModalOpen={actions.openModal}
           />
