@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import type { TechStack } from '../../types/techStack';
-import type { TechStackData } from '@/common/types/widgetData';
+import type { TechStackWidgetData } from '@/common/types/widgetData';
 
 interface UseTechStackProps {
-  data: TechStackData;
-  onDataChange: (data: TechStackData) => void;
+  data: TechStackWidgetData;
+  onDataChange: (data: TechStackWidgetData) => void;
 }
 
 export function useTechStack({ data, onDataChange }: UseTechStackProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const selectedTechStacks = data.selectedItems || [];
+  const selectedTechStacks = data.techItems || [];
 
   const setSelectedTechStacks = (value: React.SetStateAction<TechStack[]>) => {
     let newItems: TechStack[];
@@ -22,7 +22,8 @@ export function useTechStack({ data, onDataChange }: UseTechStackProps) {
     }
 
     onDataChange({
-      selectedItems: newItems,
+      ...data,
+      techItems: newItems,
     });
   };
 
@@ -48,7 +49,8 @@ export function useTechStack({ data, onDataChange }: UseTechStackProps) {
           { id, name, category },
         ];
         onDataChange({
-          selectedItems: newSelectedTechStacks,
+          ...data,
+          techItems: newSelectedTechStacks,
         });
       }
     }
