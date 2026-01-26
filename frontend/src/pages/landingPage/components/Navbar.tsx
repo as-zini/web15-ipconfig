@@ -1,5 +1,6 @@
-import { Terminal, Layout } from 'lucide-react';
+import { Layout } from 'lucide-react';
 import { Button } from '@/common/components/shadcn/button';
+import { Link } from 'react-router';
 
 interface NavbarProps {
   scrolled: boolean;
@@ -18,12 +19,19 @@ const Navbar = ({ scrolled, isMenuOpen, setIsMenuOpen }: NavbarProps) => {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-6">
-        <div className="flex items-center gap-2 font-mono text-xl font-bold tracking-tighter">
-          <Terminal className="text-green-400" size={24} />
+        <Link
+          to="/"
+          className="flex items-center gap-2 font-mono text-xl font-bold tracking-tighter"
+        >
+          <img
+            src="/teamconfig-logo.png"
+            alt="logo"
+            className="h-8 w-8 object-cover"
+          />
           <span className="text-white">
             team<span className="text-green-400">.config</span>
           </span>
-        </div>
+        </Link>
         <div className="hidden items-center gap-8 text-sm font-medium text-slate-400 md:flex">
           <Button className="rounded-full border border-slate-700 bg-green-600 px-5 py-2 text-white transition-all hover:bg-green-500">
             Log in
