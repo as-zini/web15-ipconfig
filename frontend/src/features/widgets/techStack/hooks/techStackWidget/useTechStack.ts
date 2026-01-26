@@ -1,30 +1,59 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import type { TechStack } from '../../types/techStack';
 import type { TechStackWidgetData } from '@/common/types/widgetData';
+import { useWidgetIdAndType } from '@/common/components/widgetFrame/context/WidgetContext';
+import { useWorkspaceWidgetStore } from '@/common/store/workspace';
+import { useShallow } from 'zustand/react/shallow';
+import {
+  updateArrayContentAction,
+  updateSelectorPickAction,
+} from '@/common/api/yjs/actions/widgetContent';
 
-interface UseTechStackProps {
-  data: TechStackWidgetData;
-  onDataChange: (data: TechStackWidgetData) => void;
-}
+export function useTechStack() {
+  // Store Connection
+  const { widgetId, type } = useWidgetIdAndType();
+  const content = useWorkspaceWidgetStore(
+    useShallow(
+      (state) =>
+        state.widgetList.find((widget) => widget.widgetId === widgetId)
+          ?.content,
+    ),
+  );
 
-export function useTechStack({ data, onDataChange }: UseTechStackProps) {
+  const techStackData = content as TechStackWidgetData;
+
+  // Defaults
+  const subject = techStackData?.subject ?? { selectedId: '', options: {} };
+  const techItems = techStackData?.techItems ?? [];
+
+  // Update Handlers
+  const handleSubjectUpdate = useCallback(
+    (newSubject: string) => {
+      updateSelectorPickAction(widgetId, type, 'subject', newSubject);
+    },
+    [widgetId, type],
+  );
+
+  const handleTechItemsUpdate = useCallback(
+    (newItems: TechStack[]) => {
+      updateArrayContentAction(widgetId, type, 'techItems', newItems);
+    },
+    [widgetId, type],
+  );
+
+  // Local UI State
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const selectedTechStacks = data.techItems || [];
 
   const setSelectedTechStacks = (value: React.SetStateAction<TechStack[]>) => {
     let newItems: TechStack[];
     if (typeof value === 'function') {
-      newItems = value(selectedTechStacks);
+      newItems = value(techItems);
     } else {
       newItems = value;
     }
 
-    onDataChange({
-      ...data,
-      techItems: newItems,
-    });
+    handleTechItemsUpdate(newItems);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -43,22 +72,18 @@ export function useTechStack({ data, onDataChange }: UseTechStackProps) {
     // 드롭 영역 위에 드롭되었는지 확인
     if (over && over.id === 'techStackWidget') {
       const { id, name, category } = active.data.current.content as TechStack;
-      if (!selectedTechStacks.some((tech) => tech.id === id)) {
-        const newSelectedTechStacks = [
-          ...selectedTechStacks,
-          { id, name, category },
-        ];
-        onDataChange({
-          ...data,
-          techItems: newSelectedTechStacks,
-        });
+      if (!techItems.some((tech) => tech.id === id)) {
+        const newSelectedTechStacks = [...techItems, { id, name, category }];
+        handleTechItemsUpdate(newSelectedTechStacks);
       }
     }
   };
 
   return {
-    selectedTechStacks,
+    subject,
+    techItems,
     isModalOpen,
+    handleSubjectUpdate,
     actions: {
       setSelectedTechStacks,
       handleDragEnd,
