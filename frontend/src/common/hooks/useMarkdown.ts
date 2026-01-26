@@ -4,6 +4,8 @@ import { markdownApi } from '../api/markdownApi';
 interface UseMarkdownReturn {
   markdown: string;
   fetchMarkdown: (workspaceId: string) => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
 }
 
 /**
@@ -11,14 +13,25 @@ interface UseMarkdownReturn {
  */
 export const useMarkdown = (): UseMarkdownReturn => {
   const [markdown, setMarkdown] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchMarkdown = useCallback(async (workspaceId: string) => {
-    const markdownData = await markdownApi.getMarkdown(workspaceId);
-    setMarkdown(markdownData);
+    setIsLoading(true);
+    try {
+      const markdownData = await markdownApi.getMarkdown(workspaceId);
+      setMarkdown(markdownData);
+    } catch (error) {
+      setError(error as string);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   return {
     markdown,
     fetchMarkdown,
+    isLoading,
+    error,
   };
 };
