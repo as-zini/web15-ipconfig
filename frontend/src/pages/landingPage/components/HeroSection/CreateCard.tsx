@@ -17,12 +17,11 @@ const CreateCard = () => {
           새로 시작하기
         </h2>
         <p className="text-sm text-slate-400">
-          새로운 워크스페이스를 만들고
+          새로운 워크스페이스를 만들고&nbsp;
+          <span className="font-semibold text-slate-100">원하는 코드</span>
+          를 입력하거나
           <br />
-          <span className="font-semibold text-slate-100">원하는 코드</span>를
-          입력하거나
-          <br />
-          미입력 시{' '}
+          미입력 시&nbsp;
           <span className="font-semibold text-slate-100">무작위 코드</span>를
           발급받으세요.
         </p>
