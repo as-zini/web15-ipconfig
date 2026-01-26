@@ -226,29 +226,10 @@ export const replaceMapAction = (
     const parentPath = fullPath.slice(0, -1);
     const targetKey = fullPath[fullPath.length - 1];
 
-    // 타겟의 부모 맵을 찾음
     const parentMap = getTargetMap(widgetId, parentPath);
-    if (!parentMap) return;
 
-    let targetMap: Y.Map<unknown>;
-
-    if (parentMap.has(targetKey)) {
-      const existing = parentMap.get(targetKey);
-      if (existing instanceof Y.Map) {
-        targetMap = existing as Y.Map<unknown>;
-        targetMap.clear();
-      } else {
-        // 맵이 아니면 덮어쓰기 위해 새로 만듦
-        targetMap = new Y.Map();
-        parentMap.set(targetKey, targetMap);
-      }
-    } else {
-      targetMap = new Y.Map();
-      parentMap.set(targetKey, targetMap);
+    if (parentMap) {
+      parentMap.set(targetKey, toYType(newMapData));
     }
-
-    Object.entries(newMapData).forEach(([key, value]) => {
-      targetMap.set(key, toYType(value));
-    });
   });
 };

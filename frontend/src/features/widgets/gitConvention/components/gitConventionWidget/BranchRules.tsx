@@ -59,7 +59,7 @@ export function BranchRules({ rules, onChange }: BranchRulesProps) {
       </div>
 
       {/* Develop Branch (Optional) */}
-      {rules.developBranch !== undefined && (
+      {rules.developBranch && (
         <div className="flex flex-col gap-1.5">
           <label className="text-muted-foreground ml-1 text-xs font-medium">
             Develop Branch

@@ -40,10 +40,7 @@ function ToolBar() {
               widgetId,
               type: 'GIT_CONVENTION',
               layout: { x: 500, y: 500 },
-              content: INITIAL_GIT_CONVENTION_DATA as unknown as Record<
-                string,
-                unknown
-              >,
+              content: INITIAL_GIT_CONVENTION_DATA,
             });
           }}
         />
