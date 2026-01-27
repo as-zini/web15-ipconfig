@@ -1,8 +1,8 @@
-import ExportDocModal from '@/features/export/docs/components/ExportDocModal';
-import { LuFileText, LuGithub, LuSettings } from 'react-icons/lu';
+import { LuGithub, LuSettings } from 'react-icons/lu';
 import { type ComponentProps } from 'react';
 import { cn } from '@/common/lib/utils';
 import { Button } from '@/common/components/shadcn/button';
+import ExportGroupDropdownButton from '@/features/export/components/ExportGroupDropdownButton';
 
 function RoundedContainer({ children, className }: ComponentProps<'div'>) {
   return (
@@ -21,8 +21,8 @@ function TitleInput() {
   return (
     <input
       type="text"
-      defaultValue="web-15-demo"
-      className="focus:border-primary-600/50 focus:ring-primary-600/50 w-full rounded-md border border-transparent bg-transparent px-1 text-lg text-white outline-none focus:ring"
+      defaultValue="제목을 입력하세요"
+      className="focus:border-primary-600/50 focus:ring-primary-600/50 w-full rounded-md border border-transparent bg-transparent px-1 text-base font-bold text-white outline-none focus:ring"
     />
   );
 }
@@ -42,11 +42,7 @@ function WorkspaceHeader() {
       </RoundedContainer>
 
       <RoundedContainer className="gap-2">
-        <ExportDocModal />
-        <Button size="sm" variant="outline">
-          <LuSettings size={16} />
-          설정 파일 내보내기
-        </Button>
+        <ExportGroupDropdownButton />
         <Button size="sm" variant="outline">
           <LuGithub size={16} />
           초기 세팅하기
