@@ -7,7 +7,6 @@ import {
 } from './components/landing';
 
 const LandingPage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   // 스크롤 감지
@@ -22,11 +21,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-950 font-sans text-slate-50 selection:bg-green-500/30 selection:text-green-200">
       <BackgroundGradient />
-      <Navbar
-        scrolled={scrolled}
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-      />
+      <Navbar scrolled={scrolled} />
       <HeroSection />
       <Footer />
     </div>
