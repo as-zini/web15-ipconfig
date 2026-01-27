@@ -1,8 +1,15 @@
-import type { CollaborationData } from '@/features/widgets/collaboration/components/CollaborationWidget';
+import type { CollaborationData } from '@/features/widgets/collaboration/types/CollaborationData';
 import type { CommunicationData } from '@/features/widgets/communication/types/communication';
 import type { GitConventionData } from '@/features/widgets/gitConvention/types/gitConvention';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
 import type { NamingConventionData } from '@/features/widgets/namingConvention/types/namingConvention';
+
+export type {
+  CollaborationData,
+  CommunicationData,
+  GitConventionData,
+  TechStack,
+};
 
 export type WidgetType =
   | 'TECH_STACK'
@@ -21,6 +28,7 @@ export type WidgetContent =
 
 export interface TechStackData {
   selectedItems: TechStack[];
+  subject?: string;
 }
 
 export interface WidgetData {

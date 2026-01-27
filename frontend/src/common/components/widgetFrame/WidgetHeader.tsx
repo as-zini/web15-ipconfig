@@ -1,7 +1,7 @@
 import type { WidgetLayout } from '@/common/types/widgetData';
 import { LuTrash2 } from 'react-icons/lu';
 import { useWidgetIdAndType } from './context/WidgetContext';
-import { emitDeleteWidget } from '@/common/api/socket';
+import { deleteWidgetAction } from '@/common/api/yjs/actions/widgetFrame';
 
 export interface WidgetHeaderProps {
   title: string;
@@ -30,7 +30,7 @@ function WidgetHeader({ title, icon, actions }: WidgetHeaderProps) {
           <LuTrash2
             size={16}
             onClick={() => {
-              emitDeleteWidget(widgetId);
+              deleteWidgetAction(widgetId);
             }}
           />
         </button>
