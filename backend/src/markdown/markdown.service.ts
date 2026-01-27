@@ -7,6 +7,8 @@ import type {
   YjsPostItContent,
   YjsCollaborationContent,
   YjsCommunicationContent,
+  YjsNamingConventionContent,
+  YjsFormatContent,
 } from '../collaboration/types/yjs-widget.types';
 import {
   getSelectedValue,
@@ -177,6 +179,133 @@ export class MarkdownService {
           lines.push(`- **${item.name}**`);
         });
       }
+    });
+
+    this.addSeparator(lines);
+    return lines;
+  }
+
+  private buildNamingConventionSection(widgets: YjsWidgetData[]): string[] {
+    if (!widgets || widgets.length === 0) return [];
+
+    const lines: string[] = [];
+    lines.push('## 📝 네이밍 컨벤션');
+
+    widgets.forEach((widget) => {
+      const content = widget.content as unknown as YjsNamingConventionContent;
+
+      // Frontend
+      lines.push('### Frontend');
+      lines.push('| 구분 | 컨벤션 |');
+      lines.push('| :--- | :--- |');
+      lines.push(
+        this.createTableRow('변수', content.frontend?.variable || '-'),
+      );
+      lines.push(
+        this.createTableRow('함수', content.frontend?.function || '-'),
+      );
+      lines.push(
+        this.createTableRow('컴포넌트', content.frontend?.component || '-'),
+      );
+      lines.push(
+        this.createTableRow('상수', content.frontend?.constant || '-'),
+      );
+      lines.push('');
+
+      // Backend
+      lines.push('### Backend');
+      lines.push('| 구분 | 컨벤션 |');
+      lines.push('| :--- | :--- |');
+      lines.push(this.createTableRow('변수', content.backend?.variable || '-'));
+      lines.push(this.createTableRow('함수', content.backend?.function || '-'));
+      lines.push(this.createTableRow('클래스', content.backend?.class || '-'));
+      lines.push(this.createTableRow('상수', content.backend?.constant || '-'));
+      lines.push('');
+
+      // Database
+      lines.push('### Database');
+      lines.push('| 구분 | 컨벤션 |');
+      lines.push('| :--- | :--- |');
+      lines.push(this.createTableRow('테이블', content.database?.table || '-'));
+      lines.push(this.createTableRow('컬럼', content.database?.column || '-'));
+      lines.push(this.createTableRow('인덱스', content.database?.index || '-'));
+      lines.push(
+        this.createTableRow('제약조건', content.database?.constraint || '-'),
+      );
+      lines.push('');
+
+      // Common
+      lines.push('### Common');
+      lines.push('| 구분 | 컨벤션 |');
+      lines.push('| :--- | :--- |');
+      lines.push(
+        this.createTableRow('유틸리티', content.common?.utility || '-'),
+      );
+      lines.push(this.createTableRow('상수', content.common?.constant || '-'));
+      lines.push(this.createTableRow('타입', content.common?.type || '-'));
+      lines.push(this.createTableRow('열거형', content.common?.enum || '-'));
+      lines.push('');
+    });
+
+    this.addSeparator(lines);
+    return lines;
+  }
+
+  private buildFormatSection(widgets: YjsWidgetData[]): string[] {
+    if (!widgets || widgets.length === 0) return [];
+
+    const lines: string[] = [];
+    lines.push('## ⚙️ 코드 포맷 (Code Format)');
+
+    widgets.forEach((widget) => {
+      const content = widget.content as unknown as YjsFormatContent;
+
+      lines.push('| 설정 (Setting) | 값 (Value) |');
+      lines.push('| :--- | :--- |');
+      lines.push(this.createTableRow('줄 길이', `${content.line ?? '-'}`));
+      lines.push(
+        this.createTableRow('탭 사용', content.useTabs ? '스페이스' : '탭'),
+      );
+      lines.push(
+        this.createTableRow('들여쓰기 폭', `${content.tabWidth ?? '-'}`),
+      );
+      lines.push(
+        this.createTableRow('세미콜론', content.semi ? '사용' : '생략'),
+      );
+      lines.push(
+        this.createTableRow(
+          '홑따옴표',
+          content.singleQuote ? '홑따옴표' : '쌍따옴표',
+        ),
+      );
+      lines.push(
+        this.createTableRow(
+          'JSX 홑따옴표',
+          content.jsxSingleQuote ? '홑따옴표' : '쌍따옴표',
+        ),
+      );
+      lines.push(
+        this.createTableRow('후행 쉼표', content.trailingComma || '-'),
+      );
+      lines.push(
+        this.createTableRow(
+          '중괄호 공백',
+          content.bracketSpacing ? '공백 사용' : '공백 없음',
+        ),
+      );
+      lines.push(
+        this.createTableRow(
+          '화살표 괄호',
+          content.arrowParens ? '사용' : '미사용',
+        ),
+      );
+      lines.push(
+        this.createTableRow(
+          '속성 줄바꿈',
+          content.attributePerLine ? '줄바꿈' : '한 줄에 배치',
+        ),
+      );
+      lines.push('');
     });
 
     this.addSeparator(lines);
@@ -355,6 +484,20 @@ export class MarkdownService {
     );
     markdownParts.push(...this.buildTechStackSection(techStackWidgets));
 
+    // 네이밍 컨벤션
+    const namingConventionWidgets = allWidgets.filter(
+      (widget) => widget.type === 'NAMING_CONVENTION',
+    );
+    markdownParts.push(
+      ...this.buildNamingConventionSection(namingConventionWidgets),
+    );
+
+    // 코드 포맷
+    const formatWidgets = allWidgets.filter(
+      (widget) => widget.type === 'FORMAT',
+    );
+    markdownParts.push(...this.buildFormatSection(formatWidgets));
+
     // Git 컨벤션
     const groundRuleWidgets = allWidgets.filter(
       (widget) => widget.type === 'GIT_CONVENTION',
@@ -385,6 +528,8 @@ export class MarkdownService {
       collaborationWidgets.length === 0 &&
       communicationWidgets.length === 0 &&
       techStackWidgets.length === 0 &&
+      namingConventionWidgets.length === 0 &&
+      formatWidgets.length === 0 &&
       postItWidgets.length === 0
     ) {
       markdownParts.push('### 🚀 아직 작성된 내용이 없습니다.');
