@@ -1,36 +1,57 @@
 import ExportDocModal from '@/features/export/docs/components/ExportDocModal';
-import { LuGithub } from 'react-icons/lu';
+import { LuFileText, LuGithub, LuSettings } from 'react-icons/lu';
+import { type ComponentProps } from 'react';
+import { cn } from '@/common/lib/utils';
+import { Button } from '@/common/components/shadcn/button';
+
+function RoundedContainer({ children, className }: ComponentProps<'div'>) {
+  return (
+    <div
+      className={cn(
+        'pointer-events-auto flex h-full items-center rounded-xl border border-gray-700 bg-gray-800 px-2 py-1 shadow-2xl backdrop-blur-xl',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+function TitleInput() {
+  return (
+    <input
+      type="text"
+      defaultValue="web-15-demo"
+      className="focus:border-primary-600/50 focus:ring-primary-600/50 w-full rounded-md border border-transparent bg-transparent px-1 text-lg text-white outline-none focus:ring"
+    />
+  );
+}
 
 function WorkspaceHeader() {
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between bg-transparent px-6">
-      <div className="flex items-center gap-4">
+    <header className="pointer-events-none flex h-16 shrink-0 items-center justify-between bg-transparent px-4 py-2">
+      <RoundedContainer>
         <img
           src="/teamconfig-logo.png"
           alt="logo"
-          className="h-12 w-12 shrink-0 translate-y-0.5"
+          className="mr-2 h-9 w-9 shrink-0"
         />
         <div>
-          <input
-            type="text"
-            defaultValue="web-15-demo"
-            className="w-64 border-none bg-transparent p-0 text-lg font-bold text-white transition-colors outline-none hover:text-teal-400 focus:ring-0"
-          />
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-            Saved just now
-          </div>
+          <TitleInput />
         </div>
-      </div>
+      </RoundedContainer>
 
-      <div className="flex items-center gap-6">
+      <RoundedContainer className="gap-2">
         <ExportDocModal />
-
-        <button className="flex transform items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105 hover:bg-blue-500">
+        <Button size="sm" variant="outline">
+          <LuSettings size={16} />
+          설정 파일 내보내기
+        </Button>
+        <Button size="sm" variant="outline">
           <LuGithub size={16} />
-          레포지토리 초기 세팅하기
-        </button>
-      </div>
+          초기 세팅하기
+        </Button>
+      </RoundedContainer>
     </header>
   );
 }
