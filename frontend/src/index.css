@@ -7,8 +7,15 @@
   --color-main: #00c950;
 }
 
+@font-face {
+  font-family: 'suit';
+  font-weight: 100 900;
+  src: url('./assets/fonts/SUIT-Variable.ttf') format('truetype');
+  font-display: swap;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'suit', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
