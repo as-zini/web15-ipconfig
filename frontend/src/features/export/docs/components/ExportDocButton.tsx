@@ -4,7 +4,11 @@ import { LuFileText } from 'react-icons/lu';
 
 function ExportDocButton({ ...props }: ComponentProps<typeof Button>) {
   return (
-    <Button className="bg-primary-700 font-semibold text-white" {...props}>
+    <Button
+      className="bg-primary-700 font-semibold text-white"
+      {...props}
+      size="sm"
+    >
       <LuFileText size={16} />
       문서 내보내기
     </Button>
