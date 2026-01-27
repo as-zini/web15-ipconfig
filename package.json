@@ -70,5 +70,8 @@
         "react-dom": "^19.2.0"
       }
     }
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2"
   }
 }
