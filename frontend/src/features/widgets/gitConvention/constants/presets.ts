@@ -59,7 +59,7 @@ export const GIT_CONVENTION_PRESETS: Record<string, GitConventionData> = {
     },
     branchRules: {
       mainBranch: 'main',
-      developBranch: '',
+      developBranch: undefined,
       prefixes: {
         selectedIds: ['feature', 'fix', 'refactor'],
         options: createOptions(EXTENDED_PREFIX_OPTIONS),
@@ -108,7 +108,7 @@ export const GIT_CONVENTION_PRESETS: Record<string, GitConventionData> = {
     },
     branchRules: {
       mainBranch: 'trunk',
-      developBranch: '',
+      developBranch: undefined,
       prefixes: {
         selectedIds: ['chore', 'fix'],
         options: createOptions(['chore', 'fix']),
