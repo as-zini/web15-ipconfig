@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { markdownApi } from '../api/markdownApi';
+import { toast } from 'sonner';
 
 interface UseMarkdownReturn {
   markdown: string;
@@ -17,12 +18,16 @@ export const useMarkdown = (): UseMarkdownReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchMarkdown = useCallback(async (workspaceId: string) => {
+    setError(null);
     setIsLoading(true);
     try {
       const markdownData = await markdownApi.getMarkdown(workspaceId);
       setMarkdown(markdownData);
     } catch (error) {
-      setError(error as string);
+      const errorMessage =
+        (error as Error).message ?? '알 수 없는 오류가 발생했어요.';
+      setError(errorMessage);
+      toast.error('마크다운 가져오기에 실패했어요.');
     } finally {
       setIsLoading(false);
     }
