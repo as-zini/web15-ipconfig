@@ -6,6 +6,7 @@ export type WidgetContent =
   | GitConventionContent
   | CommunicationContent
   | CollaborationContent
+  | NamingConventionContent
   | PostItContent
   | Record<string, unknown>;
 
@@ -74,6 +75,13 @@ export interface CollaborationContent {
     cycleUnit: string;
   };
 }
+
+export type NamingConventionContent = {
+  [key in 'frontend' | 'backend' | 'database' | 'common']?: Record<
+    string,
+    string
+  >;
+};
 
 // 5. POST_IT (Example placeholder)
 export interface PostItContent {
