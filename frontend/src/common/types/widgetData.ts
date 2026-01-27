@@ -1,4 +1,4 @@
-import type { CollaborationData } from '@/features/widgets/collaboration/components/CollaborationWidget';
+import type { CollaborationData } from '@/features/widgets/collaboration/types/CollaborationData';
 import type { CommunicationData } from '@/features/widgets/communication/types/communication';
 import type { GitConventionData } from '@/features/widgets/gitConvention/types/gitConvention';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
