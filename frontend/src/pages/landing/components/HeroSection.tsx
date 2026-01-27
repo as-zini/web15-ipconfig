@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/common/components/shadcn/button';
 
-const HeroSection = () => {
+function HeroSection() {
   const navigate = useNavigate();
 
   return (
@@ -37,6 +37,6 @@ const HeroSection = () => {
       </div>
     </section>
   );
-};
+}
 
 export default HeroSection;
