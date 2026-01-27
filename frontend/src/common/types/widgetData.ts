@@ -20,16 +20,14 @@ export type WidgetType =
   | 'CODE_FORMAT';
 
 export type WidgetContent =
-  | TechStackData
+  | TechStackWidgetData
   | GitConventionData
   | CommunicationData
   | CollaborationData
   | NamingConventionData;
 
-export interface TechStackData {
-  selectedItems: TechStack[];
-  subject?: string;
-}
+import type { TechStackWidgetData } from '@/features/widgets/techStack/types/TechStackWidgetData';
+export type { TechStackWidgetData };
 
 export interface WidgetData {
   widgetId: string;
