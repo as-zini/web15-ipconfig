@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  BackgroundGradient,
-  Navbar,
-  HeroSection,
-  Footer,
-} from './components/landing';
+import { BackgroundGradient, Navbar, HeroSection, Footer } from './components';
 
 const LandingPage = () => {
   const [scrolled, setScrolled] = useState(false);
