@@ -215,7 +215,7 @@ describe('MarkdownService', () => {
 
     const markdown = service.generateMarkdown(workspaceId);
 
-    expect(markdown).toContain('## 📋 그라운드 룰');
+    expect(markdown).toContain('## 🐙 Git 컨벤션');
     expect(markdown).toContain('### 🧩 브랜치 전략');
     expect(markdown).toContain('GitHub Flow');
     expect(markdown).toContain('### 🌿 브랜치 규칙');

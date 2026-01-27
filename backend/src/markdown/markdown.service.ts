@@ -35,20 +35,17 @@ export class MarkdownService {
     lines.push('');
   }
 
-  private buildGitConventionStrategySection(
-    gitConventionWidgets: YjsWidgetData[],
-  ): string[] {
-    if (!gitConventionWidgets || gitConventionWidgets.length === 0) {
-      return [];
-    }
+  private buildGitConventionSection(widgets: YjsWidgetData[]): string[] {
+    if (!widgets || widgets.length === 0) return [];
 
     const lines: string[] = [];
-    lines.push('### 🧩 브랜치 전략');
+    lines.push('## 🐙 Git 컨벤션');
 
-    gitConventionWidgets.forEach((widget) => {
+    widgets.forEach((widget) => {
       const content = widget.content as unknown as YjsGitConventionContent;
-      const strategy = getSelectedValue(content.strategy);
 
+      lines.push('### 🧩 브랜치 전략');
+      const strategy = getSelectedValue(content.strategy);
       let strategyName = '';
       let description = '';
 
@@ -71,30 +68,14 @@ export class MarkdownService {
       lines.push(`> **${strategyName}**`);
       lines.push(`> "${description}"`);
       lines.push('');
-    });
 
-    return lines;
-  }
+      lines.push('### 🌿 브랜치 규칙');
+      lines.push('| 구분 | 브랜치명 / Prefix |');
+      lines.push('| :--- | :--- |');
 
-  private buildGitBranchRulesSection(
-    gitConventionWidgets: YjsWidgetData[],
-  ): string[] {
-    if (!gitConventionWidgets || gitConventionWidgets.length === 0) {
-      return [];
-    }
-
-    const lines: string[] = [];
-    lines.push('### 🌿 브랜치 규칙');
-
-    lines.push('| 구분 | 브랜치명 / Prefix |');
-    lines.push('| :--- | :--- |');
-
-    gitConventionWidgets.forEach((widget) => {
-      const content = widget.content as unknown as YjsGitConventionContent;
       const mainBranch = content.branchRules?.mainBranch || '-';
       const developBranch = content.branchRules?.developBranch || '-';
       const prefixes = getSelectedValues(content.branchRules?.prefixes);
-
       const prefixesStr =
         prefixes.length > 0 ? prefixes.map((p) => `\`${p}\``).join(', ') : '-';
 
@@ -105,24 +86,9 @@ export class MarkdownService {
         );
       }
       lines.push(this.createTableRow('**Prefix 목록**', prefixesStr));
-    });
+      lines.push('');
 
-    lines.push('');
-    return lines;
-  }
-
-  private buildGitCommitConventionSection(
-    gitConventionWidgets: YjsWidgetData[],
-  ): string[] {
-    if (!gitConventionWidgets || gitConventionWidgets.length === 0) {
-      return [];
-    }
-
-    const lines: string[] = [];
-    lines.push('### 📝 커밋 컨벤션');
-
-    gitConventionWidgets.forEach((widget) => {
-      const content = widget.content as unknown as YjsGitConventionContent;
+      lines.push('### 📝 커밋 컨벤션');
       const commitTypes = getSelectedValues(
         content.commitConvention?.commitTypes,
       );
@@ -142,25 +108,8 @@ export class MarkdownService {
         lines.push('');
         lines.push('</details>');
       }
+      lines.push('');
     });
-
-    lines.push('');
-    return lines;
-  }
-
-  private buildGroundRuleSection(widgets: YjsWidgetData[]): string[] {
-    if (!widgets || widgets.length === 0) return [];
-
-    const lines: string[] = [];
-    lines.push('## 📋 그라운드 룰');
-
-    const gitConventionWidgets = widgets.filter(
-      (widget) => widget.type === 'GIT_CONVENTION',
-    );
-
-    lines.push(...this.buildGitConventionStrategySection(gitConventionWidgets));
-    lines.push(...this.buildGitBranchRulesSection(gitConventionWidgets));
-    lines.push(...this.buildGitCommitConventionSection(gitConventionWidgets));
 
     this.addSeparator(lines);
     return lines;
@@ -502,7 +451,7 @@ export class MarkdownService {
     const groundRuleWidgets = allWidgets.filter(
       (widget) => widget.type === 'GIT_CONVENTION',
     );
-    markdownParts.push(...this.buildGroundRuleSection(groundRuleWidgets));
+    markdownParts.push(...this.buildGitConventionSection(groundRuleWidgets));
 
     // 협업 규칙
     const collaborationWidgets = allWidgets.filter(
