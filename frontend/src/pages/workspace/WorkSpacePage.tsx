@@ -19,6 +19,7 @@ import { joinRoom, leaveRoom } from '@/common/api/socket';
 import { useWorkspaceInfoStore } from '@/common/store/workspace';
 import { generateCurrentUser } from '@/common/lib/user';
 import { useCollaboration } from '@/common/hooks/useCollaboration';
+import useUserStore from '@/common/store/user';
 
 function WorkSpacePage() {
   const navigate = useNavigate();

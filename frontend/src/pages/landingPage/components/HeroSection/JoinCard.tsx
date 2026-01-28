@@ -23,7 +23,7 @@ const JoinCard = () => {
           placeholder="코드 입력 (예: 1a2b3c)"
           {...register('code')}
           maxLength={32}
-          className="h-12 text-center font-mono text-base"
+          className="h-12 text-center font-mono text-base focus-visible:border-blue-500 focus-visible:ring-blue-500/50"
         />
         {errors.code && (
           <p className="text-left font-mono text-sm text-red-400">
