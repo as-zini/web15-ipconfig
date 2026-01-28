@@ -4,12 +4,10 @@ import { Link } from 'react-router';
 
 interface NavbarProps {
   scrolled: boolean;
-  isMenuOpen: boolean;
-  setIsMenuOpen: (open: boolean) => void;
 }
 
 // 버튼 색이 마음에 안 듬...
-const Navbar = ({ scrolled, isMenuOpen, setIsMenuOpen }: NavbarProps) => {
+const Navbar = ({ scrolled }: NavbarProps) => {
   return (
     <nav
       className={`fixed z-50 w-full transition-all duration-300 ${
@@ -40,13 +38,6 @@ const Navbar = ({ scrolled, isMenuOpen, setIsMenuOpen }: NavbarProps) => {
             Sign In
           </Button>
         </div>
-        {/* Mobile Menu Button */}
-        <Button
-          className="text-white md:hidden"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <Layout />
-        </Button>
       </div>
     </nav>
   );
