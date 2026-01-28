@@ -1,9 +1,9 @@
 import { Input } from '@/common/components/shadcn/input';
-import { MainButton } from '..';
+import MainButton from '@/pages/landing/components/MainButton';
 import { Plus } from 'lucide-react';
 import { useCreateWorkspace } from '@/common/hooks/useCreateWorkspace';
 
-const CreateCard = () => {
+function CreateCard() {
   const { register, handleSubmit, errors, onSubmit } = useCreateWorkspace();
 
   return (
@@ -34,7 +34,7 @@ const CreateCard = () => {
           placeholder="코드 입력 (선택사항, 미입력 시 무작위 생성)"
           {...register('code')}
           maxLength={32}
-          className="h-12 text-center font-mono text-base"
+          className="h-12 text-center"
         />
         {errors.code && (
           <p className="text-left font-mono text-sm text-red-400">
@@ -50,6 +50,6 @@ const CreateCard = () => {
       </div>
     </div>
   );
-};
+}
 
 export default CreateCard;

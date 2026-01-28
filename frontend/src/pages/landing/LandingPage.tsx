@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { BackgroundGradient, Navbar, HeroSection, Footer } from './components';
+import BackgroundGradient from './components/BackgroundGradient';
+import Navbar from './components/Navbar';
+import { HeroSection } from './components/HeroSection';
+import Footer from './components/Footer';
 
-const LandingPage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
 
   // 스크롤 감지
@@ -15,17 +17,13 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-950 font-sans text-slate-50 selection:bg-green-500/30 selection:text-green-200">
+    <div className="min-h-screen w-full overflow-x-hidden bg-slate-950 text-slate-50 selection:bg-green-500/30 selection:text-green-200">
       <BackgroundGradient />
-      <Navbar
-        scrolled={scrolled}
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-      />
+      <Navbar scrolled={scrolled} />
       <HeroSection />
       <Footer />
     </div>
   );
-};
+}
 
 export default LandingPage;
