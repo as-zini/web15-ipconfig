@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router';
 import WorkSpacePage from '@/pages/workspace/WorkSpacePage';
 import LandingPage from '@/pages/landing/LandingPage';
-import ErrorPage from '@/pages/ErrorPage';
+import ErrorPage from '@/pages/error/ErrorPage';
 
 function App() {
   return (
