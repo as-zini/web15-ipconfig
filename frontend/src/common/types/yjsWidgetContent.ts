@@ -6,6 +6,7 @@ export type WidgetContent =
   | GitConventionContent
   | CommunicationContent
   | CollaborationContent
+  | FormatContent
   | PostItContent
   | Record<string, unknown>;
 
@@ -73,6 +74,19 @@ export interface CollaborationContent {
     cycleValue: number;
     cycleUnit: string;
   };
+}
+
+export interface FormatContent {
+  printWidth: number;
+  useTabs: boolean;
+  tabWidth: number;
+  semi: boolean;
+  singleQuote: boolean;
+  jsxSingleQuote: boolean;
+  trailingComma: string;
+  bracketSpacing: boolean;
+  arrowParens: string;
+  singleAttributePerLine: boolean;
 }
 
 // 5. POST_IT (Example placeholder)
