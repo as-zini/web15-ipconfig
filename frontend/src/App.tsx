@@ -9,6 +9,7 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/workspace/:workspaceId" element={<WorkSpacePage />} />
       <Route path="/error" element={<ErrorPage />} />
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 }

@@ -1,71 +1,48 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useParams, useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 
 import type { UserExtended } from '@/common/types/user';
-
-import { useMarkdown } from '@/common/hooks/useMarkdown';
 
 // Page-specific components
 import WorkspaceHeader from './components/header/WorkspaceHeader';
 import RightSidebar from './components/infoPanel/InfoPanel';
 import UserHoverCard from './components/UserHoverCard';
-import ExportModal from './components/ExportModal';
 import CompactPanel from './components/infoPanel/CompactPanel';
 import { INITIAL_USERS } from '@/common/mocks/users';
 import { Canvas } from '@/common/components/canvas';
 import ToolBar from './components/toolbar/ToolBar';
-import { joinRoom, leaveRoom } from '@/common/api/socket';
-import { useWorkspaceInfoStore } from '@/common/store/workspace';
-import { generateCurrentUser } from '@/common/lib/user';
 import { useCollaboration } from '@/common/hooks/useCollaboration';
+import { useWorkspaceGuard } from '@/common/hooks/useWorkspaceGuard';
+import { generateCurrentUser } from '@/common/lib/user';
+import useUserStore from '@/common/store/user';
+import { setLocalUser } from '@/common/api/yjs/awareness';
 
 function WorkSpacePage() {
-  const navigate = useNavigate();
-
   // Workspace State
   const { workspaceId } = useParams<{ workspaceId: string }>();
-  const setWorkspaceId = useWorkspaceInfoStore((state) => state.setWorkspaceId);
-
-  // UI State
-  const [hoveredUser, setHoveredUser] = useState<UserExtended | null>(null);
-  const [hoverPosition, setHoverPosition] = useState({ top: 0, left: 0 });
   const [isSidebarExpanded, setSidebarExpanded] = useState(false);
+  const setUser = useUserStore((state) => state.setUser);
 
-  useEffect(() => {
-    if (!workspaceId) {
-      navigate('/error', {
-        state: {
-          title: '잘못된 접근입니다',
-          message:
-            '워크스페이스 ID가 없어 페이지를 불러올 수 없습니다.\n처음 화면에서 다시 워크스페이스를 생성하거나 참가해주세요.',
-        },
-      });
-      return;
-    }
-    const isValidFormat = /^[a-z0-9]{1,32}$/.test(workspaceId);
-    if (!isValidFormat) {
-      navigate('/error', {
-        state: {
-          title: '잘못된 워크스페이스 주소입니다',
-          message: `'${workspaceId}' 는 유효하지 않은 워크스페이스 ID입니다.\n영소문자와 숫자만 사용 가능하며, 1~32자 이내여야 합니다.\n처음 화면에서 올바른 코드로 참가해주세요.`,
-        },
-      });
-      return;
-    }
-
-    setWorkspaceId(workspaceId);
-  }, [workspaceId, setWorkspaceId, navigate]);
-
+  useWorkspaceGuard(workspaceId);
   useCollaboration(workspaceId || '');
 
   useEffect(() => {
     if (!workspaceId) return;
-    joinRoom(generateCurrentUser());
-    return () => {
-      leaveRoom();
-    };
-  }, [workspaceId]);
+
+    const user = generateCurrentUser();
+    setUser(user);
+    setLocalUser({
+      id: user.id,
+      nickname: user.nickname,
+      color: user.color,
+      backgroundColor: user.backgroundColor,
+    });
+  }, [workspaceId, setUser]);
+
+  // UI State
+  const [hoveredUser, setHoveredUser] = useState<UserExtended | null>(null);
+  const [hoverPosition, setHoverPosition] = useState({ top: 0, left: 0 });
 
   // User Hover Logic
   const handleUserHover = (e: React.MouseEvent, user: UserExtended) => {
