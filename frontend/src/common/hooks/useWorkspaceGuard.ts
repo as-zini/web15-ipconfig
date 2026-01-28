@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AxiosError } from 'axios';
 
@@ -8,6 +8,7 @@ import { workspaceApi } from '@/common/api/workspaceApi';
 export function useWorkspaceGuard(workspaceId: string | undefined) {
   const navigate = useNavigate();
   const setWorkspaceId = useWorkspaceInfoStore((state) => state.setWorkspaceId);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     // 1. 워크스페이스 ID 자체가 없는 경우
@@ -47,6 +48,7 @@ export function useWorkspaceGuard(workspaceId: string | undefined) {
 
         // 서버 검증까지 통과한 경우에만 전역 스토어에 동기화
         setWorkspaceId(workspaceId);
+        setIsReady(true);
       } catch (error) {
         if (cancelled) return;
 
@@ -95,4 +97,6 @@ export function useWorkspaceGuard(workspaceId: string | undefined) {
       cancelled = true;
     };
   }, [workspaceId, navigate, setWorkspaceId]);
+
+  return isReady;
 }

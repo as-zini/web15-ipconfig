@@ -17,6 +17,7 @@ import { useWorkspaceGuard } from '@/common/hooks/useWorkspaceGuard';
 import { generateCurrentUser } from '@/common/lib/user';
 import useUserStore from '@/common/store/user';
 import { setLocalUser } from '@/common/api/yjs/awareness';
+import { LoadingSpinner } from './LoadingSpinner';
 
 function WorkSpacePage() {
   // Workspace State
@@ -24,8 +25,8 @@ function WorkSpacePage() {
   const [isSidebarExpanded, setSidebarExpanded] = useState(false);
   const setUser = useUserStore((state) => state.setUser);
 
-  useWorkspaceGuard(workspaceId);
-  useCollaboration(workspaceId || '');
+  const isWorkspaceReady = useWorkspaceGuard(workspaceId);
+  useCollaboration(isWorkspaceReady && workspaceId ? workspaceId : '');
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -57,6 +58,10 @@ function WorkSpacePage() {
   const handleUserLeave = () => {
     setHoveredUser(null);
   };
+
+  if (!isWorkspaceReady) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="relative h-screen overflow-hidden bg-gray-900 text-gray-100 [--header-h:4rem]">
