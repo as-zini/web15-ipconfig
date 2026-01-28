@@ -6,7 +6,6 @@ import { useCanvas } from '../canvas/context/CanvasProvider';
 import {
   clearEditingState,
   updateEditingState,
-  updateLocalCursor,
 } from '@/common/api/yjs/awareness';
 import {
   updateWidgetLayoutAction,
@@ -14,7 +13,6 @@ import {
 } from '@/common/api/yjs/actions/widgetFrame';
 import { useWidgetInteractionStore } from '@/common/store/widgetInteraction';
 import type { WidgetLayout } from '@/common/types/widgetData';
-import { browserToCanvasPosition } from '../canvas/lib/positionTransform';
 
 interface WidgetContainerProps {
   children: React.ReactNode;
@@ -60,9 +58,9 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
     const isHeader = target.closest('[data-widget-header="true"]');
     if (!isHeader) return;
 
-    // 캔버스 패닝으로 이벤트가 전파되지 않도록 중단
-    e.stopPropagation();
-    e.preventDefault();
+    // // 캔버스 패닝으로 이벤트가 전파되지 않도록 중단
+    // e.stopPropagation();
+    // e.preventDefault();
 
     setIsDragging(true);
 
@@ -79,7 +77,7 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
     if (!isDragging) return;
 
     const handlePointerMove = (e: PointerEvent) => {
-      e.preventDefault();
+      // e.preventDefault();
 
       const { mouseX, mouseY, widgetX, widgetY } = dragStartRef.current;
 
@@ -110,25 +108,23 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
 
       // 3) 드래그 중에도 커서 위치 동기화 (Mouse Move가 stopPropagation 되므로 여기서 직접 호출)
       // 실제 마우스 위치를 캔버스 좌표로 변환하여 전송
-      const frameInfo = getFrameInfo();
-      const cursorCanvasPos = browserToCanvasPosition(
-        { x: e.clientX, y: e.clientY },
-        { x: frameInfo.left, y: frameInfo.top },
-        camera,
-      );
-      updateLocalCursor(cursorCanvasPos.x, cursorCanvasPos.y);
+      // const frameInfo = getFrameInfo();
+      // const cursorCanvasPos = browserToCanvasPosition(
+      //   { x: e.clientX, y: e.clientY },
+      //   { x: frameInfo.left, y: frameInfo.top },
+      //   camera,
+      // );
+      // updateLocalCursor(cursorCanvasPos.x, cursorCanvasPos.y);
     };
 
     const handlePointerUp = () => {
       setIsDragging(false);
 
-      // 드래그 종료: 프리뷰 제거 + Doc에 최종 반영
-      // 종료 시점의 위치는 store에 있는 마지막 interaction 위치를 사용
+      // 드래그 종료: Doc에 최종 반영 후 프리뷰 제거
+      // Doc을 먼저 보내면 수신측에서 "interaction 사라짐 → 폴백" 시점에 이미 새 좌표가 도착해 튕김 방지
       const finalInteraction = useWidgetInteractionStore
         .getState()
         .getInteraction(widgetId);
-
-      clearEditingState();
 
       if (finalInteraction) {
         updateWidgetLayoutAction(widgetId, {
@@ -136,6 +132,7 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
           y: finalInteraction.y,
         });
       }
+      clearEditingState();
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -148,11 +145,7 @@ function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
   }, [isDragging, widgetId, camera, width, height, getFrameInfo]);
 
   const renderedPos = useMemo(() => {
-    // 1. Interaction(내꺼/남의꺼) 있으면 그거 우선
-    if (interaction) {
-      return { x: interaction.x, y: interaction.y };
-    }
-    // 2. 없으면 Yjs Doc state
+    if (interaction) return { x: interaction.x, y: interaction.y };
     return { x, y };
   }, [interaction, x, y]);
 
