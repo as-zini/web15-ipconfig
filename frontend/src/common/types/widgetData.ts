@@ -1,26 +1,33 @@
-import type { CollaborationData } from '@/features/widgets/collaboration/components/CollaborationWidget';
+import type { CollaborationData } from '@/features/widgets/collaboration/types/CollaborationData';
 import type { CommunicationData } from '@/features/widgets/communication/types/communication';
 import type { GitConventionData } from '@/features/widgets/gitConvention/types/gitConvention';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
 import type { NamingConventionData } from '@/features/widgets/namingConvention/types/namingConvention';
+
+export type {
+  CollaborationData,
+  CommunicationData,
+  GitConventionData,
+  TechStack,
+};
 
 export type WidgetType =
   | 'TECH_STACK'
   | 'GIT_CONVENTION'
   | 'COLLABORATION'
   | 'COMMUNICATION'
-  | 'NAMING_CONVENTION';
+  | 'NAMING_CONVENTION'
+  | 'CODE_FORMAT';
 
 export type WidgetContent =
-  | TechStackData
+  | TechStackWidgetData
   | GitConventionData
   | CommunicationData
   | CollaborationData
   | NamingConventionData;
 
-export interface TechStackData {
-  selectedItems: TechStack[];
-}
+import type { TechStackWidgetData } from '@/features/widgets/techStack/types/TechStackWidgetData';
+export type { TechStackWidgetData };
 
 export interface WidgetData {
   widgetId: string;

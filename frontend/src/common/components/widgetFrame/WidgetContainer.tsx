@@ -1,22 +1,42 @@
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type React from 'react';
-import type { PropsWithChildren } from 'react';
 import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useWidgetIdAndType } from './context/WidgetContext';
-import { emitUpdateWidgetLayout } from '@/common/api/socket';
 import { useCanvas } from '../canvas/context/CanvasProvider';
+import {
+  clearEditingState,
+  updateEditingState,
+  updateLocalCursor,
+} from '@/common/api/yjs/awareness';
+import {
+  updateWidgetLayoutAction,
+  bringToFrontAction,
+} from '@/common/api/yjs/actions/widgetFrame';
+import { useWidgetInteractionStore } from '@/common/store/widgetInteraction';
+import type { WidgetLayout } from '@/common/types/widgetData';
+import { browserToCanvasPosition } from '../canvas/lib/positionTransform';
 
-function WidgetContainer({ children }: PropsWithChildren) {
+interface WidgetContainerProps {
+  children: React.ReactNode;
+  defaultLayout?: WidgetLayout;
+}
+
+function WidgetContainer({ children, defaultLayout }: WidgetContainerProps) {
   const { widgetId } = useWidgetIdAndType();
-  const { camera } = useCanvas();
+  const { camera, getFrameInfo } = useCanvas();
   const widgetData = useWorkspaceWidgetStore((state) =>
     state.widgetList.find((widget) => widget.widgetId === widgetId),
   );
 
-  const { x, y, width, height, zIndex } = widgetData?.layout ?? {
-    x: 400,
-    y: 400,
-  };
+  const { x, y, width, height, zIndex } = widgetData?.layout ??
+    defaultLayout ?? {
+      x: 400,
+      y: 400,
+    };
+
+  const interaction = useWidgetInteractionStore((state) =>
+    state.getInteraction(widgetId),
+  );
 
   // 드래그 시작 시점의 데이터 저장
   const dragStartRef = useRef({
@@ -28,10 +48,13 @@ function WidgetContainer({ children }: PropsWithChildren) {
 
   const [isDragging, setIsDragging] = useState(false);
 
-  // 스로틀링을 위한 ref
+  // 스로틀링 위한 ref
   const lastEmitRef = useRef<number>(0);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // 위젯 클릭 시 최상단으로 이동 (z-index)
+    bringToFrontAction(widgetId);
+
     // 헤더 영역이 아닌 곳에서는 드래그 시작하지 않음
     const target = e.target as HTMLElement;
     const isHeader = target.closest('[data-widget-header="true"]');
@@ -73,11 +96,46 @@ function WidgetContainer({ children }: PropsWithChildren) {
       if (now - lastEmitRef.current < 30) return;
       lastEmitRef.current = now;
 
-      emitUpdateWidgetLayout(widgetId, { x: actualX, y: actualY });
+      // 드래그 중에는 awareness로 "프리뷰"만 전파 (내 상호작용도 이걸로 처리)
+      updateEditingState({
+        widgetId,
+        kind: 'move',
+        preview: {
+          x: actualX,
+          y: actualY,
+          width: width ?? undefined,
+          height: height ?? undefined,
+        },
+      });
+
+      // 3) 드래그 중에도 커서 위치 동기화 (Mouse Move가 stopPropagation 되므로 여기서 직접 호출)
+      // 실제 마우스 위치를 캔버스 좌표로 변환하여 전송
+      const frameInfo = getFrameInfo();
+      const cursorCanvasPos = browserToCanvasPosition(
+        { x: e.clientX, y: e.clientY },
+        { x: frameInfo.left, y: frameInfo.top },
+        camera,
+      );
+      updateLocalCursor(cursorCanvasPos.x, cursorCanvasPos.y);
     };
 
     const handlePointerUp = () => {
       setIsDragging(false);
+
+      // 드래그 종료: 프리뷰 제거 + Doc에 최종 반영
+      // 종료 시점의 위치는 store에 있는 마지막 interaction 위치를 사용
+      const finalInteraction = useWidgetInteractionStore
+        .getState()
+        .getInteraction(widgetId);
+
+      clearEditingState();
+
+      if (finalInteraction) {
+        updateWidgetLayoutAction(widgetId, {
+          x: finalInteraction.x,
+          y: finalInteraction.y,
+        });
+      }
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -87,14 +145,23 @@ function WidgetContainer({ children }: PropsWithChildren) {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     };
-  }, [isDragging, widgetId, camera.scale]);
+  }, [isDragging, widgetId, camera, width, height, getFrameInfo]);
+
+  const renderedPos = useMemo(() => {
+    // 1. Interaction(내꺼/남의꺼) 있으면 그거 우선
+    if (interaction) {
+      return { x: interaction.x, y: interaction.y };
+    }
+    // 2. 없으면 Yjs Doc state
+    return { x, y };
+  }, [interaction, x, y]);
 
   return (
     <div
-      className="pointer-events-auto absolute w-fit rounded-xl border border-gray-700 bg-gray-800"
+      className="pointer-events-auto absolute w-fit rounded-xl border border-gray-700 bg-gray-800 transition-shadow duration-200"
       style={{
-        left: x,
-        top: y,
+        left: renderedPos.x,
+        top: renderedPos.y,
         width: width ?? 'auto',
         height: height ?? 'auto',
         zIndex: zIndex ?? 1,

@@ -2,14 +2,16 @@ import { useMemo } from 'react';
 import type { WidgetType } from '@/common/types/widgetData';
 import CollaborationWidget from '@/features/widgets/collaboration/components/CollaborationWidget';
 import CommunicationWidget from '@/features/widgets/communication/components/communicationWidget/CommunicationWidget';
-import GitConventionWidget from '@/features/widgets/gitConvention/components/gitConventionWidget/GitConventionWidget';
 import TechStackWidget from '@/features/widgets/techStack/components/techStackWidget/TechStackWidget';
-import WidgetFrame from './WidgetFrame';
 import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useShallow } from 'zustand/react/shallow';
 import NamingConventionWidget from '@/features/widgets/namingConvention/components/NamingConventionWidget';
+import { WidgetProvider } from './context/WidgetContext';
+import { GitConventionWidget } from '@/features/widgets/gitConvention';
+import { useWidgetAwareness } from '@/common/hooks/useWidgetAwareness';
 
 function WidgetLayer() {
+  useWidgetAwareness();
   const widgetKeys = useWorkspaceWidgetStore(
     useShallow((state) =>
       state.widgetList.map((widget) => `${widget.widgetId}::${widget.type}`),
@@ -26,22 +28,10 @@ function WidgetLayer() {
   return (
     <>
       {widgetIds.map(({ widgetId, type }) => (
-        <WidgetFrame key={widgetId} widgetId={widgetId} type={type}>
+        <WidgetProvider key={widgetId} widgetId={widgetId} type={type}>
           <WidgetContent type={type} />
-        </WidgetFrame>
+        </WidgetProvider>
       ))}
-
-      <WidgetFrame widgetId={'COLLABORATION'} type={'COLLABORATION'}>
-        <CollaborationWidget />
-      </WidgetFrame>
-
-      <WidgetFrame widgetId={'COMMUNICATION'} type={'COMMUNICATION'}>
-        <CommunicationWidget />
-      </WidgetFrame>
-
-      <WidgetFrame widgetId={'NAMING_CONVENTION'} type={'NAMING_CONVENTION'}>
-        <NamingConventionWidget />
-      </WidgetFrame>
     </>
   );
 }
@@ -56,6 +46,12 @@ function WidgetContent({ type }: WidgetContentProps) {
       return <TechStackWidget />;
     case 'GIT_CONVENTION':
       return <GitConventionWidget />;
+    case 'COLLABORATION':
+      return <CollaborationWidget />;
+    case 'COMMUNICATION':
+      return <CommunicationWidget />;
+    case 'NAMING_CONVENTION':
+      return <NamingConventionWidget />;
     default:
       return null;
   }
