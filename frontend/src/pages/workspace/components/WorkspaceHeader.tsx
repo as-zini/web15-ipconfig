@@ -1,10 +1,7 @@
-import { LuFileText, LuGithub } from 'react-icons/lu';
+import ExportDocModal from '@/features/export/docs/components/ExportDocModal';
+import { LuGithub } from 'react-icons/lu';
 
-interface WorkspaceHeaderProps {
-  onExportClick: () => void;
-}
-
-function WorkspaceHeader({ onExportClick }: WorkspaceHeaderProps) {
+function WorkspaceHeader() {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between bg-transparent px-6">
       <div className="flex items-center gap-4">
@@ -27,18 +24,9 @@ function WorkspaceHeader({ onExportClick }: WorkspaceHeaderProps) {
       </div>
 
       <div className="flex items-center gap-6">
-        <button
-          onClick={onExportClick}
-          className="flex transform items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105 hover:bg-blue-500"
-        >
-          <LuFileText size={16} />
-          문서 내보내기
-        </button>
+        <ExportDocModal />
 
-        <button
-          onClick={onExportClick}
-          className="flex transform items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105 hover:bg-blue-500"
-        >
+        <button className="flex transform items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105 hover:bg-blue-500">
           <LuGithub size={16} />
           레포지토리 초기 세팅하기
         </button>
