@@ -6,6 +6,7 @@ import { WorkspaceIdPipe } from './workspcae.pipe';
 import { CreateWorkspaceRequest } from './dto/create-workspace-request.dto';
 import { CreateWorkspaceResponse } from './dto/create-workspace-response.dto';
 import { JoinWorkspaceRequest } from './dto/join-workspace-request.dto';
+import { CheckWorkspaceResponse } from './dto/check-workspace-response.dto';
 
 @Controller('workspace')
 export class WorkspaceController {
@@ -35,15 +36,15 @@ export class WorkspaceController {
     return this.workspaceService.createWorkspace(body?.workspaceId);
   }
 
-  @Get(':workspaceId')
+  @Get('/check/:workspaceId')
   @ApiResponse({
     status: 200,
     description: '워크스페이스 존재 여부 조회',
-    schema: { type: 'boolean' },
+    type: CheckWorkspaceResponse,
   })
   getWorkspaceById(
     @Param('workspaceId', WorkspaceIdPipe) workspaceId: string,
-  ): boolean {
-    return this.workspaceService.isExistsWorkspace(workspaceId);
+  ): CheckWorkspaceResponse {
+    return { exists: this.workspaceService.isExistsWorkspace(workspaceId) };
   }
 }

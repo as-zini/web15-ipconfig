@@ -51,7 +51,7 @@ export class WorkspaceService {
       }
     } else {
       if (this.isExistsWorkspace(newWorkspaceId)) {
-        throw new ConflictException(`'${workspaceId}' 는 이미 존재합니다.`);
+        throw new ConflictException(`'${newWorkspaceId}' 는 이미 존재합니다.`);
       }
     }
     this.saveWorkspaceIdInMemory(newWorkspaceId);
