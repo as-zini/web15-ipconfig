@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-
 // import type { UserExtended } from '@/common/types/user';
 
 // Page-specific components
@@ -10,6 +9,8 @@ import { Canvas } from '@/common/components/canvas';
 import ToolBar from './components/toolbar/ToolBar';
 import { useWorkspaceInfoStore } from '@/common/store/workspace';
 import { useCollaboration } from '@/common/hooks/useCollaboration';
+import { LoadingSpinner } from '@/common/components/LoadingSpinner';
+import { useWorkspaceGuard } from '@/common/hooks/useWorkspaceGuard';
 
 function WorkSpacePage() {
   const navigate = useNavigate();
@@ -17,6 +18,10 @@ function WorkSpacePage() {
   // Workspace State
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const setWorkspaceId = useWorkspaceInfoStore((state) => state.setWorkspaceId);
+  // const setUser = useUserStore((state) => state.setUser);
+
+  const isWorkspaceReady = useWorkspaceGuard(workspaceId);
+  useCollaboration(isWorkspaceReady && workspaceId ? workspaceId : '');
 
   // UI State
   // const [hoveredUser, setHoveredUser] = useState<UserExtended | null>(null);
@@ -45,6 +50,10 @@ function WorkSpacePage() {
   // const handleUserLeave = () => {
   //   setHoveredUser(null);
   // };
+
+  if (!isWorkspaceReady) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="relative h-screen overflow-hidden bg-gray-900 text-gray-100 [--header-h:4rem]">
