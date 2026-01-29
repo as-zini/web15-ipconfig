@@ -31,7 +31,9 @@ export class RedisStorageAdapter implements StorageAdapter, OnModuleDestroy {
    */
   async set(key: string, data: Uint8Array): Promise<void> {
     try {
-      await this.redis.set(key, Buffer.from(data));
+      // 3일 후 자동 만료
+      const TTL_SECONDS = 60 * 60 * 24 * 3;
+      await this.redis.set(key, Buffer.from(data), 'EX', TTL_SECONDS);
     } catch (error) {
       this.logger.error(`Failed to set data for key ${key} in Redis`, error);
       throw error;
