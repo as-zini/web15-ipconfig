@@ -11,13 +11,14 @@ interface UserItemProps {
 }
 
 function UserItem({ user }: UserItemProps) {
-  const { setCamera, getFrameInfo } = useCanvas();
+  const { setCamera, getFrameInfo, setClickedFollow } = useCanvas();
   const { cursor } = user;
   return (
     <Button
       variant="ghost"
       className="group flex items-center justify-start gap-2.5 px-2 py-5"
       onClick={() => {
+        setClickedFollow(true);
         setCamera((prev) => {
           return getCameraByCursorPosition({
             frameInfo: getFrameInfo(),
@@ -25,6 +26,10 @@ function UserItem({ user }: UserItemProps) {
             camera: prev,
           });
         });
+        // transition duration(300ms) 후에 clickedFollow를 false로 변경
+        setTimeout(() => {
+          setClickedFollow(false);
+        }, 300);
       }}
     >
       <Avatar className="size-7 !ring-gray-800">

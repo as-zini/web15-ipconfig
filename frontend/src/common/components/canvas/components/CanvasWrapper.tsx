@@ -5,7 +5,7 @@ import useWheel from '../hooks/useWheel';
 import usePanning from '../hooks/usePanning';
 
 export function CanvasWrapper({ children }: PropsWithChildren) {
-  const { camera, frameRef } = useCanvas();
+  const { camera, frameRef, clickedFollow } = useCanvas();
 
   // 휠 이벤트 핸들러 등록
   useWheel();
@@ -46,7 +46,10 @@ export function CanvasWrapper({ children }: PropsWithChildren) {
           transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`,
           transformOrigin: '0 0',
         }}
-        className="pointer-events-none absolute top-0 left-0 h-0 w-0 overflow-visible transition-transform"
+        className={cn(
+          'pointer-events-none absolute top-0 left-0 h-0 w-0 overflow-visible',
+          clickedFollow && 'transition-transform duration-300',
+        )}
       >
         {children}
       </div>
