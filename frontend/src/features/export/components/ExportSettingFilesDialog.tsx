@@ -12,8 +12,8 @@ import { useState } from 'react';
 import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useShallow } from 'zustand/react/shallow';
 import { EXPORT_CONFIGS } from '../constant/ExportConfigs';
-import { getWidgetContents } from '../hooks/getWidgetContents';
-import { mappingIcon } from '../hooks/mappingIcon';
+import { getWidgetContents } from '../utils/getWidgetContents';
+import { mappingIcon } from '../utils/mappingIcon';
 
 export function ExportSettingFilesDialog() {
   const { isCopied, handleCopyToClipboard } = useClipboard();
