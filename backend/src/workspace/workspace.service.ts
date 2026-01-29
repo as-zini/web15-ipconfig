@@ -1,6 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JoinUserDTO } from './dto/join-user.dto';
 import { User } from './dto/join-user.dto';
+import generateNickname from 'ko-nickname/src/index.js';
+import { customAlphabet } from 'nanoid';
+import { WorkSpaceResponse } from './dto/workspace-response.dto';
 
 // 유저 정보는 저장해야 함
 interface UserSession {
@@ -18,6 +25,46 @@ interface WorkspaceInfo {
 export class WorkspaceService {
   private readonly workspaces = new Map<string, WorkspaceInfo>();
   private readonly userSessions = new Map<string, UserSession>();
+
+  public joinWorkSpace(workspaceId: string): WorkSpaceResponse {
+    if (!this.isExistsWorkspace(workspaceId)) {
+      throw new NotFoundException(`'${workspaceId}' 는 존재하지 않습니다.`);
+    }
+    return {
+      workspaceId,
+      nickname: this.createRandomUserNickname(),
+    };
+  }
+
+  public makeWorkspace(workspaceId?: string): WorkSpaceResponse {
+    let newWorkspaceId = workspaceId;
+    if (!newWorkspaceId) {
+      newWorkspaceId = customAlphabet(
+        '0123456789abcdefghijklmnopqrstuvwxyz',
+        10,
+      )();
+      while (this.isExistsWorkspace(newWorkspaceId)) {
+        newWorkspaceId = customAlphabet(
+          '0123456789abcdefghijklmnopqrstuvwxyz',
+          10,
+        )();
+      }
+    } else {
+      if (this.isExistsWorkspace(newWorkspaceId)) {
+        throw new ConflictException(`'${workspaceId}' 는 이미 존재합니다.`);
+      }
+    }
+    this.createWorkspace(newWorkspaceId);
+
+    return {
+      workspaceId: newWorkspaceId,
+      nickname: this.createRandomUserNickname(),
+    };
+  }
+
+  private createRandomUserNickname(): string {
+    return generateNickname();
+  }
 
   public createWorkspace(workspaceId: string): void {
     this.workspaces.set(workspaceId, {
