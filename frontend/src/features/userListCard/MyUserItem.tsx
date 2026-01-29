@@ -31,9 +31,10 @@ function MyUserItem({ user }: MyUserItemProps) {
           <div className="text-gray-400">(나)</div>
         </div>
       </div>
-      <Button variant="secondary" size="sm" className="w-full">
+      {/* TODO: 스포트라이트 기능 추가 */}
+      {/* <Button variant="secondary" size="sm" className="w-full">
         <span className="text-xs">스포트라이트</span>
-      </Button>
+      </Button> */}
       <Separator />
     </>
   );

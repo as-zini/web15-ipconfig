@@ -37,8 +37,9 @@ function UserItem({ user }: UserItemProps) {
       </Avatar>
       <div className="flex flex-col items-start justify-center text-[13px]">
         <div>{user.nickname}</div>
+        {/* TODO: 팔로우 기능으로 구현 */}
         <div className="hidden text-[11px] text-gray-400 group-hover:block">
-          클릭하여 팔로우
+          클릭하여 이동
         </div>
       </div>
     </Button>
