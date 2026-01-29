@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { createContext } from '@/common/contexts/createContext';
 import type { FrameInfo } from '@/common/types/canvas';
-import { useCanvasStore } from '@/common/store/canvas';
 
 interface CanvasContext {
   camera: Camera;
