@@ -1,12 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { JoinWorkspaceRequest } from './join-workspace-request.dto';
 
-export class CreateWorkspaceRequest {
-  @ApiProperty({
-    description: '워크스페이스 ID (선택 사항)',
-    example: 'jowkys7uvi',
-  })
-  @IsString()
-  @IsOptional()
-  workspaceId?: string;
-}
+export class CreateWorkspaceRequest extends PartialType(JoinWorkspaceRequest) {}
