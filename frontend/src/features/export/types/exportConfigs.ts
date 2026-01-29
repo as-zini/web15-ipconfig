@@ -1,12 +1,12 @@
 import 'github-markdown-css/github-markdown.css';
+import type { WidgetType } from '@/common/types/widgetData';
 
 export interface ExportConfig {
   id: string;
   label: string;
   description: string;
-  type: string;
+  type: WidgetType;
   fileName: string;
-  icon: React.ReactNode;
 }
 
 // function getDockerContent(widgetList: WidgetList) {

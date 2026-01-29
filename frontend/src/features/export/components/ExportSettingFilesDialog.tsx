@@ -13,6 +13,7 @@ import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useShallow } from 'zustand/react/shallow';
 import { EXPORT_CONFIGS } from '../constant/ExportConfigs';
 import { getWidgetContents } from '../hooks/getWidgetContents';
+import { mappingIcon } from '../hooks/mappingIcon';
 
 export function ExportSettingFilesDialog() {
   const { isCopied, handleCopyToClipboard } = useClipboard();
@@ -76,7 +77,7 @@ export function ExportSettingFilesDialog() {
                 onClick={() => setSelectedId(config.id)}
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800">
-                  {config.icon}
+                  {mappingIcon(config.type)}
                 </div>
                 <div className="flex flex-col items-start gap-1">
                   <span className="text-base font-semibold text-white">

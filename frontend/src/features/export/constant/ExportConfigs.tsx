@@ -1,5 +1,4 @@
 import type { ExportConfig } from '../types/exportConfigs';
-import { LuFileJson } from 'react-icons/lu';
 
 export const EXPORT_CONFIGS: ExportConfig[] = [
   {
@@ -8,7 +7,6 @@ export const EXPORT_CONFIGS: ExportConfig[] = [
     description: '.prettierrc 파일로 내보냅니다.',
     type: 'CODE_FORMAT',
     fileName: '.prettierrc',
-    icon: <LuFileJson className="h-5 w-5 text-pink-500" />,
   },
   // {
   //   id: 'docker',
