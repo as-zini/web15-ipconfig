@@ -17,7 +17,7 @@ import { useWorkspaceGuard } from '@/common/hooks/useWorkspaceGuard';
 import { generateCurrentUser } from '@/common/lib/user';
 import useUserStore from '@/common/store/user';
 import { setLocalUser } from '@/common/api/yjs/awareness';
-import { LoadingSpinner } from './LoadingSpinner';
+import { LoadingSpinner } from '@/common/components/LoadingSpinner';
 
 function WorkSpacePage() {
   // Workspace State
