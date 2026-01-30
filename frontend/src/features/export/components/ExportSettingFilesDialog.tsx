@@ -69,6 +69,7 @@ export function ExportSettingFilesDialog() {
               <Button
                 key={config.id}
                 variant="ghost"
+                disabled={config.type !== 'CODE_FORMAT'}
                 className="flex h-auto w-full items-center justify-start gap-4 p-4 hover:bg-white/10"
                 onClick={() => setSelectedId(config.id)}
               >
