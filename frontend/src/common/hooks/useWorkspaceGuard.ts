@@ -9,6 +9,7 @@ export function useWorkspaceGuard(workspaceId: string | undefined) {
   const navigate = useNavigate();
   const setWorkspaceId = useWorkspaceInfoStore((state) => state.setWorkspaceId);
   const [isReady, setIsReady] = useState(false);
+  const [userNickname, setUserNickname] = useState<string | null>(null);
 
   useEffect(() => {
     // 1. 워크스페이스 ID 자체가 없는 경우
@@ -44,11 +45,12 @@ export function useWorkspaceGuard(workspaceId: string | undefined) {
     const verifyWorkspace = async () => {
       try {
         // join API를 통해 존재 여부 및 서버 상태 확인
-        await workspaceApi.join(workspaceId, { signal });
+        const { nickname } = await workspaceApi.join(workspaceId, { signal });
 
         // 서버 검증까지 통과한 경우에만 전역 스토어에 동기화
         setWorkspaceId(workspaceId);
         setIsReady(true);
+        setUserNickname(nickname);
       } catch (error) {
         // AbortController 취소 시 Axios는 AxiosError(code: 'ERR_CANCELED')를 던짐. name은 'AbortError'가 아님.
         if (error instanceof AxiosError && error.code === 'ERR_CANCELED')
@@ -100,5 +102,8 @@ export function useWorkspaceGuard(workspaceId: string | undefined) {
     };
   }, [workspaceId, navigate, setWorkspaceId]);
 
-  return isReady;
+  return {
+    isReady,
+    userNickname,
+  };
 }
