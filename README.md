@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://teamconfig.work">
     <picture>
-      <img alt="team.config" src="/github/asset/teamconfig_github_cover.png" />
+      <img alt="team.config" src=".github/asset/teamconfig_github_cover.png" />
     </picture>
   </a>
 </div>
@@ -16,7 +16,7 @@
 <div align="center">
 <a href="https://teamconfig.work">
   <picture>
-    <img alt="team.config" src="/github/asset/teamconfig_github_preview.png" />
+    <img alt="team.config" src=".github/asset/teamconfig_github_preview.png" />
   </picture>
 </a>
 
