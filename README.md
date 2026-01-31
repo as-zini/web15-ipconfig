@@ -82,17 +82,21 @@ npm run dev:fe
 
 ### Frontend
 
-![React](https://img.shields.io/badge/React-v18-61DAFB?logo=react&style=flat-square)
+![React](https://img.shields.io/badge/React-v19-61DAFB?logo=react&style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-v5-3178C6?logo=typescript&style=flat-square)
-![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF?logo=vite&style=flat-square)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Styling-06B6D4?logo=tailwindcss&style=flat-square)
+![Vite](https://img.shields.io/badge/Vite-v7-646CFF?logo=vite&style=flat-square)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-06B6D4?logo=tailwindcss&style=flat-square)
 ![Zustand](https://img.shields.io/badge/Zustand-State_Mgmt-orange?style=flat-square)
+![Radix UI](https://img.shields.io/badge/Radix_UI-Components-161618?logo=radix-ui&style=flat-square)
+![Yjs](https://img.shields.io/badge/Yjs-CRDT-blue?style=flat-square)
 ![Socket.io](https://img.shields.io/badge/Socket.io-Client-010101?logo=socket.io&style=flat-square)
 
 ### Backend
 
-![NestJS](https://img.shields.io/badge/NestJS-Server-E0234E?logo=nestjs&style=flat-square)
+![NestJS](https://img.shields.io/badge/NestJS-v11-E0234E?logo=nestjs&style=flat-square)
+![Hocuspocus](https://img.shields.io/badge/Hocuspocus-Collaboration-7B61FF?style=flat-square)
 ![Socket.io](https://img.shields.io/badge/Socket.io-WebSocket-010101?logo=socket.io&style=flat-square)
+![Redis](https://img.shields.io/badge/Redis-Cache_&_Pub/Sub-DC382D?logo=redis&style=flat-square)
 ![Node.js](https://img.shields.io/badge/Node.js-Runtime-339933?logo=node.js&style=flat-square)
 
 ### Infrastructure & DevOps
@@ -100,7 +104,6 @@ npm run dev:fe
 ![Naver Cloud](https://img.shields.io/badge/Naver_Cloud_Platform-Infrastructure-03C75A?logo=naver&style=flat-square)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?logo=github-actions&style=flat-square)
 ![Nginx](https://img.shields.io/badge/Nginx-Reverse_Proxy-009639?logo=nginx&style=flat-square)
-![PM2](https://img.shields.io/badge/PM2-Process_Mgmt-2B037B?logo=pm2&style=flat-square)
 
 <br/>
 
