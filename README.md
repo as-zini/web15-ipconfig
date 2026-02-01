@@ -8,7 +8,8 @@
 
 <h3 align="center">
   <a href="https://teamconfig.work">team.config</a> | 
-  <a href="https://github.com/boostcampwm2025/web15-ipconfig/wiki">wiki</a>
+  <a href="https://github.com/boostcampwm2025/web15-ipconfig/wiki">wiki</a> | 
+  <a href="https://github.com/boostcampwm2025/web15-ipconfig/discussions">discussions</a>
 </h3>
 
 ---
