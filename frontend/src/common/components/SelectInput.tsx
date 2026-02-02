@@ -88,7 +88,9 @@ function SelectInput({
       <SelectContent
         className="p-0"
         position="popper"
-        style={{ width: 'var(--radix-select-trigger-width)' }}
+        style={{
+          width: `${Math.max(100, Number('var(--radix-select-trigger-width)'))}px`,
+        }}
       >
         <div className="border-b p-2" onClick={(e) => e.stopPropagation()}>
           <div className="relative">
