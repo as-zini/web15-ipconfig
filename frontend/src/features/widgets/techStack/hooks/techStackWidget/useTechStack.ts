@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useDndMonitor, type DragEndEvent } from '@dnd-kit/core';
+import { useDndMonitor } from '@dnd-kit/core';
 import type { TechStack } from '../../types/techStack';
 import type { TechStackWidgetData } from '@/common/types/widgetData';
 import { useWidgetIdAndType } from '@/common/components/widgetFrame/context/WidgetContext';
@@ -56,13 +56,6 @@ export function useTechStack() {
     }
 
     handleTechItemsUpdate(newItems);
-  };
-
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const handleDragEnd = (event: any) => {
-    // This is now handled by useDndMonitor internally,
-    // but if we want to keep the signature clean or if we move logic back,
-    // actually we should use useDndMonitor here.
   };
 
   useDndMonitor({
