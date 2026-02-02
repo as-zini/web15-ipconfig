@@ -3,6 +3,7 @@ import type { WidgetType } from '@/common/types/widgetData';
 import CollaborationWidget from '@/features/widgets/collaboration/components/CollaborationWidget';
 import CommunicationWidget from '@/features/widgets/communication/components/communicationWidget/CommunicationWidget';
 import TechStackWidget from '@/features/widgets/techStack/components/techStackWidget/TechStackWidget';
+import { TechStackWidgetGroup } from '@/features/widgets/techStack/components/TechStackWidgetGroup';
 import { useWorkspaceWidgetStore } from '@/common/store/workspace';
 import { useShallow } from 'zustand/react/shallow';
 import NamingConventionWidget from '@/features/widgets/namingConvention/components/NamingConventionWidget';
@@ -16,6 +17,7 @@ function WidgetLayer() {
       state.widgetList.map((widget) => `${widget.widgetId}::${widget.type}`),
     ),
   );
+
   const widgetIds = useMemo(
     () =>
       widgetKeys.map((key) => {
@@ -24,9 +26,24 @@ function WidgetLayer() {
       }),
     [widgetKeys],
   );
+
+  const techStackWidgets = widgetIds.filter(
+    ({ type }) => type === 'TECH_STACK',
+  );
+
+  const otherWidgets = widgetIds.filter(({ type }) => type !== 'TECH_STACK');
+
   return (
     <>
-      {widgetIds.map(({ widgetId, type }) => (
+      <TechStackWidgetGroup>
+        {techStackWidgets.map(({ widgetId, type }) => (
+          <WidgetProvider key={widgetId} widgetId={widgetId} type={type}>
+            <TechStackWidget />
+          </WidgetProvider>
+        ))}
+      </TechStackWidgetGroup>
+
+      {otherWidgets.map(({ widgetId, type }) => (
         <WidgetProvider key={widgetId} widgetId={widgetId} type={type}>
           <WidgetContent type={type} />
         </WidgetProvider>
@@ -41,8 +58,6 @@ interface WidgetContentProps {
 
 function WidgetContent({ type }: WidgetContentProps) {
   switch (type) {
-    case 'TECH_STACK':
-      return <TechStackWidget />;
     case 'GIT_CONVENTION':
       return <GitConventionWidget />;
     case 'COLLABORATION':
