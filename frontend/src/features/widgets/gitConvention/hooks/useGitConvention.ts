@@ -93,7 +93,7 @@ export function useGitConvention() {
             widgetId,
             type,
             'developBranch',
-            rules.developBranch || '',
+            rules.developBranch || undefined,
           );
 
           if (rules.prefixes) {
