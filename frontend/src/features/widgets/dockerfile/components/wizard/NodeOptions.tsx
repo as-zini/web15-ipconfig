@@ -40,7 +40,16 @@ export function NodeOptions({ content, onChange }: NodeOptionsProps) {
         <Label>패키지 매니저</Label>
         <RadioGroup
           value={content.packageManager}
-          onValueChange={(val) => onChange('packageManager', val)}
+          onValueChange={(val) => {
+            onChange('packageManager', val);
+            if (content.command) {
+              const parts = content.command.split(' ');
+              if (['npm', 'yarn', 'pnpm', 'bun'].includes(parts[0])) {
+                parts[0] = val;
+                onChange('command', parts.join(' '));
+              }
+            }
+          }}
           className="flex gap-4"
         >
           <div className="flex items-center space-x-2">
@@ -60,6 +69,20 @@ export function NodeOptions({ content, onChange }: NodeOptionsProps) {
             <Label htmlFor="bun">bun</Label>
           </div>
         </RadioGroup>
+      </div>
+
+      <div className="space-y-2">
+        <Label>실행 스크립트 (CMD)</Label>
+        <Input
+          value={content.command || ''}
+          onChange={(e) => onChange('command', e.target.value)}
+          onBlur={(e) => {
+            if (!e.target.value.trim()) {
+              onChange('command', 'npm run dev');
+            }
+          }}
+          placeholder="npm run dev"
+        />
       </div>
     </>
   );

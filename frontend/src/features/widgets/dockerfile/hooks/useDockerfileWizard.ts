@@ -10,6 +10,7 @@ const DEFAULT_VALUES = {
     version: '22',
     port: 3000,
     packageManager: 'npm',
+    command: 'npm run dev',
   },
 } as const;
 
@@ -46,6 +47,12 @@ export function useDockerfileWizard() {
         type,
         'packageManager',
         DEFAULT_VALUES['Node.js'].packageManager,
+      );
+      updatePrimitiveFieldAction(
+        widgetId,
+        type,
+        'command',
+        DEFAULT_VALUES['Node.js'].command,
       );
     }
   }, [content, widgetId, type]);

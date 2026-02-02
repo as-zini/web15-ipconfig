@@ -107,4 +107,5 @@ export interface DockerfileData {
   version: string;
   port: number;
   packageManager?: 'npm' | 'yarn' | 'pnpm' | 'bun';
+  command?: string;
 }

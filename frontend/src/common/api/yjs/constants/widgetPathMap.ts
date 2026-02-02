@@ -74,6 +74,7 @@ export const WIDGET_PATH_MAP: Record<string, Record<string, string[]>> = {
 
     // Node.js
     packageManager: ['packageManager'],
+    command: ['command'],
   },
   CODE_FORMAT: {
     printWidth: ['printWidth'],

@@ -8,6 +8,7 @@ const defaultContent: DockerfileData = {
   version: '22',
   port: 3000,
   packageManager: 'npm',
+  command: 'npm run dev',
 };
 
 const meta = {
@@ -77,6 +78,16 @@ export const CustomPort: Story = {
     content: {
       ...defaultContent,
       port: 8080,
+    },
+    onChange: fn(),
+  },
+};
+
+export const CustomCommand: Story = {
+  args: {
+    content: {
+      ...defaultContent,
+      command: 'npm run start:prod',
     },
     onChange: fn(),
   },
