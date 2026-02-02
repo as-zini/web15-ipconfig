@@ -5,6 +5,7 @@ import type { TechStack } from '@/features/widgets/techStack/types/techStack';
 import type { TechStackWidgetData } from '@/features/widgets/techStack/types/TechStackWidgetData';
 import type { NamingConventionData } from '@/features/widgets/namingConvention/types/namingConvention';
 import type { DockerfileData } from '@/features/widgets/dockerfile/types/wizard';
+import type { FormatData } from '@/features/widgets/format/types/format';
 
 export type {
   CollaborationData,
@@ -14,6 +15,7 @@ export type {
   TechStackWidgetData,
   DockerfileData,
   NamingConventionData,
+  FormatData,
 };
 
 export type WidgetType =
@@ -31,7 +33,8 @@ export type WidgetContent =
   | CommunicationData
   | CollaborationData
   | NamingConventionData
-  | DockerfileData;
+  | DockerfileData
+  | FormatData;
 
 export interface WidgetData {
   widgetId: string;

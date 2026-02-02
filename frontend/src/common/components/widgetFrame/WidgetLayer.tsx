@@ -8,11 +8,10 @@ import { useShallow } from 'zustand/react/shallow';
 import NamingConventionWidget from '@/features/widgets/namingConvention/components/NamingConventionWidget';
 import { WidgetProvider } from './context/WidgetContext';
 import { GitConventionWidget } from '@/features/widgets/gitConvention';
-import { useWidgetAwareness } from '@/common/hooks/useWidgetAwareness';
 import { DockerfileBuilderWidget } from '@/features/widgets/dockerfile';
+import { FormatWidget } from '@/features/widgets/format';
 
 function WidgetLayer() {
-  useWidgetAwareness();
   const widgetKeys = useWorkspaceWidgetStore(
     useShallow((state) =>
       state.widgetList.map((widget) => `${widget.widgetId}::${widget.type}`),
@@ -53,6 +52,8 @@ function WidgetContent({ type }: WidgetContentProps) {
       return <CommunicationWidget />;
     case 'NAMING_CONVENTION':
       return <NamingConventionWidget />;
+    case 'CODE_FORMAT':
+      return <FormatWidget />;
     case 'DOCKERFILE':
       return <DockerfileBuilderWidget />;
     default:
