@@ -130,22 +130,39 @@ export const updateWidgetLayoutAction = (
   });
 };
 
-// 4. 위젯 최상단으로 가져오기 (z-Index 변경)
+// 4. 위젯 최상단으로 가져오기
+
 /**
- * 위젯 최상단으로 가져오기 (z-Index 변경 효과)
+ * bringToFront 순수 로직 (테스트 가능)
+ *
+ * 위젯 순서 배열에서 해당 위젯 ID를 맨 뒤로 이동시킵니다.
+ * 이 함수는 Y.Doc의 transact 블록 내에서 호출되어야 합니다.
+ *
+ * @param widgetOrder - Yjs 위젯 순서 배열
+ * @param widgetId - 최상단으로 올릴 위젯 ID
+ */
+export function bringToFrontLogic(
+  widgetOrder: Y.Array<string>,
+  widgetId: string,
+): void {
+  const arr = widgetOrder.toArray();
+  const index = arr.indexOf(widgetId);
+  if (index > -1) {
+    widgetOrder.delete(index, 1);
+    widgetOrder.push([widgetId]);
+  }
+}
+
+/**
+ * 위젯 최상단으로 가져오기
  *
  * 위젯 순서 배열(widgetOrder)에서 해당 위젯 ID를 맨 뒤로 이동시켜,
- * 렌더링 시 가장 높은 z-index를 갖게 합니다.
+ * 렌더링 시 가장 높은 레이어에 위치하도록 합니다.
  *
  * @param widgetId - 최상단으로 올릴 위젯 ID
  */
 export const bringToFrontAction = (widgetId: string) => {
   doc.transact(() => {
-    const widgetOrder = getWidgetOrderArray();
-    const index = widgetOrder.toArray().indexOf(widgetId);
-    if (index > -1) {
-      widgetOrder.delete(index, 1);
-      widgetOrder.push([widgetId]);
-    }
+    bringToFrontLogic(getWidgetOrderArray(), widgetId);
   });
 };
