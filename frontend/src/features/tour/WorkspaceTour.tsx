@@ -37,6 +37,8 @@ const WorkspaceTour = () => {
       continuous
       showSkipButton
       showProgress
+      disableCloseOnEsc
+      hideCloseButton
       callback={handleJoyrideCallback}
       styles={{
         options: {
