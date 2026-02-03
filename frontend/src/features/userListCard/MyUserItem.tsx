@@ -62,7 +62,12 @@ function MyUserItem({ user }: MyUserItemProps) {
   return (
     <>
       <div className="group hover:bg-accent/50 flex h-10 items-center justify-between rounded-lg px-2 text-sm transition-colors select-none">
-        <div className="flex items-center gap-2.5 overflow-hidden">
+        <div
+          className={cn(
+            'flex items-center gap-2.5',
+            !isEditing && 'overflow-hidden',
+          )}
+        >
           {/* 유저 아바타 */}
           <Avatar className="size-7 shrink-0 ring-gray-800!">
             <AvatarFallback
@@ -89,6 +94,11 @@ function MyUserItem({ user }: MyUserItemProps) {
                     'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50',
                 )}
               />
+              {errors.nickname && (
+                <span className="absolute top-full left-0 z-50 min-w-max rounded bg-gray-800 px-2 py-1 text-[10px] text-red-500 shadow-md">
+                  {errors.nickname.message}
+                </span>
+              )}
             </div>
           ) : (
             <div className="flex items-center gap-2 truncate">
