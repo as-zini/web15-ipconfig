@@ -20,9 +20,9 @@ export default function CounterInput({
     if (e.key === 'Enter') setter();
   };
   return (
-    <div className="flex w-fit items-center gap-3 rounded-lg border border-gray-700 px-2 py-1">
+    <div className="border-border flex w-fit items-center gap-3 rounded-lg border px-2 py-1">
       <button
-        className="hover:bg-primary rounded bg-gray-700 px-2 py-1 text-gray-200 hover:text-black"
+        className="hover:bg-primary bg-muted text-muted-foreground hover:text-primary-foreground rounded px-2 py-1"
         onClick={() => setValue(Math.max(1, value - 1))}
       >
         -
@@ -33,7 +33,7 @@ export default function CounterInput({
           type="text"
           inputMode="numeric"
           pattern="[0-9]*"
-          className="w-6 bg-transparent text-center focus:outline-none"
+          className="text-foreground w-6 bg-transparent text-center focus:outline-none"
           value={value}
           onChange={(e) => {
             const value = e.target.value;
@@ -56,7 +56,7 @@ export default function CounterInput({
       )}
 
       <button
-        className="hover:bg-primary rounded bg-gray-700 px-2 py-1 text-gray-200 hover:text-black"
+        className="hover:bg-primary bg-muted text-muted-foreground hover:text-primary-foreground rounded px-2 py-1"
         onClick={() => setValue(max ? Math.min(max, value + 1) : value + 1)}
       >
         +

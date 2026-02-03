@@ -84,7 +84,7 @@ export function BranchRules({ strategy, rules, onChange }: BranchRulesProps) {
             {...register('prefix')}
             onKeyDown={handleKeyDown}
             placeholder="Add prefix..."
-            className={`h-9 ${errors.prefix ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50' : ''}`}
+            className={`h-9 ${errors.prefix ? 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/50' : ''}`}
           />
           <Button
             variant="outline"
@@ -110,7 +110,7 @@ export function BranchRules({ strategy, rules, onChange }: BranchRulesProps) {
               {prefix}
               <button
                 onClick={() => handleRemovePrefix(prefix)}
-                className="hover:text-destructive hover:bg-muted-foreground/20 rounded-full p-0.5 transition-colors focus:outline-none"
+                className="hover:text-destructive hover:bg-accent rounded-full p-0.5 transition-colors focus:outline-none"
                 aria-label={`Remove ${prefix}`}
               >
                 <LuX size={14} />
