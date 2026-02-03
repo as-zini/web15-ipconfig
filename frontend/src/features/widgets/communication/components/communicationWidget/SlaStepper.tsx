@@ -29,7 +29,7 @@ export function SlaStepper({ responseTime, onChange }: SlaStepperProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value, 10);
+    const val = Number.parseInt(e.target.value, 10);
     if (!isNaN(val)) onChange(Math.max(1, Math.min(48, val)));
   };
 
