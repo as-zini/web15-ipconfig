@@ -60,9 +60,12 @@ const WorkspaceTour = () => {
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          zIndex: 10000,
-          primaryColor: '#3b82f6',
-          textColor: '#333',
+          arrowColor: '#EEEEEE',
+          backgroundColor: '#EEEEEE',
+          overlayColor: 'rgba(0, 0, 0, 0.5)',
+          primaryColor: '#393E46',
+          textColor: '#222831',
+          zIndex: 1000,
         },
       }}
       locale={{
