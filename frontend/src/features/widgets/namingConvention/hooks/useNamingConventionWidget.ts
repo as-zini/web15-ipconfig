@@ -8,17 +8,7 @@ import { updatePrimitiveFieldAction } from '@/common/api/yjs/actions/widgetConte
 
 import type { Category } from '../types/category';
 import type { NamingConventionData } from '../types/namingConvention';
-
-// Helper to deep compare simple objects
-const isContentEqual = (
-  obj1: Record<string, string>,
-  obj2: Record<string, string>,
-) => {
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
-  if (keys1.length !== keys2.length) return false;
-  return keys1.every((key) => obj1[key] === obj2[key]);
-};
+import { isNamingContentEqual } from '../utils/isNamingContentEqual';
 
 export default function useNamingConventionWidget(activeCategory: Category) {
   const { widgetId, type } = useWidgetIdAndType();
@@ -32,7 +22,7 @@ export default function useNamingConventionWidget(activeCategory: Category) {
 
   const namingContent = (content as NamingConventionContent) ?? {};
 
-  // Merge with initial content
+  // 초기 콘텐츠와 병합
   const mergedContent: NamingConventionContent = {
     frontend: {
       ...NAMING_CONVENTION_INITIAL_CONTENT.frontend,
@@ -56,7 +46,7 @@ export default function useNamingConventionWidget(activeCategory: Category) {
   const prevContentRef = useRef<NamingConventionContent>(mergedContent);
   const isFirstRender = useRef(true);
 
-  // Detect changes in other tabs
+  // 다른 탭의 변경 사항 감지
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -72,14 +62,15 @@ export default function useNamingConventionWidget(activeCategory: Category) {
     ];
 
     categories.forEach((cat) => {
-      // Skip if it's the active category (user sees changes immediately)
+      // 활성화된 카테고리라면 건너뛰기 (사용자가 변경 사항을 즉시 확인 가능)
       if (cat === activeCategory) return;
 
       const currentCatContent = mergedContent[cat] || {};
       const prevCatContent = prevContentRef.current[cat] || {};
 
-      if (!isContentEqual(currentCatContent, prevCatContent)) {
+      if (!isNamingContentEqual(currentCatContent, prevCatContent)) {
         setUnreadTabs((prev) => {
+          if (prev.has(cat)) return prev;
           const newSet = new Set(prev);
           newSet.add(cat);
           return newSet;
