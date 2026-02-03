@@ -10,7 +10,7 @@ export const getTechIconUrl = (name: string): string => {
 
   let slug = name.split('/')[0].trim().toLowerCase();
 
-  slug = slug.replace(/\s+/g, '').replace(/\./g, 'dot');
+  slug = slug.replaceAll(/\s+/g, '').replaceAll(/\./g, 'dot');
 
   return `https://cdn.simpleicons.org/${slug}`;
 };

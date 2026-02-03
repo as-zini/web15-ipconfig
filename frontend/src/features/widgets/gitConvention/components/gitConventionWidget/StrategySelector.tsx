@@ -12,9 +12,9 @@ interface StrategySelectorProps {
 export function StrategySelector({ value, onChange }: StrategySelectorProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-muted-foreground ml-1 text-xs font-semibold">
+      <div className="text-muted-foreground ml-1 text-xs font-semibold">
         Git 전략
-      </label>
+      </div>
       <div className="flex flex-col gap-1.5">
         {STRATEGY_OPTIONS.map((option) => {
           const isSelected = value.selectedId === option.value;
