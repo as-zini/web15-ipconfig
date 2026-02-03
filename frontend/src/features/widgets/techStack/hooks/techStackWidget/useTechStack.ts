@@ -8,12 +8,12 @@ import { useShallow } from 'zustand/react/shallow';
 import {
   updateArrayContentAction,
   updateSelectorPickAction,
+  upsertOptionAction,
 } from '@/common/api/yjs/actions/widgetContent';
 import { parseSubject } from '../../utils/parsing';
 import { INITIAL_TECH_STACK_DATA } from '../../constant/initial';
 
 export function useTechStack() {
-  // 스토어 연결
   const { widgetId, type } = useWidgetIdAndType();
   const content = useWorkspaceWidgetStore(
     useShallow(
@@ -25,14 +25,25 @@ export function useTechStack() {
 
   const techStackData = content as TechStackWidgetData;
 
-  // 기본값 설정
   const subject = techStackData?.subject ?? INITIAL_TECH_STACK_DATA.subject;
   const techItems =
     techStackData?.techItems ?? INITIAL_TECH_STACK_DATA.techItems;
 
-  // 업데이트 핸들러
+  const customOptions = useMemo(() => {
+    if (!subject.options) return [];
+    return Object.values(subject.options).map((item) => item.value);
+  }, [subject.options]);
+
   const handleSubjectUpdate = useCallback(
     (newSubject: string) => {
+      updateSelectorPickAction(widgetId, type, 'subject', newSubject);
+    },
+    [widgetId, type],
+  );
+
+  const handleCreateSubject = useCallback(
+    (newSubject: string) => {
+      upsertOptionAction(widgetId, type, 'subject', newSubject, newSubject);
       updateSelectorPickAction(widgetId, type, 'subject', newSubject);
     },
     [widgetId, type],
@@ -54,7 +65,6 @@ export function useTechStack() {
     } else {
       newItems = value;
     }
-
     handleTechItemsUpdate(newItems);
   };
 
@@ -66,6 +76,7 @@ export function useTechStack() {
       if (!active.data.current || !active.data.current?.content) {
         return;
       }
+      if (!active.data.current.support.includes(String(over?.id))) return;
 
       // 내 위젯의 드롭존에 드롭되었는지 확인
       if (over && over.id === `tech-stack-dropzone-${widgetId}`) {
@@ -90,7 +101,9 @@ export function useTechStack() {
     parsedSubject,
     techItems,
     isModalOpen,
+    customOptions,
     handleSubjectUpdate,
+    handleCreateSubject,
     actions: {
       setSelectedTechStacks,
       openModal: () => setIsModalOpen(true),
