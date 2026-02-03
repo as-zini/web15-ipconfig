@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { DragEndEvent } from '@dnd-kit/core';
+import { useDndMonitor } from '@dnd-kit/core';
 import type { TechStack } from '../../types/techStack';
 import type { TechStackWidgetData } from '@/common/types/widgetData';
 import { useWidgetIdAndType } from '@/common/components/widgetFrame/context/WidgetContext';
@@ -68,19 +68,29 @@ export function useTechStack() {
     handleTechItemsUpdate(newItems);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!active.data.current || !active.data.current?.content) return;
-    if (!active.data.current.support.includes(String(over?.id))) return;
+  useDndMonitor({
+    onDragEnd(event) {
+      const { active, over } = event;
 
-    if (over && over.id === 'techStackWidget') {
-      const { id, name, category } = active.data.current.content as TechStack;
-      if (!techItems.some((tech) => tech.id === id)) {
-        const newSelectedTechStacks = [...techItems, { id, name, category }];
-        handleTechItemsUpdate(newSelectedTechStacks);
+      // 전달된 데이터가 없는 경우
+      if (!active.data.current || !active.data.current?.content) {
+        return;
       }
-    }
-  };
+      // 'techStackWidget'을 지원하는 아이템인지 확인 (특정 ID가 아닌 타입으로 체크)
+      if (!active.data.current.support.includes('techStackWidget')) return;
+
+      // 내 위젯의 드롭존에 드롭되었는지 확인
+      if (over && over.id === `tech-stack-dropzone-${widgetId}`) {
+        const { id, name, category } = active.data.current.content as TechStack;
+
+        // 중복 체크
+        if (!techItems.some((tech) => tech.id === id)) {
+          const newSelectedTechStacks = [...techItems, { id, name, category }];
+          handleTechItemsUpdate(newSelectedTechStacks);
+        }
+      }
+    },
+  });
 
   const parsedSubject = useMemo(
     () => parseSubject(subject.selectedId),
@@ -97,7 +107,6 @@ export function useTechStack() {
     handleCreateSubject,
     actions: {
       setSelectedTechStacks,
-      handleDragEnd,
       openModal: () => setIsModalOpen(true),
       closeModal: () => setIsModalOpen(false),
     },
