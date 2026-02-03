@@ -9,7 +9,7 @@ import { useWorkspaceInfoStore } from '@/common/store/workspace';
 import { useCollaboration } from '@/common/hooks/useCollaboration';
 import { LoadingSpinner } from '@/common/components/LoadingSpinner';
 import { useWorkspaceGuard } from '@/common/hooks/useWorkspaceGuard';
-import WorkspaceTour from './components/tour/WorkspaceTour';
+import WorkspaceTour from '@/features/tour/WorkspaceTour';
 
 function WorkSpacePage() {
   const navigate = useNavigate();

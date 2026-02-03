@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import Joyride, { type CallBackProps, STATUS, type Step } from 'react-joyride';
+import { useEffect, useState } from 'react';
+import Joyride, { type CallBackProps, STATUS } from 'react-joyride';
+import { TOOL_BAR_STEPS } from './constant/ToolBarSteps';
+import { HEADER_STEPS } from './constant/HeaderSteps';
 
 const TOUR_STORAGE_KEY = 'has-visited-workspace';
 
@@ -15,6 +17,8 @@ const WorkspaceTour = () => {
     }
   }, []);
 
+  const ALL_STEPS = [...TOOL_BAR_STEPS, ...HEADER_STEPS];
+
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data as {
       status: typeof STATUS.FINISHED | typeof STATUS.SKIPPED;
@@ -26,33 +30,9 @@ const WorkspaceTour = () => {
     }
   };
 
-  const steps: Step[] = useMemo(
-    () => [
-      {
-        target: '#tool-bar',
-        content:
-          '이 툴바에서 원하는 위젯을 선택하여 캔버스에 생성할 수 있습니다.',
-        placement: 'top',
-        disableBeacon: true,
-      },
-      {
-        target: '#export-group-dropdown-button',
-        content:
-          '작업이 완료되면 여기서 문서나 설정 파일로 내보낼 수 있습니다.',
-        placement: 'bottom',
-      },
-      {
-        target: '#invite-button',
-        content: '동료를 초대하거나 주소를 복사하여 함께 작업해보세요!',
-        placement: 'bottom',
-      },
-    ],
-    [],
-  );
-
   return (
     <Joyride
-      steps={steps}
+      steps={ALL_STEPS}
       run={run}
       continuous
       showSkipButton
