@@ -30,6 +30,20 @@ export const clearUserManipulationState = () => {
   }
 };
 
+// 닉네임 변경
+export const updateUserNickname = (nickname: string) => {
+  const provider = getProvider();
+  if (provider && provider.awareness) {
+    const currentUser = provider.awareness.getLocalState()?.user;
+    if (currentUser) {
+      provider.awareness.setLocalStateField('user', {
+        ...currentUser,
+        nickname,
+      });
+    }
+  }
+};
+
 export const updateUserCursorType = (type: 'default' | 'chat') => {
   const provider = getProvider();
   if (provider && provider.awareness) {
