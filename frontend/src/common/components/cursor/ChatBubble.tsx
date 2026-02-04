@@ -16,14 +16,14 @@ function ChatBubble({ color, message }: ChatBubbleProps) {
   const measureRef = useRef<HTMLSpanElement>(null);
   const [inputWidth, setInputWidth] = useState(CHAT_PLACEHOLDER.length);
 
-  // message가 변경되면 inputWidth 업데이트
+  // message가 변경되면, chatBubble를 paint 하기 전에 inputWidth 업데이트
   useLayoutEffect(() => {
     if (measureRef.current) {
       setInputWidth(Math.max(80, measureRef.current.scrollWidth + 6));
     }
   }, [message]);
 
-  // isActive가 true로 변경되면 포커스
+  // 컴포넌트가 마운트되면 포커스
   useLayoutEffect(() => {
     chatInputRef.current?.focus({ preventScroll: true });
   }, []);
