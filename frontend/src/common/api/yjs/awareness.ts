@@ -6,6 +6,7 @@ export const updateLocalCursor = (x: number, y: number) => {
   const provider = getProvider();
   if (provider && provider.awareness) {
     provider.awareness.setLocalStateField('cursor', {
+      ...provider.awareness.getLocalState()?.cursor,
       x,
       y,
       ts: Date.now(),
@@ -26,5 +27,36 @@ export const clearUserManipulationState = () => {
   const provider = getProvider();
   if (provider && provider.awareness) {
     provider.awareness.setLocalStateField('manipulationState', null);
+  }
+};
+
+export const updateUserCursorType = (type: 'default' | 'chat') => {
+  const provider = getProvider();
+  if (provider && provider.awareness) {
+    provider.awareness.setLocalStateField('cursor', {
+      ...provider.awareness.getLocalState()?.cursor,
+      type,
+    });
+  }
+};
+
+export const updateUserChatMessage = (message: string) => {
+  const provider = getProvider();
+  if (provider && provider.awareness) {
+    provider.awareness.setLocalStateField('cursor', {
+      ...provider.awareness.getLocalState()?.cursor,
+      message,
+    });
+  }
+};
+
+export const clearUserChatMessage = () => {
+  const provider = getProvider();
+  if (provider && provider.awareness) {
+    provider.awareness.setLocalStateField('cursor', {
+      ...provider.awareness.getLocalState()?.cursor,
+      message: null,
+      type: 'default',
+    });
   }
 };
