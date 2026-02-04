@@ -24,6 +24,8 @@ interface SelectInputProps {
   setSelectedValue: (value: string) => void;
   customOptions?: string[];
   onCreateOption?: (value: string) => void;
+  defaultGroups?: { category: string; options: string[] }[];
+  customCategoryName?: string;
 }
 
 function SelectInput({
@@ -31,12 +33,15 @@ function SelectInput({
   setSelectedValue,
   customOptions = [],
   onCreateOption,
+  defaultGroups,
+  customCategoryName = '커스텀 주제',
 }: SelectInputProps) {
   const [searchText, setSearchText] = useState('');
   const { setValue, errors, handleSubmit } = useTeckStackSearch();
   const { filteredOptions, isExisting } = useSelectOptions(
     searchText,
     customOptions,
+    defaultGroups,
   );
   // 입력으로 인한 focus 잃어버리는 거 해결
   const inputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +64,7 @@ function SelectInput({
     const validSearchText = data.search;
     if (!validSearchText) return;
 
-    const fullValue = `[커스텀 주제] ${validSearchText}`;
+    const fullValue = `[${customCategoryName}] ${validSearchText}`;
 
     if (onCreateOption) onCreateOption(fullValue);
     else setSelectedValue(fullValue);
