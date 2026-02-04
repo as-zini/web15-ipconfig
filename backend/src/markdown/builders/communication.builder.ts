@@ -25,18 +25,19 @@ export class CommunicationBuilder implements ISectionBuilder {
       lines.push('| 상황 | 채널 |');
       lines.push('| :--- | :--- |');
 
-      const urgent = getSelectedValue(content.communication?.urgent);
-      const sync = getSelectedValue(content.communication?.sync);
-      const async = getSelectedValue(content.communication?.async);
-      const official = getSelectedValue(content.communication?.official);
+      const meeting = getSelectedValue(content.communication?.meeting);
+      const chat = getSelectedValue(content.communication?.chat);
+      const doc = getSelectedValue(content.communication?.doc);
+      const announce = getSelectedValue(content.communication?.announce);
 
-      if (urgent)
-        lines.push(createTableRow('**🚨 긴급 (Urgent)**', `\`${urgent}\``));
-      if (sync) lines.push(createTableRow('**🗣️ 동기 (Sync)**', `\`${sync}\``));
-      if (async)
-        lines.push(createTableRow('**📨 비동기 (Async)**', `\`${async}\``));
-      if (official)
-        lines.push(createTableRow('**📝 공식 (Official)**', `\`${official}\``));
+      if (meeting)
+        lines.push(createTableRow('**🚨 회의 (Meeting)**', `\`${meeting}\``));
+      if (doc) lines.push(createTableRow('**📨 기록 (Doc)**', `\`${doc}\``));
+      if (announce)
+        lines.push(createTableRow('**📝 공지 (Announce)**', `\`${announce}\``));
+      if (chat)
+        lines.push(createTableRow('**🗣️ 그 외 소통 (Chat)**', `\`${chat}\``));
+
       lines.push('');
 
       // SLA & Time
