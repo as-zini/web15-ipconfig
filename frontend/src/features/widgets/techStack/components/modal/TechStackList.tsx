@@ -1,37 +1,18 @@
 import { memo, useMemo } from 'react';
 import NoContents from './NoContents';
-import {
-  FRONTEND_TECH_STACKS,
-  BACKEND_TECH_STACKS,
-  DATABASE_TECH_STACKS,
-  INFRASTRUCTURE_TECH_STACKS,
-  COMMON_TECH_STACKS,
-} from '@/features/widgets/techStack/constant/techStackInfo';
+import { TECH_STACK_GROUPS } from '@/features/widgets/techStack/constant/techStackInfo';
 import DraggableTechStackItem from './DraggableTechStackItem';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from '@/common/components/shadcn/accordion';
+import { ALL_TECH_STACKS } from '@/features/widgets/techStack/constant/techStackInfo';
 
 interface TechStackListProps {
   keyword: string;
 }
 
-export function TechStackList({ keyword }: TechStackListProps) {
-  const techStacks = [
-    ...FRONTEND_TECH_STACKS,
-    ...BACKEND_TECH_STACKS,
-    ...DATABASE_TECH_STACKS,
-    ...INFRASTRUCTURE_TECH_STACKS,
-    ...COMMON_TECH_STACKS,
-  ];
-
+function TechStackList({ keyword }: TechStackListProps) {
   const filteredStacks = useMemo(() => {
     const lower = keyword.toLowerCase();
-    return FRONTEND_TECH_STACKS.filter((tech) =>
-      tech.name.toLowerCase().includes(lower),
+    return ALL_TECH_STACKS.filter((item) =>
+      item.name.toLowerCase().includes(lower),
     );
   }, [keyword]);
 
@@ -42,14 +23,7 @@ export function TechStackList({ keyword }: TechStackListProps) {
   return (
     <div className="flex flex-wrap gap-2.5 overflow-y-auto py-1">
       {filteredStacks.map((tech) => (
-        <Accordion type="single" collapsible>
-          <AccordionItem value={tech.id}>
-            <AccordionTrigger>{tech.name}</AccordionTrigger>
-            <AccordionContent>
-              <DraggableTechStackItem key={tech.id} {...tech} />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <DraggableTechStackItem key={tech.id} {...tech} />
       ))}
     </div>
   );
