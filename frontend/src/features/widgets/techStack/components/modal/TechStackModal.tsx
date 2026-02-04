@@ -24,7 +24,6 @@ function TechStackModal({
   const [search, setSearch] = useState<string>('');
   const debouncedSearch = useDebounce(search, 300);
   const { active } = useDndContext();
-
   // 모달 위치
   const [position, setPosition] = useState({ x: 600, y: 100 });
 
@@ -79,7 +78,6 @@ function TechStackModal({
         <div className="px-6.5 text-sm text-gray-400">
           아이템을 드래그 앤 드롭으로 기술 스택 위젯 안에 넣어주세요!
         </div>
-        {/* 내부 컨텐츠 */}
         <div className="flex flex-1 flex-col overflow-hidden px-6.5 pt-2 pb-4">
           <SearchBar search={search} setSearch={setSearch} />
           <TechStackList keyword={debouncedSearch} />
