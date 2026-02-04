@@ -12,7 +12,7 @@ import { SpinnerCustom } from '@/common/components/SpinnerCustom';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import 'github-markdown-css/github-markdown.css';
+import 'github-markdown-css/github-markdown-light.css';
 
 export function ExportDocDialog({
   markdown,

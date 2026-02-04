@@ -208,7 +208,7 @@ body {
 }
 
 .dark .markdown-body table tr:nth-child(2n) {
-  background-color: var(--muted) !important;
+  background-color: var(--background) !important;
 }
 
 .dark .markdown-body table th,
