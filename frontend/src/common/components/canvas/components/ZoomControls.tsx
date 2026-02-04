@@ -16,7 +16,10 @@ function ZoomControls() {
   };
 
   return (
-    <div className="absolute bottom-6 left-6 z-50 flex items-center gap-2">
+    <div
+      id="zoom-controls"
+      className="absolute bottom-6 left-6 z-50 flex items-center gap-2"
+    >
       <div className="flex items-center rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
         <button
           disabled={isMinZoom}

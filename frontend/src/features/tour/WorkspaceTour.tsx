@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Joyride, { type CallBackProps, STATUS } from 'react-joyride';
 import { TOOL_BAR_STEPS } from './constant/ToolBarSteps';
 import { HEADER_STEPS } from './constant/HeaderSteps';
+import { ZOOM_STEPS } from './constant/ZoomSteps';
 
 const TOUR_STORAGE_KEY = 'has-visited-workspace';
 
@@ -17,7 +18,7 @@ const WorkspaceTour = () => {
     }
   }, []);
 
-  const ALL_STEPS = [...TOOL_BAR_STEPS, ...HEADER_STEPS];
+  const ALL_STEPS = [...TOOL_BAR_STEPS, ...ZOOM_STEPS, ...HEADER_STEPS];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data as {
