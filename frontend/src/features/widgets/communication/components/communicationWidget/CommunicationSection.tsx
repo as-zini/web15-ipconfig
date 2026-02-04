@@ -74,6 +74,8 @@ export function CommunicationSection({
               customOptions={allCustomOptions[item.key]}
               defaultGroups={defaultGroups}
               customCategoryName={item.label}
+              placeholder={'플랫폼을 선택해주세요...'}
+              searchPlaceholder={'플랫폼을 입력하세요...'}
             />
           </div>
         ))}

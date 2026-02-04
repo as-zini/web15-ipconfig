@@ -26,6 +26,8 @@ interface SelectInputProps {
   onCreateOption?: (value: string) => void;
   defaultGroups?: { category: string; options: string[] }[];
   customCategoryName?: string;
+  placeholder?: string;
+  searchPlaceholder?: string;
 }
 
 function SelectInput({
@@ -35,6 +37,8 @@ function SelectInput({
   onCreateOption,
   defaultGroups,
   customCategoryName = '커스텀 주제',
+  placeholder = '주제를 선택해주세요...',
+  searchPlaceholder = '원하는 주제를 입력하세요...',
 }: SelectInputProps) {
   const [searchText, setSearchText] = useState('');
   const { setValue, errors, handleSubmit } = useTeckStackSearch();
@@ -87,7 +91,7 @@ function SelectInput({
     <Select value={selectedValue} onValueChange={setSelectedValue}>
       <SelectTrigger className="w-full justify-between px-3 font-normal">
         <span className="min-w-0 flex-1 truncate text-left">
-          <SelectValue placeholder="주제를 선택해주세요..." />
+          <SelectValue placeholder={placeholder} />
         </span>
       </SelectTrigger>
 
@@ -103,7 +107,7 @@ function SelectInput({
             <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2" />
             <Input
               ref={inputRef}
-              placeholder="원하는 주제를 입력하세요..."
+              placeholder={searchPlaceholder}
               value={searchText}
               onChange={handleSearchChange}
               onKeyDown={handleInputKeyDown}

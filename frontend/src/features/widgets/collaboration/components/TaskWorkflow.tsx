@@ -54,7 +54,9 @@ export default function TaskWorkflow({ data, onUpdate }: TaskWorkflowProps) {
               : []),
           ]}
           defaultGroups={[]}
-          customCategoryName="Platform"
+          customCategoryName="작업 관리 플랫폼"
+          placeholder="플랫폼을 선택해주세요..."
+          searchPlaceholder="플랫폼을 입력하세요..."
         />
       </div>
 
