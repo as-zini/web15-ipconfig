@@ -48,12 +48,21 @@ export class CommunicationBuilder implements ISectionBuilder {
       const noMeetingDay = content.meeting?.noMeetingDay || '-';
       const feedbackStyle = content.meeting?.feedbackStyle || '-';
 
+      const FEEDBACK_STYLE_LABELS: Record<string, string> = {
+        Soft: '부드럽게',
+        Honest: '솔직하게',
+        Retrospective: '회고 중심',
+      };
+
+      const feedbackLabel =
+        FEEDBACK_STYLE_LABELS[feedbackStyle] || feedbackStyle;
+
       lines.push(
         `- **코어 타임 (Core Time)**: \`${coreStart}\` ~ \`${coreEnd}\``,
       );
       lines.push(`- **최대 응답 시간 (SLA)**: ${responseTime}h`);
       lines.push(`- **미팅 없는 날**: ${noMeetingDay}`);
-      lines.push(`- **피드백 스타일**: ${feedbackStyle}`);
+      lines.push(`- **피드백 스타일**: ${feedbackLabel}`);
       lines.push('');
     });
 

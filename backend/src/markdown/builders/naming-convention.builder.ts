@@ -15,7 +15,6 @@ export class NamingConventionBuilder implements ISectionBuilder {
 
     const lines: string[] = [];
     lines.push('## 📝 네이밍 컨벤션');
-    console.log(widgets[0].content);
 
     widgets.forEach((widget) => {
       const content = widget.content as unknown as YjsNamingConventionContent;
