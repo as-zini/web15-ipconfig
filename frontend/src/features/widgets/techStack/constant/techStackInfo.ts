@@ -80,14 +80,17 @@ export const BACKEND_TECH_STACKS: BackendTechStack[] = [
 
 export const DATABASE_TECH_STACKS: DatabaseTechStack[] = [
   // Main Database
+  // https://survey.stackoverflow.co/2025/technology#most-popular-technologies-language-write-ins
   { id: 'mysql', category: 'mainDatabase', name: 'MySQL' },
   { id: 'postgresql', category: 'mainDatabase', name: 'PostgreSQL' },
+  { id: 'sqlite', category: 'mainDatabase', name: 'SQLite' },
   { id: 'mariadb', category: 'mainDatabase', name: 'MariaDB' },
   { id: 'mongodb', category: 'mainDatabase', name: 'MongoDB' },
-  { id: 'redis', category: 'cachingAndMessageQueue', name: 'Redis' }, // 주로 캐싱 용도라 아래로 분류 가능하나 Main DB로도 씀. 여기선 Caching으로 이동 추천하거나 유지.
   { id: 'dynamodb', category: 'mainDatabase', name: 'DynamoDB' },
   { id: 'supabase', category: 'mainDatabase', name: 'Supabase' },
   { id: 'firebase', category: 'mainDatabase', name: 'Firebase' },
+  { id: 'elasticsearch', category: 'mainDatabase', name: 'Elasticsearch' },
+  { id: 'oracle', category: 'mainDatabase', name: 'Oracle' },
 
   // ORM & Query Builder (Moved from Backend)
   { id: 'prisma', category: 'ormAndQueryBuilder', name: 'Prisma' },
@@ -101,6 +104,7 @@ export const DATABASE_TECH_STACKS: DatabaseTechStack[] = [
   },
   { id: 'mybatis', category: 'ormAndQueryBuilder', name: 'MyBatis' },
   { id: 'sequelize', category: 'ormAndQueryBuilder', name: 'Sequelize' },
+  { id: 'redis', category: 'cachingAndMessageQueue', name: 'Redis' },
 
   // Caching & Message Queue
   { id: 'kafka', category: 'cachingAndMessageQueue', name: 'Kafka' },
@@ -176,6 +180,23 @@ export const COMMON_TECH_STACKS: CommonTechStack[] = [
   { id: 'slack', category: 'messenger', name: 'Slack' },
   { id: 'discord', category: 'messenger', name: 'Discord' },
   { id: 'msteams', category: 'messenger', name: 'Microsoft Teams' },
+
+  // IDE
+  { id: 'vscode', category: 'IDE', name: 'Visual Studio Code' },
+  { id: 'visualstudio', category: 'IDE', name: 'Visual Studio' },
+  { id: 'cursor', category: 'IDE', name: 'Cursor' },
+  { id: 'vim', category: 'IDE', name: 'Vim' },
+  { id: 'pycharm', category: 'IDE', name: 'PyCharm' },
+  { id: 'intellijidea', category: 'IDE', name: 'IntelliJ IDEA' },
+  { id: 'pycharm', category: 'IDE', name: 'PyCharm' },
+  { id: 'sublime', category: 'IDE', name: 'Sublime Text' },
+  { id: 'riders', category: 'IDE', name: 'Rider' },
+
+  // AI
+  { id: 'google gemini', category: 'ai', name: 'Google Gemini' },
+  { id: 'claude', category: 'ai', name: 'Claude' },
+  { id: 'grok', category: 'ai', name: 'Grok' },
+  { id: 'grok', category: 'ai', name: 'Grok' },
 ];
 
 export const TECH_STACK_GROUPS = [
@@ -189,6 +210,8 @@ export const TECH_STACK_GROUPS = [
       monorepoManagement: '모노레포 관리',
       codeQuality: '코드 퀄리티',
       messenger: '메신저',
+      IDE: 'IDE',
+      ai: 'AI',
     },
   },
   {
