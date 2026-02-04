@@ -9,28 +9,38 @@ import type {
 
 export const FRONTEND_TECH_STACKS: FrontendTechStack[] = [
   // Framework & Library
+  // https://www.statista.com/statistics/1124699/worldwide-developer-survey-most-used-frameworks-web/
+  // https://twentytwentyone.tistory.com/1459
   { id: 'react', category: 'framework', name: 'React' },
-  { id: 'nextjs', category: 'framework', name: 'Next.js' },
   { id: 'vue', category: 'framework', name: 'Vue.js' },
-  { id: 'nuxt', category: 'framework', name: 'Nuxt' },
+  { id: 'nextjs', category: 'framework', name: 'Next.js' },
   { id: 'svelte', category: 'framework', name: 'Svelte' },
   { id: 'sveltekit', category: 'framework', name: 'SvelteKit' },
+  { id: 'solid', category: 'framework', name: 'Solid' },
+  { id: 'astro', category: 'framework', name: 'Astro' },
   { id: 'angular', category: 'framework', name: 'Angular' },
+  { id: 'qwik', category: 'framework', name: 'Qwik' },
+  { id: 'remix', category: 'framework', name: 'Remix' },
+  // Mobile로 빼야하나? 삭제?
   { id: 'reactnative', category: 'framework', name: 'React Native' },
-  { id: 'flutter', category: 'framework', name: 'Flutter' }, // Mobile 추가
+  { id: 'flutter', category: 'framework', name: 'Flutter' },
 
   // State Management
+  // https://trio.dev/7-top-react-state-management-libraries/
   { id: 'redux', category: 'stateManagement', name: 'Redux' },
-  { id: 'zustand', category: 'stateManagement', name: 'Zustand' },
-  { id: 'tanstackquery', category: 'stateManagement', name: 'TanStack Query' },
   { id: 'recoil', category: 'stateManagement', name: 'Recoil' },
+  { id: 'zustand', category: 'stateManagement', name: 'Zustand' },
   { id: 'jotai', category: 'stateManagement', name: 'Jotai' },
+  { id: 'mobx', category: 'stateManagement', name: 'Mobx' },
+  { id: 'xstate', category: 'stateManagement', name: 'XState' },
+  { id: 'valtio', category: 'stateManagement', name: 'Valtio' },
+  { id: 'tanstackquery', category: 'stateManagement', name: 'TanStack Query' },
 
   // Styling
   { id: 'tailwindcss', category: 'styling', name: 'Tailwind CSS' },
   { id: 'styledcomponents', category: 'styling', name: 'styled-components' },
   { id: 'emotion', category: 'styling', name: 'Emotion' },
-  { id: 'sassscss', category: 'styling', name: 'Sass/SCSS' },
+  { id: 'sass/scss', category: 'styling', name: 'Sass/SCSS' },
   { id: 'vanillaextract', category: 'styling', name: 'Vanilla Extract' },
 
   // UI Library
