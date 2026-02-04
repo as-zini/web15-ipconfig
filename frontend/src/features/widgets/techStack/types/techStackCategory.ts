@@ -4,7 +4,9 @@ export type CommonCategory =
   | 'testing'
   | 'monorepoManagement'
   | 'codeQuality'
-  | 'messenger';
+  | 'messenger'
+  | 'ide'
+  | 'ai';
 
 export type FrontendCategory =
   | 'framework'

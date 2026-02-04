@@ -7,6 +7,307 @@ import type {
   TechStack,
 } from '../types/techStack';
 
+// https://survey.stackoverflow.co/2025/
+
+export const COMMON_TECH_STACKS: CommonTechStack[] = [
+  // Languages
+  {
+    id: 'javascript',
+    category: 'language',
+    name: 'JavaScript',
+    color: 'F7DF1E',
+    slug: 'javascript',
+  },
+  {
+    id: 'typescript',
+    category: 'language',
+    name: 'TypeScript',
+    color: '3178C6',
+    slug: 'typescript',
+  },
+  {
+    id: 'java',
+    category: 'language',
+    name: 'Java',
+    color: '007396',
+    slug: 'openjdk',
+  },
+  {
+    id: 'python',
+    category: 'language',
+    name: 'Python',
+    color: '3776AB',
+    slug: 'python',
+  },
+  { id: 'go', category: 'language', name: 'Go', color: '00ADD8', slug: 'go' },
+  {
+    id: 'rust',
+    category: 'language',
+    name: 'Rust',
+    color: '000000',
+    slug: 'rust',
+  },
+  {
+    id: 'kotlin',
+    category: 'language',
+    name: 'Kotlin',
+    color: '7F52FF',
+    slug: 'kotlin',
+  },
+  {
+    id: 'swift',
+    category: 'language',
+    name: 'Swift',
+    color: 'F05138',
+    slug: 'swift',
+  },
+
+  // Package Manager
+  {
+    id: 'npm',
+    category: 'packageManager',
+    name: 'npm',
+    color: 'CB3837',
+    slug: 'npm',
+  },
+  {
+    id: 'yarn',
+    category: 'packageManager',
+    name: 'Yarn',
+    color: '2C8EBB',
+    slug: 'yarn',
+  },
+  {
+    id: 'pnpm',
+    category: 'packageManager',
+    name: 'pnpm',
+    color: 'F69220',
+    slug: 'pnpm',
+  },
+  {
+    id: 'bun',
+    category: 'packageManager',
+    name: 'Bun',
+    color: 'FBF0DF',
+    slug: 'bun',
+  },
+
+  // Testing
+  {
+    id: 'jest',
+    category: 'testing',
+    name: 'Jest',
+    color: 'C21325',
+    slug: 'jest',
+  },
+  {
+    id: 'vitest',
+    category: 'testing',
+    name: 'Vitest',
+    color: '6E9F18',
+    slug: 'vitest',
+  },
+  {
+    id: 'cypress',
+    category: 'testing',
+    name: 'Cypress',
+    color: '17202C',
+    slug: 'cypress',
+  },
+  {
+    id: 'playwright',
+    category: 'testing',
+    name: 'Playwright',
+    color: '2EAD33',
+    slug: 'playwright',
+  },
+  {
+    id: 'storybook',
+    category: 'testing',
+    name: 'Storybook',
+    color: 'FF4785',
+    slug: 'storybook',
+  },
+
+  // Monorepo & Repo Management
+  {
+    id: 'turborepo',
+    category: 'monorepoManagement',
+    name: 'Turborepo',
+    color: 'EF4815',
+    slug: 'turborepo',
+  },
+  {
+    id: 'nx',
+    category: 'monorepoManagement',
+    name: 'Nx',
+    color: '143055',
+    slug: 'nx',
+  },
+  {
+    id: 'git',
+    category: 'monorepoManagement',
+    name: 'Git',
+    color: 'F05032',
+    slug: 'git',
+  },
+  {
+    id: 'github',
+    category: 'monorepoManagement',
+    name: 'GitHub',
+    color: '181717',
+    slug: 'github',
+  },
+
+  // Code Quality
+  {
+    id: 'eslint',
+    category: 'codeQuality',
+    name: 'ESLint',
+    color: '4B32C3',
+    slug: 'eslint',
+  },
+  {
+    id: 'prettier',
+    category: 'codeQuality',
+    name: 'Prettier',
+    color: 'F7B93E',
+    slug: 'prettier',
+  },
+  {
+    id: 'sonar',
+    category: 'codeQuality',
+    name: 'Sonar',
+    color: '4E9BCD',
+    slug: 'sonar',
+  },
+
+  // Messenger
+  {
+    id: 'slack',
+    category: 'messenger',
+    name: 'Slack',
+    color: '4A154B',
+    slug: 'slack',
+  },
+  {
+    id: 'discord',
+    category: 'messenger',
+    name: 'Discord',
+    color: '5865F2',
+    slug: 'discord',
+  },
+  {
+    id: 'msteams',
+    category: 'messenger',
+    name: 'Microsoft Teams',
+    color: '6264A7',
+    slug: 'microsoftteams',
+  },
+
+  // IDE
+  {
+    id: 'vscode',
+    category: 'ide',
+    name: 'Visual Studio Code',
+    color: '007ACC',
+    slug: 'vscode',
+  },
+  {
+    id: 'visualstudio',
+    category: 'ide',
+    name: 'Visual Studio',
+    color: '000000',
+    slug: 'visualstudio',
+  },
+  {
+    id: 'cursor',
+    category: 'ide',
+    name: 'Cursor',
+    color: '000000',
+    slug: 'cursor',
+  },
+  {
+    id: 'intellijidea',
+    category: 'ide',
+    name: 'IntelliJ IDEA',
+    color: 'E53353',
+    slug: 'intellijidea',
+  },
+  {
+    id: 'sublimetext',
+    category: 'ide',
+    name: 'Sublime Text',
+    color: 'FF9800',
+    slug: 'sublimetext',
+  },
+  {
+    id: 'vim',
+    category: 'ide',
+    name: 'Vim',
+    color: '019733',
+    slug: 'vim',
+  },
+  {
+    id: 'pycharm',
+    category: 'ide',
+    name: 'PyCharm',
+    color: '00C4F4',
+    slug: 'pycharm',
+  },
+  {
+    id: 'rider',
+    category: 'ide',
+    name: 'Rider',
+    color: 'FF281C',
+    slug: 'rider',
+  },
+
+  // AI
+  {
+    id: 'chatgpt',
+    category: 'ai',
+    name: 'ChatGPT',
+    color: '000000',
+    slug: 'chatgpt',
+  },
+  {
+    id: 'claude',
+    category: 'ai',
+    name: 'Claude',
+    color: '000000',
+    slug: 'claude',
+  },
+  {
+    id: 'google gemini',
+    category: 'ai',
+    name: 'Google Gemini',
+    color: '8E75B2',
+    slug: 'googlegemini',
+  },
+  {
+    id: 'grok',
+    category: 'ai',
+    name: 'Grok',
+    color: '000000',
+    slug: 'grok',
+  },
+  {
+    id: 'github copilot',
+    category: 'ai',
+    name: 'Copilot',
+    color: '001380',
+    slug: 'githubcopilot',
+  },
+  {
+    id: 'perplexity',
+    category: 'ai',
+    name: 'Perplexity',
+    color: 'FFFFFF',
+    slug: 'perplexity',
+  },
+];
+
 export const FRONTEND_TECH_STACKS: FrontendTechStack[] = [
   // Framework & Library
   {
@@ -602,204 +903,6 @@ export const INFRASTRUCTURE_TECH_STACKS: InfrastructureTechStack[] = [
     slug: 'prometheus',
   },
 ];
-
-export const COMMON_TECH_STACKS: CommonTechStack[] = [
-  // Languages
-  {
-    id: 'javascript',
-    category: 'language',
-    name: 'JavaScript',
-    color: 'F7DF1E',
-    slug: 'javascript',
-  },
-  {
-    id: 'typescript',
-    category: 'language',
-    name: 'TypeScript',
-    color: '3178C6',
-    slug: 'typescript',
-  },
-  {
-    id: 'java',
-    category: 'language',
-    name: 'Java',
-    color: '007396',
-    slug: 'openjdk',
-  },
-  {
-    id: 'python',
-    category: 'language',
-    name: 'Python',
-    color: '3776AB',
-    slug: 'python',
-  },
-  { id: 'go', category: 'language', name: 'Go', color: '00ADD8', slug: 'go' },
-  {
-    id: 'rust',
-    category: 'language',
-    name: 'Rust',
-    color: '000000',
-    slug: 'rust',
-  },
-  {
-    id: 'kotlin',
-    category: 'language',
-    name: 'Kotlin',
-    color: '7F52FF',
-    slug: 'kotlin',
-  },
-  {
-    id: 'swift',
-    category: 'language',
-    name: 'Swift',
-    color: 'F05138',
-    slug: 'swift',
-  },
-
-  // Package Manager
-  {
-    id: 'npm',
-    category: 'packageManager',
-    name: 'npm',
-    color: 'CB3837',
-    slug: 'npm',
-  },
-  {
-    id: 'yarn',
-    category: 'packageManager',
-    name: 'Yarn',
-    color: '2C8EBB',
-    slug: 'yarn',
-  },
-  {
-    id: 'pnpm',
-    category: 'packageManager',
-    name: 'pnpm',
-    color: 'F69220',
-    slug: 'pnpm',
-  },
-  {
-    id: 'bun',
-    category: 'packageManager',
-    name: 'Bun',
-    color: 'FBF0DF',
-    slug: 'bun',
-  },
-
-  // Testing
-  {
-    id: 'jest',
-    category: 'testing',
-    name: 'Jest',
-    color: 'C21325',
-    slug: 'jest',
-  },
-  {
-    id: 'vitest',
-    category: 'testing',
-    name: 'Vitest',
-    color: '6E9F18',
-    slug: 'vitest',
-  },
-  {
-    id: 'cypress',
-    category: 'testing',
-    name: 'Cypress',
-    color: '17202C',
-    slug: 'cypress',
-  },
-  {
-    id: 'playwright',
-    category: 'testing',
-    name: 'Playwright',
-    color: '2EAD33',
-    slug: 'playwright',
-  },
-  {
-    id: 'storybook',
-    category: 'testing',
-    name: 'Storybook',
-    color: 'FF4785',
-    slug: 'storybook',
-  },
-
-  // Monorepo & Repo Management
-  {
-    id: 'turborepo',
-    category: 'monorepoManagement',
-    name: 'Turborepo',
-    color: 'EF4815',
-    slug: 'turborepo',
-  },
-  {
-    id: 'nx',
-    category: 'monorepoManagement',
-    name: 'Nx',
-    color: '143055',
-    slug: 'nx',
-  },
-  {
-    id: 'git',
-    category: 'monorepoManagement',
-    name: 'Git',
-    color: 'F05032',
-    slug: 'git',
-  },
-  {
-    id: 'github',
-    category: 'monorepoManagement',
-    name: 'GitHub',
-    color: '181717',
-    slug: 'github',
-  },
-
-  // Code Quality
-  {
-    id: 'eslint',
-    category: 'codeQuality',
-    name: 'ESLint',
-    color: '4B32C3',
-    slug: 'eslint',
-  },
-  {
-    id: 'prettier',
-    category: 'codeQuality',
-    name: 'Prettier',
-    color: 'F7B93E',
-    slug: 'prettier',
-  },
-  {
-    id: 'sonar',
-    category: 'codeQuality',
-    name: 'Sonar',
-    color: '4E9BCD',
-    slug: 'sonar',
-  },
-
-  // Messenger
-  {
-    id: 'slack',
-    category: 'messenger',
-    name: 'Slack',
-    color: '4A154B',
-    slug: 'slack',
-  },
-  {
-    id: 'discord',
-    category: 'messenger',
-    name: 'Discord',
-    color: '5865F2',
-    slug: 'discord',
-  },
-  {
-    id: 'msteams',
-    category: 'messenger',
-    name: 'Microsoft Teams',
-    color: '6264A7',
-    slug: 'microsoftteams',
-  },
-];
-
 export const TECH_STACK_GROUPS = [
   {
     title: '공통 및 기반',
@@ -811,6 +914,8 @@ export const TECH_STACK_GROUPS = [
       monorepoManagement: '모노레포 관리',
       codeQuality: '코드 퀄리티',
       messenger: '메신저',
+      ide: 'IDE',
+      ai: 'AI',
     },
   },
   {
