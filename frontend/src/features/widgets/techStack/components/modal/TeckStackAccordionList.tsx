@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/common/components/shadcn/accordion'; //
-import { TechStackItem } from '../TechStackItem'; // 기존 아이템 컴포넌트
+import DraggableTechStackItem from './DraggableTechStackItem'; // 기존 아이템 컴포넌트
 import { TECH_STACK_GROUPS } from '../../constant/techStackInfo'; //
 
 export function TechStackAccordionList() {
@@ -37,7 +37,7 @@ export function TechStackAccordionList() {
                     <AccordionContent>
                       <div className="flex flex-wrap gap-2 pt-2">
                         {filteredItems.map((item) => (
-                          <TechStackItem key={item.id} techName={item.name} />
+                          <DraggableTechStackItem key={item.id} {...item} />
                         ))}
                       </div>
                     </AccordionContent>
