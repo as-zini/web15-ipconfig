@@ -24,14 +24,14 @@ export const createWinstonConfig = (): WinstonModuleOptions => {
 
   // 프로덕션: 파일 로깅
   if (isProduction) {
-    // 일반 로그 (14일 보관)
+    // 일반 로그 (7일 보관)
     transports.push(
       new winston.transports.DailyRotateFile({
-        dirname: 'logs',
+        dirname: process.env.LOG_DIR || 'logs',
         filename: 'app-%DATE%.log',
         datePattern: 'YYYY-MM-DD',
         maxSize: '20m',
-        maxFiles: '14d',
+        maxFiles: '7d',
         level: 'info',
         format: winston.format.combine(
           winston.format.timestamp(),
@@ -40,14 +40,14 @@ export const createWinstonConfig = (): WinstonModuleOptions => {
       }),
     );
 
-    // 에러 로그 (30일 보관)
+    // 에러 로그 (14일 보관)
     transports.push(
       new winston.transports.DailyRotateFile({
-        dirname: 'logs',
+        dirname: process.env.LOG_DIR || 'logs',
         filename: 'error-%DATE%.log',
         datePattern: 'YYYY-MM-DD',
         maxSize: '20m',
-        maxFiles: '30d',
+        maxFiles: '14d',
         level: 'error',
         format: winston.format.combine(
           winston.format.timestamp(),
