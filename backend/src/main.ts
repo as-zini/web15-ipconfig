@@ -60,7 +60,7 @@ async function bootstrap() {
     .build();
 
   const documentFactory = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('api-docs', app, documentFactory);
 
   await app.listen(configService.get<number>('port') || DEFAULT_SERVER_PORT);
 
@@ -68,7 +68,7 @@ async function bootstrap() {
   const collaborationService = app.get(CollaborationService);
   const httpServer = app.getHttpServer() as Server;
 
-  // Upgrade 요청 처리 (Socket.IO와 Hocuspocus 공존)
+  // Upgrade 요청 처리 (Hocuspocus WebSocket)
   httpServer.on(
     'upgrade',
     (request: IncomingMessage, socket: Duplex, head: Buffer) => {
