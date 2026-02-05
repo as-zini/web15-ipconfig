@@ -8,14 +8,8 @@ import {
 import { SUBJECT_GUIDELINES } from '@/features/widgets/techStack/constant/subject';
 import { SparklesIcon } from 'lucide-react';
 
-function SubjectGuideline({
-  category,
-  option,
-}: {
-  category: string;
-  option: string;
-}) {
-  const guideline = SUBJECT_GUIDELINES[category]?.[option];
+function SubjectGuideline({ category }: { category: string }) {
+  const guideline = SUBJECT_GUIDELINES[category];
 
   if (!guideline) {
     return null;
@@ -30,10 +24,8 @@ function SubjectGuideline({
         <SparklesIcon className="text-primary size-4" />
       </ItemMedia>
       <ItemContent>
-        <ItemTitle>
-          [{category}] {option}
-        </ItemTitle>
-        <ItemDescription className="line-clamp-none text-pretty wrap-break-word">
+        <ItemTitle>{category}</ItemTitle>
+        <ItemDescription className="line-clamp-none text-pretty wrap-break-word whitespace-pre-wrap">
           {guideline}
         </ItemDescription>
       </ItemContent>
