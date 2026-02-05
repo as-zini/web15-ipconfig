@@ -19,10 +19,11 @@ function SelectedTechItem({
   return (
     <div className="group border-border bg-secondary/20 relative flex flex-col items-center justify-center gap-2 rounded-lg border">
       <Button
+        size="icon"
         onClick={onRemove}
-        className="bg-destructive text-destructive-foreground absolute -top-2 -right-2 hidden cursor-pointer rounded-full p-1 group-hover:block"
+        className="bg-destructive text-destructive-foreground hover:bg-destructive hover:text-destructive-foreground absolute -top-2 -right-2 hidden size-5 cursor-pointer rounded-full group-hover:flex"
       >
-        <LuX size={12} />
+        <LuX className="size-3" />
       </Button>
       <TechStackItem name={name} slug={slug} color={color} />
     </div>
