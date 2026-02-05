@@ -181,6 +181,13 @@ export const COMMON_TECH_STACKS: CommonTechStack[] = [
     color: '4E9BCD',
     slug: 'sonar',
   },
+  {
+    id: 'husky',
+    category: 'codeQuality',
+    name: 'Husky',
+    color: '000000',
+    slug: 'husky',
+  },
 
   // IDE
   {
