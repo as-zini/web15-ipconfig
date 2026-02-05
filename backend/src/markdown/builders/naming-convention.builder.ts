@@ -61,7 +61,7 @@ export class NamingConventionBuilder implements ISectionBuilder {
       categories.forEach((category) => {
         // 'none' 값이 아닌 아이템만 필터링
         const validItems = category.items.filter(
-          (item) => item.value && item.value !== 'none',
+          (item) => item.value !== 'none',
         );
 
         // 유효한 아이템이 없으면 해당 카테고리 표시 안 함
