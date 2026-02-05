@@ -79,6 +79,13 @@ npm run dev:be
 npm run dev:fe
 ```
 
+## 🏗️ 인프라 아키텍처
+<div align="center">
+  <picture>
+    <img alt="cloudarch" src=".github/asset/teamconfig_cloud_arch.png" />
+  </picture>
+</div>
+
 ## 🛠 기술 스택
 
 ### Frontend
