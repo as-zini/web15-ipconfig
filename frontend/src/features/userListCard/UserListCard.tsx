@@ -20,10 +20,8 @@ import { useUserInfoById } from '@/common/store/user';
 const VISIBLE_USER_COUNT = 3;
 
 export default function UserListCard() {
-  // 유저 ID 배열만 구독합니다. (커서가 움직여도 이 배열의 내용은 변하지 않아 리렌더링되지 않음)
   const userIds = useUserIds();
   const myId = useMyId();
-
   const totalUserCount = userIds.length;
   const hiddenUserCount = totalUserCount - VISIBLE_USER_COUNT;
 
@@ -35,13 +33,13 @@ export default function UserListCard() {
             <UserAvatarItem key={id} userId={id} />
           ))}
           {hiddenUserCount > 0 && (
-            <AvatarGroupCount className="bg-secondary text-xs !ring-gray-800">
+            <AvatarGroupCount className="bg-secondary !ring-background text-xs">
               +{hiddenUserCount}
             </AvatarGroupCount>
           )}
         </AvatarGroup>
       </PopoverTrigger>
-      <PopoverContent className="w-fit bg-gray-800 p-2">
+      <PopoverContent className="bg-popover border-border w-fit border p-2">
         <div className="flex flex-col gap-2 text-sm">
           {userIds.map((id) => {
             const isMe = id === myId;

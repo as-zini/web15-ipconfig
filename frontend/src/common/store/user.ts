@@ -16,7 +16,16 @@ export const useUserStore = create<UserStore>((set) => ({
   setUserList: (userList: User[]) => set({ userList }),
 }));
 
-// 1. 전체 리스트를 그대로 가져오되, 사용하는 컴포넌트에서 useShallow를 씁니다.
+export const useMe = () =>
+  useUserStore(useShallow((s) => s.userList.find((u) => u.id === s.myId)));
+
+// 내 커서 타입
+export const useMyCursorType = () =>
+  useUserStore(
+    useShallow((s) => s.userList.find((u) => u.id === s.myId)?.cursor.type),
+  );
+
+// 전체 유저 리스트(파생)
 export const useUserList = () => useUserStore((s) => s.userList);
 
 // 2. ID 리스트만 따로 관리하는 훅 (이 리스트는 커서가 움직여도 변하지 않음)

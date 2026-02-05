@@ -1,7 +1,10 @@
 // TODO: Yjs(Y.Map, Y.Array) 등 외부 타입으로 인한 경고/에러 무시
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { CollaborationService } from './collaboration.service';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 import * as Y from 'yjs';
+import { DEFAULT_WIDGET_LAYOUT } from './constants/collaboration.constants';
 import type {
   YjsWidgetData,
   YjsWidgetType,
@@ -10,9 +13,10 @@ import type {
 
 @Injectable()
 export class YjsDocReaderService {
-  private readonly logger = new Logger(YjsDocReaderService.name);
-
-  constructor(private readonly collaborationService: CollaborationService) {}
+  constructor(
+    private readonly collaborationService: CollaborationService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   /**
    * 워크스페이스의 모든 위젯 데이터를 가져옵니다.
@@ -37,7 +41,9 @@ export class YjsDocReaderService {
     const widgets = root.get('widgets') as Y.Map<Y.Map<unknown>>;
 
     if (!widgets) {
-      this.logger.warn(`Workspace ${workspaceId}: widgets map not found`);
+      this.logger.warn(`Workspace ${workspaceId}: widgets map not found`, {
+        context: YjsDocReaderService.name,
+      });
       return [];
     }
 
@@ -72,12 +78,17 @@ export class YjsDocReaderService {
 
     const layout: YjsWidgetLayout = layoutMap
       ? {
-          x: layoutMap.get('x') ?? 0,
-          y: layoutMap.get('y') ?? 0,
-          width: layoutMap.get('width') ?? 300,
-          height: layoutMap.get('height') ?? 300,
+          x: layoutMap.get('x') ?? DEFAULT_WIDGET_LAYOUT.X,
+          y: layoutMap.get('y') ?? DEFAULT_WIDGET_LAYOUT.Y,
+          width: layoutMap.get('width') ?? DEFAULT_WIDGET_LAYOUT.WIDTH,
+          height: layoutMap.get('height') ?? DEFAULT_WIDGET_LAYOUT.HEIGHT,
         }
-      : { x: 0, y: 0, width: 300, height: 300 };
+      : {
+          x: DEFAULT_WIDGET_LAYOUT.X,
+          y: DEFAULT_WIDGET_LAYOUT.Y,
+          width: DEFAULT_WIDGET_LAYOUT.WIDTH,
+          height: DEFAULT_WIDGET_LAYOUT.HEIGHT,
+        };
 
     return {
       widgetId: (widgetMap.get('id') as string) ?? widgetId,

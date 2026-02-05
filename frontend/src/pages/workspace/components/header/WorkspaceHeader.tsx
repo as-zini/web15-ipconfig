@@ -6,27 +6,19 @@ import { Button } from '@/common/components/shadcn/button';
 import { ExportGroupDropdownButton } from '@/features/export/components/ExportGroupDropdownButton';
 import { UserListCard } from '@/features/userListCard';
 import InviteButton from './InviteButton';
+import { WorkspaceTitleInput } from './WorkspaceTitleInput';
+import { ThemeToggle } from '@/common/components/ThemeToggle';
 
 function RoundedContainer({ children, className }: ComponentProps<'div'>) {
   return (
     <div
       className={cn(
-        'pointer-events-auto flex h-full items-center rounded-xl border border-gray-700 bg-gray-800 px-2 py-1 shadow-2xl backdrop-blur-xl',
+        'border-border bg-popover/80 pointer-events-auto flex h-full items-center rounded-xl border px-2 py-1 shadow-2xl backdrop-blur-xl',
         className,
       )}
     >
       {children}
     </div>
-  );
-}
-
-function TitleInput() {
-  return (
-    <input
-      type="text"
-      defaultValue="제목을 입력하세요"
-      className="focus:border-primary-600/50 focus:ring-primary-600/50 w-full rounded-md border border-transparent bg-transparent px-1 text-base font-bold text-white outline-none focus:ring"
-    />
   );
 }
 
@@ -40,7 +32,7 @@ function WorkspaceHeader() {
           className="mr-2 h-9 w-9 shrink-0"
         />
         <div>
-          <TitleInput />
+          <WorkspaceTitleInput />
         </div>
       </RoundedContainer>
 
@@ -56,6 +48,7 @@ function WorkspaceHeader() {
         <div id="invite-button">
           <InviteButton />
         </div>
+        <ThemeToggle />
       </RoundedContainer>
     </header>
   );
