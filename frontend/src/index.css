@@ -180,6 +180,10 @@
   [role='button']:not(:disabled) {
     cursor: pointer;
   }
+
+  .disable-transitions * {
+    transition: none !important;
+  }
 }
 
 body {
