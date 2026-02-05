@@ -14,6 +14,7 @@ import { useUserInfoById } from '@/common/store/user';
 interface MyUserItemProps {
   userId: string;
 }
+
 function MyUserItem({ userId }: MyUserItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const {
