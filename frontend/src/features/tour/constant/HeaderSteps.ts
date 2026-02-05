@@ -19,10 +19,4 @@ export const HEADER_STEPS: Step[] = [
     placement: 'bottom',
     spotlightClicks: true,
   },
-  {
-    target: '#canvas-wrapper',
-    content:
-      "마지막으로, '/' 키를 눌러 커서 챗을 사용할 수 있습니다. 자유롭게 회의해보세요!",
-    spotlightClicks: true,
-  },
 ];
