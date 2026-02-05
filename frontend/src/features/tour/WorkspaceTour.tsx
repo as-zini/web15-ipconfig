@@ -57,7 +57,7 @@ const WorkspaceTour = () => {
           arrowColor: '#EEEEEE',
           backgroundColor: '#EEEEEE',
           overlayColor: 'rgba(0, 0, 0, 0.5)',
-          primaryColor: '#393E46',
+          primaryColor: '#00ADB5',
           textColor: '#222831',
           zIndex: 1000,
         },

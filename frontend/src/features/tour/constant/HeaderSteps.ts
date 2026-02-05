@@ -9,8 +9,14 @@ export const HEADER_STEPS: Step[] = [
   },
   {
     target: '#invite-button',
-    content: '동료를 초대하거나 주소를 복사하여 함께 작업해보세요!',
+    content: '동료를 초대하거나 주소를 복사하여 함께 작업할 수 있습니다.',
     placement: 'bottom',
+    spotlightClicks: true,
+  },
+  {
+    target: '#canvas-wrapper',
+    content:
+      "마지막으로, '/' 키를 눌러 커서 챗을 사용할 수 있습니다. 자유롭게 회의해보세요!",
     spotlightClicks: true,
   },
 ];
