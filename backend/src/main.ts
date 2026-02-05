@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { CollaborationService } from './collaboration/collaboration.service';
+import { DEFAULT_SERVER_PORT } from './common/constants/shared.constants';
 import { Server, IncomingMessage } from 'http';
 import { Duplex } from 'stream';
 import {
@@ -57,7 +58,7 @@ async function bootstrap() {
   const documentFactory = SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('api', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? DEFAULT_SERVER_PORT);
 
   // CollaborationService를 통해 Hocuspocus WebSocket 연결 처리
   const collaborationService = app.get(CollaborationService);
