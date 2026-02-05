@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import type { CollaborationData } from './CollaborationWidget';
 import {
   Select,
   SelectContent,
@@ -7,15 +6,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/common/components/shadcn/select';
+import SelectInput from '@/common/components/SelectInput';
 
 import CounterInput from './CounterInput';
 import { platforms } from '../constants/options';
+import type { CollaborationData } from '../types/CollaborationData';
 
 interface TaskWorkflowProps {
   data: CollaborationData['workflow'];
-  onUpdate: <K extends keyof CollaborationData['workflow']>(
-    key: K,
-    value: CollaborationData['workflow'][K],
+  onUpdate: (
+    key: keyof CollaborationData['workflow'],
+    value: string | number,
   ) => void;
 }
 
@@ -23,28 +24,40 @@ export default function TaskWorkflow({ data, onUpdate }: TaskWorkflowProps) {
   const [editCycleValue, setEditCycleValue] = useState<boolean>(false);
 
   return (
-    <div className="max-w-[400px] rounded-2xl border border-gray-700 p-6 text-gray-200">
+    <div className="border-border text-foreground max-w-[400px] rounded-2xl border p-6">
       <h2 className="flex items-center gap-2 text-xl font-semibold">
         작업 관리
       </h2>
 
       <div className="mt-6">
         <p className="mb-2 text-sm">사용 플랫폼</p>
-        <Select
-          value={data.platform}
-          onValueChange={(value) => onUpdate('platform', value)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="사용 플랫폼 선택" />
-          </SelectTrigger>
-          <SelectContent>
-            {platforms.map((platform) => (
-              <SelectItem key={platform} value={platform}>
-                {platform}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SelectInput
+          selectedValue={
+            data.platform?.selectedId
+              ? `[Platform] ${data.platform.selectedId}`
+              : ''
+          }
+          setSelectedValue={(value) => {
+            // [Platform] Jira -> Jira
+            const match = value.match(/^\[(.*?)\] (.*)$/);
+            if (match) {
+              onUpdate('platform', match[2]);
+            } else {
+              onUpdate('platform', value);
+            }
+          }}
+          customOptions={[
+            ...platforms.map((p) => `[Platform] ${p}`),
+            ...(data.platform?.selectedId &&
+            !platforms.includes(data.platform.selectedId)
+              ? [`[Platform] ${data.platform.selectedId}`]
+              : []),
+          ]}
+          defaultGroups={[]}
+          customCategoryName="작업 관리 플랫폼"
+          placeholder="플랫폼을 선택해주세요..."
+          searchPlaceholder="플랫폼을 입력하세요..."
+        />
       </div>
 
       <div className="mt-6 flex items-center gap-3">

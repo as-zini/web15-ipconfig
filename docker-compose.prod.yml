@@ -4,17 +4,18 @@ services:
     env_file:
       - .env
     container_name: web15-ipconfig-backend
-    ports:
-      - '3000:3000'
+
     networks:
       - app-network
     environment:
       - NODE_ENV=production
-      - HOST_URL=http://49.50.138.164/
+      - HOST_URL=${HOST_URL}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - USE_REDIS_EXTENSION=${USE_REDIS_EXTENSION}
+    volumes:
+      - /var/log/web15-ipconfig:/app/logs
     restart: unless-stopped
 
   frontend:
@@ -22,6 +23,10 @@ services:
     container_name: web15-ipconfig-frontend
     ports:
       - '80:80'
+      - '443:443'
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/certbot:/var/www/certbot
     networks:
       - app-network
     environment:

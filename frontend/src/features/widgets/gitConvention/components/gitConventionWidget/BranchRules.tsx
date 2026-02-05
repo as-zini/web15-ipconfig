@@ -2,30 +2,40 @@ import { Input } from '@/common/components/shadcn/input';
 import { Badge } from '@/common/components/shadcn/badge';
 import { Button } from '@/common/components/shadcn/button';
 import { LuPlus, LuX } from 'react-icons/lu';
-import { useState } from 'react';
 import type { BranchRuleState } from '../../types/gitConvention';
+import { useBranchPrefix } from '@/common/hooks/useBranchPrefix';
 
 interface BranchRulesProps {
+  strategy: string;
   rules: BranchRuleState;
   onChange: (rules: Partial<BranchRuleState>) => void;
 }
 
-export function BranchRules({ rules, onChange }: BranchRulesProps) {
-  const [newPrefix, setNewPrefix] = useState('');
+export function BranchRules({ strategy, rules, onChange }: BranchRulesProps) {
+  const { register, handleSubmit, setValue, errors } = useBranchPrefix();
 
-  const handleAddPrefix = () => {
-    if (!newPrefix.trim()) return;
-    if (rules.prefixes.includes(newPrefix.trim())) return;
+  const handleAddPrefix = handleSubmit((data) => {
+    const value = data.prefix.trim();
+    if (!value) return;
+    if (rules.prefixes.selectedIds.includes(value)) return;
 
     onChange({
-      prefixes: [...rules.prefixes, newPrefix.trim()],
+      prefixes: {
+        ...rules.prefixes,
+        selectedIds: [...rules.prefixes.selectedIds, value],
+      },
     });
-    setNewPrefix('');
-  };
+    setValue('prefix', '');
+  });
 
   const handleRemovePrefix = (prefixToRemove: string) => {
     onChange({
-      prefixes: rules.prefixes.filter((p) => p !== prefixToRemove),
+      prefixes: {
+        ...rules.prefixes,
+        selectedIds: rules.prefixes.selectedIds.filter(
+          (p) => p !== prefixToRemove,
+        ),
+      },
     });
   };
 
@@ -38,45 +48,37 @@ export function BranchRules({ rules, onChange }: BranchRulesProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* Main Branch */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-muted-foreground ml-1 text-xs font-medium">
-          Main Branch
-        </label>
+      <label className="text-muted-foreground ml-1 flex flex-col gap-1.5 text-xs font-medium">
+        Main Branch
         <Input
           value={rules.mainBranch}
           onChange={(e) => onChange({ mainBranch: e.target.value })}
           className="h-9"
           placeholder="e.g. main"
         />
-      </div>
+      </label>
 
-      {/* Develop Branch (Optional) */}
-      {rules.developBranch !== undefined && (
-        <div className="flex flex-col gap-1.5">
-          <label className="text-muted-foreground ml-1 text-xs font-medium">
-            Develop Branch
-          </label>
+      {strategy === 'GIT_FLOW' && (
+        <label className="text-muted-foreground ml-1 flex flex-col gap-1.5 text-xs font-medium">
+          Develop Branch
           <Input
-            value={rules.developBranch}
+            value={rules.developBranch || ''}
             onChange={(e) => onChange({ developBranch: e.target.value })}
             className="h-9"
             placeholder="e.g. develop"
           />
-        </div>
+        </label>
       )}
 
       {/* Prefixes */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-muted-foreground ml-1 text-xs font-medium">
-          Prefixes
-        </label>
+      <label className="text-muted-foreground ml-1 flex flex-col gap-1.5 text-xs font-medium">
+        Prefixes
         <div className="flex gap-2">
           <Input
-            value={newPrefix}
-            onChange={(e) => setNewPrefix(e.target.value)}
+            {...register('prefix')}
             onKeyDown={handleKeyDown}
             placeholder="Add prefix..."
-            className="h-9"
+            className={`h-9 ${errors.prefix ? 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/50' : ''}`}
           />
           <Button
             variant="outline"
@@ -87,30 +89,36 @@ export function BranchRules({ rules, onChange }: BranchRulesProps) {
             <LuPlus size={14} />
           </Button>
         </div>
+        {errors.prefix && (
+          <span className="text-destructive mt-1 ml-1 text-xs">
+            {errors.prefix.message}
+          </span>
+        )}
         <div className="mt-1 flex flex-wrap gap-1.5">
-          {rules.prefixes.map((prefix) => (
+          {rules.prefixes.selectedIds.map((prefix) => (
             <Badge
               key={prefix}
               variant="secondary"
               className="border-border bg-background hover:bg-accent hover:text-accent-foreground flex cursor-default items-center gap-1.5 border px-2.5 py-1 pr-1.5 text-sm font-medium shadow-sm transition-colors"
             >
               {prefix}
-              <button
+              <Button
+                variant={'ghost'}
                 onClick={() => handleRemovePrefix(prefix)}
-                className="hover:text-destructive hover:bg-muted-foreground/20 rounded-full p-0.5 transition-colors focus:outline-none"
+                className="hover:text-destructive hover:bg-accent h-4 w-4 rounded-full p-0 transition-colors focus:outline-none"
                 aria-label={`Remove ${prefix}`}
               >
                 <LuX size={14} />
-              </button>
+              </Button>
             </Badge>
           ))}
-          {rules.prefixes.length === 0 && (
+          {rules.prefixes.selectedIds.length === 0 && (
             <span className="text-muted-foreground ml-1 text-xs italic">
               No prefixes configured.
             </span>
           )}
         </div>
-      </div>
+      </label>
     </div>
   );
 }

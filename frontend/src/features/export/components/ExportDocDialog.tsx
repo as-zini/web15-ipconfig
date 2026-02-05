@@ -1,0 +1,67 @@
+import { useClipboard } from '@/common/hooks/useClipboard';
+import {
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/common/components/shadcn/dialog';
+import { LuFileText, LuCircleX } from 'react-icons/lu';
+import { SpinnerCustom } from '@/common/components/SpinnerCustom';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
+import 'github-markdown-css/github-markdown-light.css';
+import { CopyButton } from './CopyButton';
+
+export function ExportDocDialog({
+  markdown,
+  isLoading,
+  error,
+}: {
+  markdown: string;
+  isLoading: boolean;
+  error: string | null;
+}) {
+  return (
+    <DialogContent className="z-999 sm:max-w-2xl">
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2">
+          <LuFileText size={18} className="text-primary" />
+          마크다운으로 내보내기
+        </DialogTitle>
+        <DialogDescription>
+          협의한 그라운드 룰 및 컨벤션을 마크다운으로 내보낼 수 있습니다.
+          <br />
+          GitHub 위키나 README에 바로 붙여넣으세요.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="border-border bg-muted h-[45vh] overflow-y-auto rounded-lg border px-4 py-3">
+        {isLoading ? (
+          <div className="text-muted-foreground flex h-full items-center justify-center gap-2">
+            <SpinnerCustom />
+            <span>불러오는 중...</span>
+          </div>
+        ) : error ? (
+          <div className="text-destructive flex h-full items-center justify-center gap-2">
+            <LuCircleX size={16} />
+            <span>{error}</span>
+          </div>
+        ) : (
+          <div className="markdown-body text-foreground w-full">
+            <Markdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw, rehypeSanitize]}
+            >
+              {markdown}
+            </Markdown>
+          </div>
+        )}
+      </div>
+      <DialogFooter>
+        <CopyButton content={markdown} />
+      </DialogFooter>
+    </DialogContent>
+  );
+}

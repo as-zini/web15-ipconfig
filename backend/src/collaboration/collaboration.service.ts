@@ -2,59 +2,79 @@ import {
   Injectable,
   OnModuleInit,
   OnModuleDestroy,
-  Logger,
+  Inject,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 import { Hocuspocus, Extension } from '@hocuspocus/server';
 import { Redis as RedisExtension } from '@hocuspocus/extension-redis';
-import { IncomingMessage } from 'http';
-import { Duplex } from 'stream';
+import { Database } from '@hocuspocus/extension-database';
+import { IncomingMessage } from 'node:http';
+import { Duplex } from 'node:stream';
 import { WebSocketServer } from 'ws';
-import Redis from 'ioredis';
+import { StorageAdapter } from './storage/storage.interface';
+import {
+  HOCUSPOCUS_DEBOUNCE_MS,
+  HOCUSPOCUS_MAX_DEBOUNCE_MS,
+  DOCUMENT_NAME_PREFIX,
+  WEBSOCKET_PATHS,
+  REDIS_KEY_PREFIX,
+} from './constants/collaboration.constants';
 
 @Injectable()
 export class CollaborationService implements OnModuleInit, OnModuleDestroy {
   private hocuspocus: Hocuspocus;
   private wss: WebSocketServer;
-  private redis: Redis | null = null;
-  private readonly logger = new Logger(CollaborationService.name);
+
+  constructor(
+    private readonly storageAdapter: StorageAdapter,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly configService: ConfigService,
+  ) {}
 
   onModuleInit() {
     // WebSocket 서버 생성 (noServer 모드)
     this.wss = new WebSocketServer({ noServer: true });
 
-    // Redis 설정
-    const redisHost = process.env.REDIS_HOST || 'localhost';
-    const redisPort = parseInt(process.env.REDIS_PORT || '6379', 10);
-    const redisPassword = process.env.REDIS_PASSWORD;
-    const useRedisExtension = process.env.USE_REDIS_EXTENSION === 'true';
-
-    this.logger.log(`Connecting to Redis at ${redisHost}:${redisPort}`);
-
-    // Redis 클라이언트 생성 (yjsdoc 저장용)
-    this.redis = new Redis({
-      host: redisHost,
-      port: redisPort,
-      password: redisPassword,
-      retryStrategy: (times) => {
-        // 재연결 시도 간격 (최대 3초)
-        return Math.min(times * 100, 3000);
-      },
-      maxRetriesPerRequest: 3,
-    });
-
-    this.redis.on('connect', () => {
-      this.logger.log('Redis connected for document storage');
-    });
-
-    this.redis.on('error', (err) => {
-      this.logger.error('Redis connection error:', err.message);
-    });
+    // Redis 설정 (Extension용)
+    const redisHost = this.configService.get<string>('redis.host');
+    const redisPort = this.configService.get<number>('redis.port');
+    const redisPassword = this.configService.get<string>('redis.password');
+    const useRedisExtension =
+      this.configService.get<boolean>('redis.useExtension');
 
     // RedisExtension은 Scale-out 시에만 사용
     const extensions: Extension[] = [];
 
+    // Database Extension (영속성)
+    extensions.push(
+      new Database({
+        fetch: async ({ documentName }) => {
+          this.logger.debug(`Fetching document ${documentName} from storage`, {
+            context: CollaborationService.name,
+          });
+          return this.storageAdapter.get(
+            `${REDIS_KEY_PREFIX.YJS_DOC}${documentName}`,
+          );
+        },
+        store: async ({ documentName, state }) => {
+          this.logger.debug(`Storing document ${documentName} to storage`, {
+            context: CollaborationService.name,
+          });
+          await this.storageAdapter.set(
+            `${REDIS_KEY_PREFIX.YJS_DOC}${documentName}`,
+            state,
+          );
+        },
+      }),
+    );
+
+    // Redis Extension (Scale-out Pub/Sub)
     if (useRedisExtension) {
-      this.logger.log('Enabling Redis Extension for multi-server sync');
+      this.logger.info('Enabling Redis Extension for multi-server sync', {
+        context: CollaborationService.name,
+      });
       extensions.push(
         new RedisExtension({
           host: redisHost,
@@ -69,22 +89,27 @@ export class CollaborationService implements OnModuleInit, OnModuleDestroy {
       extensions,
 
       // debounce 설정: 문서 저장 빈도 조절 (기본 2초)
-      debounce: 2000,
-      maxDebounce: 10000,
+      debounce: HOCUSPOCUS_DEBOUNCE_MS,
+      maxDebounce: HOCUSPOCUS_MAX_DEBOUNCE_MS,
 
       onConnect: async (data) => {
-        this.logger.log(`User connected to Hocuspocus: ${data.documentName}`);
+        this.logger.info(`User connected to Hocuspocus: ${data.documentName}`, {
+          context: CollaborationService.name,
+        });
         await Promise.resolve();
       },
 
       onDisconnect: async ({ documentName }) => {
-        this.logger.log(`User disconnected from document: ${documentName}`);
+        this.logger.info(`User disconnected from document: ${documentName}`, {
+          context: CollaborationService.name,
+        });
         await Promise.resolve();
       },
     });
 
-    this.logger.log(
-      `Hocuspocus collaboration server initialized ${useRedisExtension ? 'with Redis Extension' : 'without Redis Extension'}`,
+    this.logger.info(
+      `Hocuspocus collaboration server initialized with StorageAdapter and ${useRedisExtension ? 'Redis Extension' : 'no Redis Extension'}`,
+      { context: CollaborationService.name },
     );
   }
 
@@ -92,13 +117,11 @@ export class CollaborationService implements OnModuleInit, OnModuleDestroy {
     if (this.wss) {
       this.wss.close();
     }
-    if (this.redis) {
-      this.redis.disconnect();
-      this.logger.log('Redis connection closed');
-    }
     if (this.hocuspocus) {
       this.hocuspocus.closeConnections();
-      this.logger.log('Hocuspocus collaboration server destroyed');
+      this.logger.info('Hocuspocus collaboration server destroyed', {
+        context: CollaborationService.name,
+      });
     }
   }
 
@@ -112,9 +135,9 @@ export class CollaborationService implements OnModuleInit, OnModuleDestroy {
     if (!url) return false;
     try {
       const { pathname } = new URL(url, 'http://localhost');
-      return pathname.startsWith('/collaboration');
+      return pathname.startsWith(WEBSOCKET_PATHS.COLLABORATION);
     } catch {
-      return url.startsWith('/collaboration');
+      return url.startsWith(WEBSOCKET_PATHS.COLLABORATION);
     }
   }
 
@@ -132,7 +155,7 @@ export class CollaborationService implements OnModuleInit, OnModuleDestroy {
    * @returns Hocuspocus Document 또는 null (문서가 로드되지 않은 경우)
    */
   getDocument(workspaceId: string) {
-    const documentName = `workspace:${workspaceId}`;
+    const documentName = `${DOCUMENT_NAME_PREFIX.WORKSPACE}${workspaceId}`;
     return this.hocuspocus.documents.get(documentName) ?? null;
   }
 }

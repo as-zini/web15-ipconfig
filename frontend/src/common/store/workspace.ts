@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import type { WidgetData } from '@/common/types/widgetData';
 
 interface WorkspaceInfo {
@@ -9,15 +10,23 @@ interface WorkspaceInfo {
 interface WorkspaceInfoStore {
   workspaceId: string;
   workspaceName: string;
+  setWorkspaceId: (id: string) => void;
   setWorkspaceInfo: (workspaceInfo: WorkspaceInfo) => void;
 }
 
 // 워크스페이스 기본 정보 스토어
-export const useWorkspaceInfoStore = create<WorkspaceInfoStore>((set) => ({
-  workspaceId: 'w1', // 임시로 고정된 워크스페이스 / 사용자 정보 (실제 서비스에서는 라우팅/로그인 정보 사용)
-  workspaceName: 'workspace1',
-  setWorkspaceInfo: (workspaceInfo: WorkspaceInfo) => set({ ...workspaceInfo }),
-}));
+export const useWorkspaceInfoStore = create<WorkspaceInfoStore>()(
+  devtools(
+    (set) => ({
+      workspaceId: '', // URL에서 동기화됨
+      workspaceName: '',
+      setWorkspaceId: (id: string) => set({ workspaceId: id }),
+      setWorkspaceInfo: (workspaceInfo: WorkspaceInfo) =>
+        set({ ...workspaceInfo }),
+    }),
+    { name: 'WorkspaceInfo' },
+  ),
+);
 
 // 워크스페이스 내 위젯 데이터 스토어
 interface WorkspaceWidgetsStore {
@@ -31,38 +40,43 @@ interface WorkspaceWidgetsStore {
   deleteWidget: (widgetId: string) => void;
 }
 
-export const useWorkspaceWidgetStore = create<WorkspaceWidgetsStore>((set) => ({
-  widgetList: [],
-  setWidgetList: (widgetList: WidgetData[]) => set({ widgetList }),
-  createWidget: (payload: WidgetData) =>
-    set((state) => ({
-      widgetList: [...state.widgetList, payload],
-    })),
-  updateWidget: (
-    widgetId: string,
-    payload: Partial<Omit<WidgetData, 'widgetId'>>,
-  ) =>
-    set((state) => ({
-      widgetList: state.widgetList.map((widget) => {
-        if (widget.widgetId !== widgetId) {
-          return widget;
-        }
+export const useWorkspaceWidgetStore = create<WorkspaceWidgetsStore>()(
+  devtools(
+    (set) => ({
+      widgetList: [],
+      setWidgetList: (widgetList: WidgetData[]) => set({ widgetList }),
+      createWidget: (payload: WidgetData) =>
+        set((state) => ({
+          widgetList: [...state.widgetList, payload],
+        })),
+      updateWidget: (
+        widgetId: string,
+        payload: Partial<Omit<WidgetData, 'widgetId'>>,
+      ) =>
+        set((state) => ({
+          widgetList: state.widgetList.map((widget) => {
+            if (widget.widgetId !== widgetId) {
+              return widget;
+            }
 
-        const nextLayout = payload.layout
-          ? { ...widget.layout, ...payload.layout }
-          : widget.layout;
+            const nextLayout = payload.layout
+              ? { ...widget.layout, ...payload.layout }
+              : widget.layout;
 
-        return {
-          ...widget,
-          ...payload,
-          layout: nextLayout,
-        };
-      }),
-    })),
-  deleteWidget: (widgetId: string) =>
-    set((state) => ({
-      widgetList: state.widgetList.filter(
-        (widget) => widget.widgetId !== widgetId,
-      ),
-    })),
-}));
+            return {
+              ...widget,
+              ...payload,
+              layout: nextLayout,
+            };
+          }),
+        })),
+      deleteWidget: (widgetId: string) =>
+        set((state) => ({
+          widgetList: state.widgetList.filter(
+            (widget) => widget.widgetId !== widgetId,
+          ),
+        })),
+    }),
+    { name: 'WorkspaceWidgets' },
+  ),
+);

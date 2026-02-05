@@ -2,8 +2,10 @@ export type YjsWidgetType =
   | 'TECH_STACK'
   | 'POST_IT'
   | 'GIT_CONVENTION'
-  | 'GROUNDRULE_COLLABORATION'
-  | 'COMMUNICATION';
+  | 'COLLABORATION'
+  | 'COMMUNICATION'
+  | 'NAMING_CONVENTION'
+  | 'CODE_FORMAT';
 
 // Selector 공통 타입
 export interface YjsOptionItem {
@@ -45,6 +47,8 @@ export interface YjsTechStackContent {
     id: string;
     name: string;
     category: string;
+    slug: string;
+    color: string;
   }>;
 }
 
@@ -65,10 +69,10 @@ export interface YjsGitConventionContent {
 // COMMUNICATION
 export interface YjsCommunicationContent {
   communication: {
-    urgent: string;
-    sync: string;
-    async: string;
-    official: string;
+    meeting: YjsSelector;
+    chat: YjsSelector;
+    doc: YjsSelector;
+    announce: YjsSelector;
   };
   sla: {
     responseTime: number;
@@ -107,4 +111,46 @@ export interface YjsPostItContent {
   text: string;
   backgroundColor: string;
   fontSize: number;
+}
+
+// NAMING_CONVENTION
+export interface YjsNamingConventionContent {
+  frontend: {
+    variable: string;
+    function: string;
+    component: string;
+    constant: string;
+  };
+  backend: {
+    variable: string;
+    function: string;
+    class: string;
+    constant: string;
+  };
+  database: {
+    table: string;
+    column: string;
+    index: string;
+    constraint: string;
+  };
+  common: {
+    utility: string;
+    constant: string;
+    type: string;
+    enum: string;
+  };
+}
+
+// FORMAT
+export interface YjsFormatContent {
+  printWidth: number;
+  useTabs: boolean;
+  tabWidth: number;
+  semi: boolean;
+  singleQuote: boolean;
+  jsxSingleQuote: boolean;
+  bracketSpacing: boolean;
+  trailingComma: string;
+  arrowParens: string;
+  singleAttributePerLine: boolean;
 }

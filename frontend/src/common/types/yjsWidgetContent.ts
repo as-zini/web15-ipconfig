@@ -1,4 +1,5 @@
 import type { MultiSelector, Selector } from './yjsDoc';
+import type { Category as NamingConventionCategory } from '@/features/widgets/namingConvention/types/category';
 
 // Union Content Type
 export type WidgetContent =
@@ -6,7 +7,10 @@ export type WidgetContent =
   | GitConventionContent
   | CommunicationContent
   | CollaborationContent
+  | FormatContent
+  | NamingConventionContent
   | PostItContent
+  | DockerfileData
   | Record<string, unknown>;
 
 // 이 밑에서부터는 위젯별 컨텐츠 타입이라 각 위젯 연결할때 세분화하면 좋을 것 같습니다.
@@ -26,7 +30,7 @@ export interface GitConventionContent {
   strategy: Selector;
   branchRules: {
     mainBranch: string;
-    developBranch: string;
+    developBranch?: string | null;
     prefixes: MultiSelector;
   };
   commitConvention: {
@@ -37,15 +41,22 @@ export interface GitConventionContent {
 
 // 3. COMMUNICATION
 export interface CommunicationContent {
-  strategy: Selector;
-  branchRules: {
-    mainBranch: string;
-    developBranch: string;
-    prefixes: MultiSelector;
+  communication: {
+    meeting: Selector;
+    chat: Selector;
+    doc: Selector;
+    announce: Selector;
   };
-  commitConvention: {
-    useGitmoji: boolean;
-    commitTypes: MultiSelector;
+  sla: {
+    responseTime: number;
+  };
+  timeManagement: {
+    coreTimeStart: string;
+    coreTimeEnd: string;
+  };
+  meeting: {
+    noMeetingDay: string;
+    feedbackStyle: string;
   };
 }
 
@@ -68,8 +79,33 @@ export interface CollaborationContent {
   };
 }
 
+export interface FormatContent {
+  printWidth: number;
+  useTabs: boolean;
+  tabWidth: number;
+  semi: boolean;
+  singleQuote: boolean;
+  jsxSingleQuote: boolean;
+  trailingComma: string;
+  bracketSpacing: boolean;
+  arrowParens: string;
+  singleAttributePerLine: boolean;
+}
+export type NamingConventionContent = {
+  [key in NamingConventionCategory]?: Record<string, string>;
+};
+
 // 5. POST_IT (Example placeholder)
 export interface PostItContent {
   text: string;
   color: string;
+}
+
+// 6. DOCKERFILE
+export interface DockerfileData {
+  framework: 'Node.js';
+  version: string;
+  port: number;
+  packageManager?: 'npm' | 'yarn' | 'pnpm' | 'bun';
+  command?: string;
 }

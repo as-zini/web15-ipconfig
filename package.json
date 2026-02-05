@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "MBTI I__P들의 개발 인생 초기 설정",
   "private": true,
+  "license": "MIT",
   "workspaces": [
     "frontend",
     "backend"
@@ -50,25 +51,5 @@
   "engines": {
     "node": "v24.12.0",
     "npm": "11.6.2"
-  },
-  "overrides": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "@asyncapi/html-template": {
-      "react": "^19.2.0",
-      "react-dom": "^19.2.0"
-    },
-    "@asyncapi/generator": {
-      "@asyncapi/html-template": {
-        "react": "^19.2.0",
-        "react-dom": "^19.2.0"
-      }
-    },
-    "nestjs-asyncapi": {
-      "@asyncapi/html-template": {
-        "react": "^19.2.0",
-        "react-dom": "^19.2.0"
-      }
-    }
   }
 }

@@ -1,14 +1,21 @@
-import type { CollaborationData } from '@/features/widgets/collaboration/components/CollaborationWidget';
+import type { CollaborationData } from '@/features/widgets/collaboration/types/CollaborationData';
 import type { CommunicationData } from '@/features/widgets/communication/types/communication';
 import type { GitConventionData } from '@/features/widgets/gitConvention/types/gitConvention';
 import type { TechStack } from '@/features/widgets/techStack/types/techStack';
+import type { TechStackWidgetData } from '@/features/widgets/techStack/types/TechStackWidgetData';
 import type { NamingConventionData } from '@/features/widgets/namingConvention/types/namingConvention';
+import type { DockerfileData } from '@/features/widgets/dockerfile/types/wizard';
+import type { FormatData } from '@/features/widgets/format/types/format';
 
 export type {
   CollaborationData,
   CommunicationData,
   GitConventionData,
   TechStack,
+  TechStackWidgetData,
+  DockerfileData,
+  NamingConventionData,
+  FormatData,
 };
 
 export type WidgetType =
@@ -17,19 +24,17 @@ export type WidgetType =
   | 'COLLABORATION'
   | 'COMMUNICATION'
   | 'NAMING_CONVENTION'
-  | 'CODE_FORMAT';
+  | 'CODE_FORMAT'
+  | 'DOCKERFILE';
 
 export type WidgetContent =
-  | TechStackData
+  | TechStackWidgetData
   | GitConventionData
   | CommunicationData
   | CollaborationData
-  | NamingConventionData;
-
-export interface TechStackData {
-  selectedItems: TechStack[];
-  subject?: string;
-}
+  | NamingConventionData
+  | DockerfileData
+  | FormatData;
 
 export interface WidgetData {
   widgetId: string;

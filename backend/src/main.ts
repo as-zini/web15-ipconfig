@@ -2,16 +2,31 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { AsyncApiDocumentBuilder, AsyncApiModule } from 'nestjs-asyncapi';
+import { ConfigService } from '@nestjs/config';
 import { CollaborationService } from './collaboration/collaboration.service';
+import { DEFAULT_SERVER_PORT } from './common/constants/shared.constants';
 import { Server, IncomingMessage } from 'http';
 import { Duplex } from 'stream';
+import {
+  WINSTON_MODULE_NEST_PROVIDER,
+  WINSTON_MODULE_PROVIDER,
+} from 'nest-winston';
+import { Logger } from 'winston';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
 
-  const isProduction = process.env.NODE_ENV === 'production';
-  const allowedOrigins = isProduction ? process.env.HOST_URL : '*';
+  // Winston 로거를 NestJS 기본 로거로 사용
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+
+  const configService = app.get(ConfigService);
+  const isProduction = configService.get<string>('nodeEnv') === 'production';
+  const allowedOrigins = isProduction
+    ? configService.get<string>('hostUrl')
+    : '*';
 
   app.enableCors({
     origin: allowedOrigins,
@@ -32,6 +47,10 @@ async function bootstrap() {
     }),
   );
 
+  // Global Exception Filter 등록
+  const logger = app.get<Logger>(WINSTON_MODULE_PROVIDER);
+  app.useGlobalFilters(new GlobalExceptionFilter(logger));
+
   // Swagger 설정
   const configSwagger = new DocumentBuilder()
     .setTitle('Web15 IPConfig API')
@@ -41,26 +60,15 @@ async function bootstrap() {
     .build();
 
   const documentFactory = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('api-docs', app, documentFactory);
 
-  // AsyncAPI 설정
-  const asyncApiOptions = new AsyncApiDocumentBuilder()
-    .setTitle('WebSocket API Docs')
-    .setDescription('Web15 IPConfig API description')
-    .setVersion('1.0')
-    .addTag('Web15 IPConfig')
-    .build();
-
-  const asyncapiDocument = AsyncApiModule.createDocument(app, asyncApiOptions);
-  await AsyncApiModule.setup('asyncapi', app, asyncapiDocument);
-
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(configService.get<number>('port') || DEFAULT_SERVER_PORT);
 
   // CollaborationService를 통해 Hocuspocus WebSocket 연결 처리
   const collaborationService = app.get(CollaborationService);
   const httpServer = app.getHttpServer() as Server;
 
-  // Upgrade 요청 처리 (Socket.IO와 Hocuspocus 공존)
+  // Upgrade 요청 처리 (Hocuspocus WebSocket)
   httpServer.on(
     'upgrade',
     (request: IncomingMessage, socket: Duplex, head: Buffer) => {

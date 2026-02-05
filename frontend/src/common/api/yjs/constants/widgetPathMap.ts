@@ -29,10 +29,10 @@ export const WIDGET_PATH_MAP: Record<string, Record<string, string[]>> = {
     techItems: ['techItems'], // 배열이지만 여기선 경로만 정의
   },
   COMMUNICATION: {
-    urgent: ['communication', 'urgent'],
-    sync: ['communication', 'sync'],
-    async: ['communication', 'async'],
-    official: ['communication', 'official'],
+    meeting: ['communication', 'meeting'],
+    chat: ['communication', 'chat'],
+    doc: ['communication', 'doc'],
+    announce: ['communication', 'announce'],
     responseTime: ['sla', 'responseTime'],
     coreTimeStart: ['timeManagement', 'coreTimeStart'],
     coreTimeEnd: ['timeManagement', 'coreTimeEnd'],
@@ -49,5 +49,68 @@ export const WIDGET_PATH_MAP: Record<string, Record<string, string[]>> = {
     platform: ['workflow', 'platform'],
     cycleValue: ['workflow', 'cycleValue'],
     cycleUnit: ['workflow', 'cycleUnit'],
+  },
+  COLLABORATION: {
+    // 1. Primitive Fields
+    approves: ['reviewPolicy', 'approves'],
+    maxReviewHours: ['reviewPolicy', 'maxReviewHours'],
+    blockMerge: ['reviewPolicy', 'blockMerge'],
+    cycleValue: ['workflow', 'cycleValue'],
+    cycleUnit: ['workflow', 'cycleUnit'],
+
+    // 2. Selectors
+    activeVersion: ['prRules', 'activeVersion'],
+    activeStrategy: ['prRules', 'activeStrategy'],
+    platform: ['workflow', 'platform'],
+
+    // 3. MultiSelectors
+    labelRules: ['prRules', 'labelRules'],
+  },
+  DOCKERFILE: {
+    // 공통
+    framework: ['framework'],
+    version: ['version'],
+    port: ['port'],
+
+    // Node.js
+    packageManager: ['packageManager'],
+    command: ['command'],
+  },
+  CODE_FORMAT: {
+    printWidth: ['printWidth'],
+    useTabs: ['useTabs'],
+    tabWidth: ['tabWidth'],
+    semi: ['semi'],
+    singleQuote: ['singleQuote'],
+    jsxSingleQuote: ['jsxSingleQuote'],
+    trailingComma: ['trailingComma'],
+    bracketSpacing: ['bracketSpacing'],
+    arrowParens: ['arrowParens'],
+    singleAttributePerLine: ['singleAttributePerLine'],
+  },
+  NAMING_CONVENTION: {
+    // Frontend
+    'frontend.variable': ['frontend', 'variable'],
+    'frontend.function': ['frontend', 'function'],
+    'frontend.component': ['frontend', 'component'],
+    'frontend.constant': ['frontend', 'constant'],
+
+    // Backend
+    'backend.variable': ['backend', 'variable'],
+    'backend.function': ['backend', 'function'],
+    'backend.class': ['backend', 'class'],
+    'backend.constant': ['backend', 'constant'],
+
+    // Database
+    'database.table': ['database', 'table'],
+    'database.column': ['database', 'column'],
+    'database.index': ['database', 'index'],
+    'database.constraint': ['database', 'constraint'],
+
+    // Common
+    'common.utility': ['common', 'utility'],
+    'common.constant': ['common', 'constant'],
+    'common.type': ['common', 'type'],
+    'common.enum': ['common', 'enum'],
   },
 };
