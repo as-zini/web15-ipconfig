@@ -97,13 +97,11 @@ npm run dev:fe
 ![Zustand](https://img.shields.io/badge/Zustand-State_Mgmt-orange?style=flat-square)
 ![Radix UI](https://img.shields.io/badge/Radix_UI-Components-161618?logo=radix-ui&style=flat-square)
 ![Yjs](https://img.shields.io/badge/Yjs-CRDT-blue?style=flat-square)
-![Socket.io](https://img.shields.io/badge/Socket.io-Client-010101?logo=socket.io&style=flat-square)
 
 ### Backend
 
 ![NestJS](https://img.shields.io/badge/NestJS-v11-E0234E?logo=nestjs&style=flat-square)
 ![Hocuspocus](https://img.shields.io/badge/Hocuspocus-Collaboration-7B61FF?style=flat-square)
-![Socket.io](https://img.shields.io/badge/Socket.io-WebSocket-010101?logo=socket.io&style=flat-square)
 ![Redis](https://img.shields.io/badge/Redis-Cache_&_Pub/Sub-DC382D?logo=redis&style=flat-square)
 ![Node.js](https://img.shields.io/badge/Node.js-Runtime-339933?logo=node.js&style=flat-square)
 
