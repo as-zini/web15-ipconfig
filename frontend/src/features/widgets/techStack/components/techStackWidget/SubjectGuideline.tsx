@@ -16,10 +16,7 @@ function SubjectGuideline({ category }: { category: string }) {
   }
 
   return (
-    <Item
-      variant="outline"
-      className="border-primary/70 animate-in fade-in max-w-full duration-500"
-    >
+    <Item variant="outline" className="border-primary/70 max-w-full">
       <ItemMedia>
         <SparklesIcon className="text-primary size-4" />
       </ItemMedia>
