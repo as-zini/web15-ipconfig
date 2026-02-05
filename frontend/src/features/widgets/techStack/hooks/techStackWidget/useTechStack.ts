@@ -22,7 +22,6 @@ export function useTechStack() {
   );
 
   const content = widgetData?.content;
-  const layout = widgetData?.layout;
 
   const techStackData = content as TechStackWidgetData;
 
