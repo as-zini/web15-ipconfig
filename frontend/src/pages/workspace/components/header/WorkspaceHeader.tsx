@@ -46,7 +46,7 @@ function WorkspaceHeader() {
         <Button
           size="sm"
           variant="secondary"
-          className="dark:hover:bg-secondary/50 border-1 border-gray-200 hover:bg-gray-200 dark:border-none"
+          className="dark:hover:bg-secondary/50 border-1 border-gray-200 hover:bg-gray-200 dark:border-transparent"
           onClick={() => toast.info('Coming soon...')}
         >
           <LuGithub size={16} />
